@@ -145,8 +145,8 @@ CREATE OR REPLACE VIEW public.profiles_public AS
     END AS whatsapp
   FROM public.profiles p;
 
--- Vista de compatibilidad para "mandados"
-CREATE OR REPLACE VIEW public.mandados AS
+-- Vista de compatibilidad para "mandados" — security_invoker fuerza evaluación de RLS con el usuario llamante
+CREATE OR REPLACE VIEW public.mandados WITH (security_invoker = true) AS
   SELECT * FROM public.orders;
 
 -- ====================================================================
@@ -266,6 +266,48 @@ CREATE TABLE IF NOT EXISTS public.valens_transactions (
   description TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- ====================================================================
+-- 10b. TABLA: DELIVERIES (Entregas validadas con PIN)
+-- ====================================================================
+CREATE TABLE IF NOT EXISTS public.deliveries (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id UUID NOT NULL REFERENCES public.orders(id) ON DELETE CASCADE,
+  cadet_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  client_name TEXT NOT NULL,
+  amount_ars NUMERIC(14, 2) NOT NULL,
+  amount_val NUMERIC(14, 2) NOT NULL,
+  pin TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_deliveries_order ON public.deliveries(order_id);
+CREATE INDEX IF NOT EXISTS idx_deliveries_cadet ON public.deliveries(cadet_id);
+CREATE INDEX IF NOT EXISTS idx_deliveries_created ON public.deliveries(created_at);
+
+-- RLS en deliveries
+ALTER TABLE public.deliveries ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "deliveries_select_parties" ON public.deliveries;
+CREATE POLICY "deliveries_select_parties" ON public.deliveries
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM public.orders o
+      WHERE o.id = order_id
+      AND (o.client_id = auth.uid() OR o.cadete_id = auth.uid() OR o.assigned_cadet_id = auth.uid())
+    )
+  );
+
+DROP POLICY IF EXISTS "deliveries_insert_cadet" ON public.deliveries;
+CREATE POLICY "deliveries_insert_cadet" ON public.deliveries
+  FOR INSERT WITH CHECK (
+    auth.uid() = cadet_id
+    AND EXISTS (
+      SELECT 1 FROM public.orders o
+      WHERE o.id = order_id
+      AND (o.client_id = auth.uid() OR o.cadete_id = auth.uid() OR o.assigned_cadet_id = auth.uid())
+    )
+  );
 
 -- ====================================================================
 -- 11. ÍNDICES DE ALTO RENDIMIENTO
@@ -695,7 +737,15 @@ CREATE POLICY "wallets_select" ON public.wallets
 
 DROP POLICY IF EXISTS "wallets_update_own" ON public.wallets;
 CREATE POLICY "wallets_update_own" ON public.wallets
-  FOR UPDATE USING (auth.uid() = user_id);
+  FOR UPDATE USING (auth.uid() = user_id)
+  WITH CHECK (
+    auth.uid() = user_id
+    -- Impide al cliente modificar saldos directamente; solo RPCs SECURITY DEFINER pueden hacerlo
+    AND balance_val IS NOT DISTINCT FROM (SELECT balance_val FROM public.wallets w WHERE w.user_id = auth.uid())
+    AND valens_balance IS NOT DISTINCT FROM (SELECT valens_balance FROM public.wallets w WHERE w.user_id = auth.uid())
+    AND balance_ars IS NOT DISTINCT FROM (SELECT balance_ars FROM public.wallets w WHERE w.user_id = auth.uid())
+    AND ars_collected IS NOT DISTINCT FROM (SELECT ars_collected FROM public.wallets w WHERE w.user_id = auth.uid())
+  );
 
 -- 10. Políticas Transactions
 DROP POLICY IF EXISTS "tx_select" ON public.valens_transactions;
@@ -1020,14 +1070,13 @@ END;
 $$;
 
 -- ====================================================================
--- 23. FUNCIÓN RPC: BÚSQUEDA PÚBLICA DE USUARIOS (solo campos seguros)
+-- 23. FUNCIÓN RPC: BÚSQUEDA DE USUARIOS (requiere autenticación, sin emails)
 -- ====================================================================
 CREATE OR REPLACE FUNCTION public.search_community_users(search_term TEXT)
 RETURNS TABLE (
   id UUID,
   full_name TEXT,
   username TEXT,
-  email TEXT,
   avatar_url TEXT,
   role TEXT,
   is_online BOOLEAN,
@@ -1035,19 +1084,26 @@ RETURNS TABLE (
   vehicle_type TEXT,
   payment_alias TEXT
 )
-LANGUAGE sql
+LANGUAGE plpgsql
 SECURITY DEFINER
 STABLE
 AS $$
-  SELECT id, full_name, username, email, avatar_url, role,
-         is_online, coverage_zone, vehicle_type, payment_alias
-  FROM public.profiles
+BEGIN
+  -- Exigir autenticación: sin usuario logueado, no hay resultados
+  IF auth.uid() IS NULL THEN
+    RETURN;
+  END IF;
+
+  RETURN QUERY
+  SELECT p.id, p.full_name, p.username, p.avatar_url, p.role,
+         p.is_online, p.coverage_zone, p.vehicle_type, p.payment_alias
+  FROM public.profiles p
   WHERE btrim(search_term) <> ''
     AND (
-      full_name ILIKE '%' || btrim(search_term) || '%'
-      OR username ILIKE '%' || btrim(search_term) || '%'
-      OR email ILIKE '%' || btrim(search_term) || '%'
-      OR payment_alias ILIKE '%' || btrim(search_term) || '%'
+      p.full_name ILIKE '%' || btrim(search_term) || '%'
+      OR p.username ILIKE '%' || btrim(search_term) || '%'
+      OR p.payment_alias ILIKE '%' || btrim(search_term) || '%'
     )
   LIMIT 50;
+END;
 $$;
