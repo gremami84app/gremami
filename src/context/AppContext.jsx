@@ -563,40 +563,70 @@ export function AppProvider({ children }) {
       }
     }).catch(() => {});
 
-    // Suscripción a cambios en vivo en la tabla profiles (movimiento GPS en tiempo real)
-    const sub = profileService.subscribeToProfiles((payload) => {
-      if (payload?.new) {
-        const u = payload.new;
-        setPeers((prevPeers) => {
-          const idx = prevPeers.findIndex((p) => p.id === u.id);
-          const peerData = {
-            id: u.id,
-            name: u.full_name || 'Cadete Gremami',
-            category: u.vehicle_type === 'bicicleta' ? 'bicicleta' :
-              u.vehicle_type === 'caminando' ? 'caminando' :
-              u.vehicle_type === 'auto' ? 'automovil' :
-              u.vehicle_type === 'flete' ? 'fletes' : 'motocicleta',
-            serviceModality: u.service_modality || 'mixto',
-            lat: u.lat,
-            lng: u.lng,
-            is_online: u.is_online,
-            avatar: u.avatar_url,
-            phone: u.whatsapp,
-            rating: 5.0
-          };
-          if (idx >= 0) {
-            const next = [...prevPeers];
-            next[idx] = { ...next[idx], ...peerData };
-            return next;
-          } else {
+    // Suscripción a cambios en vivo en la tabla profiles (movimiento GPS en tiempo real).
+    // NOTA: el canal se construye inline (no vía profileService.subscribeToProfiles) porque
+    // ese helper no retorna el canal y su cleanup es un no-op: el canal queda huérfano en
+    // supabase.channels y, al re-montar (React StrictMode), supabase.channel() devuelve la
+    // instancia YA suscrita y .on() lanza:
+    // "cannot add postgres_changes callbacks ... after subscribe()".
+    const REALTIME_TOPIC = 'realtime:public:profiles';
+
+    // Purga defensiva de canales huérfanos del mismo topic (HMR / montajes previos).
+    try {
+      supabase
+        .getChannels()
+        .filter((c) => c.topic === REALTIME_TOPIC)
+        .forEach((c) => supabase.removeChannel(c));
+    } catch (e) {
+      console.warn('Aviso al purgar canales Realtime huérfanos:', e?.message);
+    }
+
+    let disposed = false;
+
+    // Orden obligatorio: channel() -> on('postgres_changes') -> subscribe()
+    const channel = supabase
+      .channel('public:profiles')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'profiles' },
+        (payload) => {
+          if (disposed || !payload?.new) return;
+          const u = payload.new;
+          setPeers((prevPeers) => {
+            const idx = prevPeers.findIndex((p) => p.id === u.id);
+            const peerData = {
+              id: u.id,
+              name: u.full_name || 'Cadete Gremami',
+              category: u.vehicle_type === 'bicicleta' ? 'bicicleta' :
+                u.vehicle_type === 'caminando' ? 'caminando' :
+                u.vehicle_type === 'auto' ? 'automovil' :
+                u.vehicle_type === 'flete' ? 'fletes' : 'motocicleta',
+              serviceModality: u.service_modality || 'mixto',
+              lat: u.lat,
+              lng: u.lng,
+              is_online: u.is_online,
+              avatar: u.avatar_url,
+              phone: u.whatsapp,
+              rating: 5.0
+            };
+            if (idx >= 0) {
+              const next = [...prevPeers];
+              next[idx] = { ...next[idx], ...peerData };
+              return next;
+            }
             return [...prevPeers, peerData];
-          }
-        });
-      }
-    });
+          });
+        }
+      )
+      .subscribe();
 
     return () => {
-      sub?.unsubscribe();
+      disposed = true;
+      try {
+        supabase.removeChannel(channel);
+      } catch (e) {
+        console.warn('Aviso al cerrar canal Realtime:', e?.message);
+      }
     };
   }, []);
 
