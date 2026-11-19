@@ -329,7 +329,9 @@ export function AppProvider({ children }) {
   const [selectedPeer, setSelectedPeer] = useState(null);
 
   // Active chat peer ID
-  const [activeChatPeerId, setActiveChatPeerId] = useState('cadete-moto-1');
+  // (S14a-6) Sin peer precargado: el invitado no hereda una conversación ficticia
+  // (antes 'cadete-moto-1' hacía que ChatScreen mostrara a "Ana P." y un PIN de ejemplo).
+  const [activeChatPeerId, setActiveChatPeerId] = useState(null);
 
   // Peers data (50 nodos en Alta Gracia, Córdoba)
   const [peers, setPeers] = useState(INITIAL_PEERS);
