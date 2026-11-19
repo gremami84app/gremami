@@ -212,28 +212,25 @@ const createPeerIcon = (node, isSelected, repStatus, formatDistanceKm, isDark) =
     repDot = REP_DOT('#F59E0B');
   }
 
-  const bgNode = isDark ? '#0B132B' : '#FFFFFF';
-  const textColor = isDark ? '#F1F5F9' : '#0F172A';
-  const scaleStyle = isSelected ? 'transform: scale(1.25); filter: drop-shadow(0 0 8px #F7931A);' : '';
+  // (S07b) Pin premium: cápsula de vidrio compacta, SOLO glifo.
+  // Se eliminó la etiqueta de texto (nombre + reputación + modalidad + barrio +
+  // distancia) que era la causa del amontonamiento: 115×52 px por nodo → 34×34.
+  // Los datos siguen disponibles en el popup al tocar el pin.
+  const pinBg = isDark ? 'rgba(18,23,31,0.82)' : 'rgba(255,255,255,0.92)';
+  const pinBorder = isSelected ? 'var(--accent, #F7931A)' : borderColor;
+  const pinColor = isSelected
+    ? 'var(--accent, #F7931A)'
+    : isDark ? '#E2E8F0' : '#1E293B';
 
   return L.divIcon({
     className: 'custom-peer-marker',
     html: `
-      <div style="display:flex; flex-direction:column; align-items:center; cursor:pointer; ${scaleStyle}">
-        <div style="background:${bgNode}; color:${isSelected ? 'var(--accent, #F7931A)' : borderColor}; border:2.5px solid ${borderColor}; border-radius:14px; padding:3px 7px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.3); font-size:16px; line-height:1;">
-          ${pinSvg}
-        </div>
-        <div style="margin-top:2px; background:${isDark ? '#070C1E' : '#FFFFFF'}; color:${textColor}; border:1px solid ${borderColor}; border-radius:6px; padding:1px 6px; font-size:9.5px; font-weight:800; white-space:nowrap; box-shadow:0 2px 6px rgba(0,0,0,0.25); display:flex; align-items:center; gap:3px;">
-          ${repDot}
-          ${modalityBadge ? `<span>${modalityBadge}</span>` : ''}
-          <span>${node.name || ''}</span>
-          ${node.locality ? `<span style="font-size:8px; opacity:0.9; color:${isDark ? '#38BDF8' : '#0284C7'};">(${node.locality})</span>` : ''}
-          <span style="font-family:monospace; color:${isDark ? '#94A3B8' : '#64748B'}; font-size:8.5px;">(${kmDistance})</span>
-        </div>
+      <div style="width:34px;height:34px;border-radius:9999px;display:flex;align-items:center;justify-content:center;background:${pinBg};backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1.5px solid ${pinBorder};color:${pinColor};box-shadow:0 2px 10px rgba(0,0,0,0.28)${isSelected ? ', 0 0 0 4px rgba(158,120,40,0.16)' : ''};${isSelected ? 'transform:scale(1.12);' : ''}cursor:pointer;transition:transform 120ms cubic-bezier(.2,.8,.2,1), box-shadow 120ms cubic-bezier(.2,.8,.2,1);">
+        ${PIN_SVG(pinKind, isSelected, 18)}
       </div>
     `,
-    iconSize: [115, 52],
-    iconAnchor: [57, 48]
+    iconSize: [34, 34],
+    iconAnchor: [17, 17]
   });
 };
 
