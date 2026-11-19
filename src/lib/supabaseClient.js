@@ -78,6 +78,41 @@ export const syncUserProfileAndWallet = async (user, additionalData = {}) => {
   let profile = null;
   let wallet = null;
 
+  // (S07-Fix) Puerta de sesión: sin un JWT activo, auth.uid() sería NULL y toda
+  // escritura terminaría en 403 (profiles / wallets). Si no hay sesión válida se
+  // devuelve la estructura local equivalente, sin tocar la red.
+  const fallbackSync = () => ({
+    profile: {
+      id: user.id,
+      full_name: fullName,
+      avatar_url: avatarUrl,
+      role,
+      email: user.email || null,
+      username,
+      fiat_provider: 'Mercado Pago',
+      fiat_alias: 'cadete.gremami.mp',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    wallet: {
+      user_id: user.id,
+      valens_balance: 10.0,
+      ars_collected: 0.0,
+      updated_at: new Date().toISOString()
+    }
+  });
+
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user || session.user.id !== user.id) {
+      console.warn('[Auth] Sincronización omitida: no hay sesión activa de Supabase.');
+      return fallbackSync();
+    }
+  } catch (e) {
+    console.warn('[Auth] No se pudo verificar la sesión antes de sincronizar:', e);
+    return fallbackSync();
+  }
+
   try {
     // 1. Verificar o Crear Registro en 'profiles'
     const { data: existingProfile } = await supabase
@@ -152,14 +187,9 @@ export const syncUserProfileAndWallet = async (user, additionalData = {}) => {
 
       wallet = insertedWallet || initialWallet;
 
-      // 3. Registrar Transacción de Faucet / Bienvenida en 'valens_transactions'
-      await supabase.from('valens_transactions').insert([{
-        receiver_id: user.id,
-        amount_val: 10.0,
-        amount_ars: 0.0,
-        type: 'faucet',
-        description: 'Airdrop Inicial de Bienvenida (10.0 VALENS)'
-      }]).catch(() => {});
+      // (S07-Fix) El airdrop de bienvenida ya lo registra el trigger handle_new_user.
+      // Insertarlo desde el cliente chocaba con la RLS de valens_transactions (solo SELECT)
+      // y además rompía con un TypeError al usar .catch() sobre un builder de PostgREST.
     }
   } catch (err) {
     console.warn('Advertencia durante la sincronización en Supabase:', err);

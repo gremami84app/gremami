@@ -739,6 +739,21 @@ DROP POLICY IF EXISTS "wallets_select" ON public.wallets;
 CREATE POLICY "wallets_select" ON public.wallets
   FOR SELECT USING (auth.uid() = user_id);
 
+-- (S07-Fix) Permite crear la billetera inicial si el trigger handle_new_user no la creó.
+-- El WITH CHECK congela los valores de bienvenida: no se pueden inventar saldos.
+-- No habilita UPDATE: los saldos se mueven solo por RPC SECURITY DEFINER.
+DROP POLICY IF EXISTS "wallets_insert_own_initial" ON public.wallets;
+CREATE POLICY "wallets_insert_own_initial" ON public.wallets
+  FOR INSERT
+  WITH CHECK (
+    auth.uid() = user_id
+    AND balance_val    = 10.0
+    AND valens_balance = 10.0
+    AND balance_ars    = 0.0
+    AND ars_collected  = 0.0
+    AND COALESCE(balance_valens, 10) = 10
+  );
+
 -- IMPORTANTE (S06.0): NO existe política de UPDATE sobre public.wallets, a propósito.
 --   * Con RLS habilitada y sin política de UPDATE, PostgreSQL DENIEGA todo UPDATE
 --     hecho por anon/authenticated (deny-by-default): el cliente no puede tocar saldos.

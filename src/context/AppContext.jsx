@@ -384,7 +384,12 @@ export function AppProvider({ children }) {
       }
 
       try {
-        const { profile, wallet } = await authService.syncUserSession(user);
+        // (S07-Fix) Solo se sincroniza contra Supabase si el id es un UUID real
+        // (sesión de Supabase Auth). Los usuarios locales/mock se omiten para no
+        // disparar 403 por auth.uid() nulo.
+        const { profile, wallet } = isUuid(user.id)
+          ? await authService.syncUserSession(user)
+          : { profile: null, wallet: null };
         const finalName = profile?.full_name || metaName;
         const finalAvatar = profile?.avatar_url || metaAvatar;
         if (finalName) setUserName(finalName);
