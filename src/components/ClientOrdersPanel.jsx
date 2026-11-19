@@ -72,12 +72,12 @@ export default function ClientOrdersPanel() {
   };
 
   const card = `rounded-2xl border p-3 transition-colors ${
-    isDark ? 'bg-[#121B2D] border-[#1F2D48]' : 'bg-white border-slate-200 shadow-sm'
+    isDark ? 'bg-card border-line' : 'bg-card border-line shadow-elev1'
   }`;
 
   if (!uid) {
     return (
-      <div className={`${card} text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+      <div className={`${card} text-xs ${isDark ? 'text-ink3' : 'text-slate-500'}`}>
         Iniciá sesión para ver tus pedidos y las ofertas que recibís.
       </div>
     );
@@ -100,7 +100,7 @@ export default function ClientOrdersPanel() {
       </div>
 
       {activeOrders.length === 0 && (
-        <div className={`${card} text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+        <div className={`${card} text-xs ${isDark ? 'text-ink3' : 'text-slate-500'}`}>
           Todavía no tenés pedidos activos. Usá <strong>Pedir Ahora</strong> o <strong>Programar</strong>.
         </div>
       )}
@@ -125,11 +125,11 @@ export default function ClientOrdersPanel() {
                     {isScheduled ? <Clock className="inline w-3.5 h-3.5 text-accent" /> : <Zap className="inline w-3.5 h-3.5 text-accent" />}{' '}
                     {order.title || 'Pedido P2P'}
                   </p>
-                  <p className={`text-xs truncate mt-0.5 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+                  <p className={`text-xs truncate mt-0.5 ${isDark ? 'text-ink3' : 'text-slate-500'}`}>
                     {order.origin_address} → {order.destination_address}
                   </p>
                   {isScheduled && (
-                    <p className={`text-xs mt-0.5 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+                    <p className={`text-xs mt-0.5 ${isDark ? 'text-ink3' : 'text-slate-500'}`}>
                       🗓 {new Date(order.scheduled_for).toLocaleString('es-AR', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                     </p>
                   )}
@@ -168,7 +168,7 @@ export default function ClientOrdersPanel() {
                         {offer.cadete?.full_name || 'Cadete'}
                         {offer.cadete?.vehicle_type ? ` · ${offer.cadete.vehicle_type}` : ''}
                       </p>
-                      <p className={`text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+                      <p className={`text-xs ${isDark ? 'text-ink3' : 'text-slate-500'}`}>
                         ${Number(offer.proposed_price_ars || 0).toLocaleString('es-AR')}
                         {offer.note ? ` · ${offer.note}` : ''}
                       </p>

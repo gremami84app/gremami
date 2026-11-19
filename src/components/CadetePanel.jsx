@@ -75,7 +75,7 @@ export default function CadetePanel() {
     }
   };
 
-  const card = `rounded-2xl border p-3 ${isDark ? 'bg-[#121B2D] border-[#1F2D48]' : 'bg-white border-slate-200 shadow-sm'}`;
+  const card = `rounded-2xl border p-3 ${isDark ? 'bg-card border-line' : 'bg-card border-line shadow-elev1'}`;
 
   return (
     <section className="space-y-2">
@@ -88,7 +88,7 @@ export default function CadetePanel() {
               <p className={`text-xs font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {isOnline ? 'En línea en el radar' : 'Fuera de línea'}
               </p>
-              <p className={`text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+              <p className={`text-xs ${isDark ? 'text-ink3' : 'text-slate-500'}`}>
                 {isOnline ? 'Recibís pedidos de Alta Gracia' : 'Pausado: no aparecés en el mapa'}
               </p>
             </div>
@@ -132,7 +132,7 @@ export default function CadetePanel() {
           className={`min-h-touch rounded-xl text-xs font-bold border flex items-center justify-center gap-1.5 transition-all ${
             tab === 'urgent'
               ? 'bg-accent text-slate-950 border-transparent'
-              : isDark ? 'bg-[#121B2D] border-[#1F2D48] text-slate-300' : 'bg-white border-slate-200 text-slate-700'
+              : isDark ? 'bg-card border-line text-slate-300' : 'bg-white border-slate-200 text-slate-700'
           }`}
         >
           <Zap className="w-4 h-4" /> Urgentes Ahora
@@ -145,7 +145,7 @@ export default function CadetePanel() {
           className={`min-h-touch rounded-xl text-xs font-bold border flex items-center justify-center gap-1.5 transition-all ${
             tab === 'scheduled'
               ? 'bg-accent text-slate-950 border-transparent'
-              : isDark ? 'bg-[#121B2D] border-[#1F2D48] text-slate-300' : 'bg-white border-slate-200 text-slate-700'
+              : isDark ? 'bg-card border-line text-slate-300' : 'bg-white border-slate-200 text-slate-700'
           }`}
         >
           <Clock className="w-4 h-4" /> Subastas
@@ -165,7 +165,7 @@ export default function CadetePanel() {
               className={`snap-start shrink-0 min-h-touch px-3 rounded-xl text-xs font-semibold border flex items-center gap-1 transition-all ${
                 category === f.id
                   ? 'bg-accent text-slate-950 border-transparent'
-                  : isDark ? 'bg-[#121B2D] border-[#1F2D48] text-slate-300' : 'bg-white border-slate-200 text-slate-700'
+                  : isDark ? 'bg-card border-line text-slate-300' : 'bg-white border-slate-200 text-slate-700'
               }`}
             >
               <Icon className="w-3.5 h-3.5" /> {f.label}
@@ -190,7 +190,7 @@ export default function CadetePanel() {
       </div>
 
       {!loading && filtered.length === 0 && (
-        <div className={`${card} text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+        <div className={`${card} text-xs ${isDark ? 'text-ink3' : 'text-slate-500'}`}>
           No hay {tab === 'urgent' ? 'pedidos urgentes' : 'subastas programadas'} para este filtro.
         </div>
       )}
@@ -202,12 +202,12 @@ export default function CadetePanel() {
               <p className={`text-xs font-bold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {order.title || 'Pedido P2P'}
               </p>
-              <p className={`text-xs truncate mt-0.5 flex items-center gap-1 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+              <p className={`text-xs truncate mt-0.5 flex items-center gap-1 ${isDark ? 'text-ink3' : 'text-slate-500'}`}>
                 <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
                 {order.origin_address} → {order.destination_address}
               </p>
               {order.scheduled_for && (
-                <p className={`text-xs mt-0.5 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+                <p className={`text-xs mt-0.5 ${isDark ? 'text-ink3' : 'text-slate-500'}`}>
                   🗓 {new Date(order.scheduled_for).toLocaleString('es-AR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                 </p>
               )}
