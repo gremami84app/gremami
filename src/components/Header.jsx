@@ -260,39 +260,35 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Role Switcher (Modo Cliente / Modo Cadete) */}
-      <div className={`px-3.5 py-1.5 flex items-center justify-between gap-2 border-b transition-colors ${
-        isDark ? 'bg-[#0F1726] border-[#1F2D48]/50' : 'bg-slate-100 border-slate-200'
-      }`}>
-        <span className={`text-xs font-medium ${isDark ? 'text-[#8C9BB4]' : 'text-slate-600'}`}>Modo:</span>
+      {/* (S09.7) Selector de rol: segmented control limpio */}
+      <div className="px-3.5 py-1.5 flex items-center justify-between gap-2 border-b border-line bg-app transition-colors">
+        <span className="text-xs font-medium text-ink3">Modo</span>
 
-        <div className={`flex items-center p-1 rounded-xl border shadow-inner ${
-          isDark ? 'bg-[#070C1E] border-[#1F2D48]' : 'bg-white border-slate-200'
-        }`}>
+        <div className="flex items-center p-1 rounded-control border border-line bg-card" role="group" aria-label="Cambiar de modo">
           <button
             onClick={() => setRole('cliente')}
             type="button"
-            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+            aria-pressed={!isCadete}
+            className={`min-h-touch px-3 rounded-control text-xs font-semibold transition-all duration-[120ms] ${
               !isCadete
-                ? isDark
-                  ? 'bg-[#1E293B] text-white shadow-md border border-[#2D3E61]'
-                  : 'bg-slate-900 text-white shadow-md'
-                : isDark ? 'text-[#8C9BB4] hover:text-gray-200' : 'text-slate-500 hover:text-slate-800'
+                ? 'bg-ink1 text-app shadow-elev1'
+                : 'text-ink3 hover:text-ink1'
             }`}
           >
-            👤 Cliente
+            Cliente
           </button>
 
           <button
             onClick={() => setRole('cadete')}
             type="button"
-            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+            aria-pressed={isCadete}
+            className={`min-h-touch px-3 rounded-control text-xs font-semibold transition-all duration-[120ms] ${
               isCadete
-                ? 'bg-gradient-to-r from-[#F7931A] to-[#E07D09] text-black shadow-glow-orange font-bold'
-                : isDark ? 'text-[#8C9BB4] hover:text-gray-200' : 'text-slate-500 hover:text-slate-800'
+                ? 'bg-accent text-slate-950 shadow-elev1'
+                : 'text-ink3 hover:text-ink1'
             }`}
           >
-            🛵 Cadete
+            Cadete
           </button>
         </div>
       </div>
@@ -308,8 +304,8 @@ export default function Header() {
                 <span className={`animate-radar absolute inline-flex h-full w-full rounded-full ${isOnline ? 'bg-emerald-400 opacity-80' : 'bg-slate-400 opacity-40'}`} />
                 <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isOnline ? 'bg-emerald-400' : 'bg-slate-400'}`} />
               </span>
-              <span className={`font-semibold text-xs ${isOnline ? (isDark ? 'text-emerald-400' : 'text-emerald-700') : 'text-slate-400'}`}>
-                {isOnline ? '🟢 ONLINE en Radar' : '⚪ OFFLINE'}
+              <span className={`font-semibold text-xs ${isOnline ? 'text-emerald-500' : 'text-ink3'}`}>
+                {isOnline ? 'En línea' : 'Fuera de línea'}
               </span>
               <button
                 onClick={toggleOnlineStatus}
