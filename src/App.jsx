@@ -34,13 +34,9 @@ function MainLayout() {
   const isDark = theme === 'dark';
 
   return (
-    <div className={`min-h-screen flex justify-center transition-colors duration-200 ${
-      isDark ? 'bg-[#070C1E]' : 'bg-slate-200'
-    }`}>
-      {/* Mobile container - takes full width on mobile, centered smartphone canvas on desktop */}
-      <div className={`w-full max-w-md min-h-screen flex flex-col shadow-2xl relative border-x transition-colors duration-200 ${
-        isDark ? 'bg-[#0A1128] border-[#1F2D48]/70 text-slate-100' : 'bg-[#F8FAFC] border-slate-300 text-slate-900'
-      }`}>
+    <div className="min-h-screen flex justify-center bg-app transition-colors duration-200">
+      {/* (S09.8) Marco principal con tokens cálidos: el modo lo resuelve data-mode */}
+      <div className="w-full max-w-md min-h-screen flex flex-col shadow-elev2 relative border-x border-line bg-app text-ink1 transition-colors duration-200">
         {/* Top Sticky Header with Brand, Slogan, Testnet status and Top-Right Hamburger Menu */}
         <Header />
 
@@ -55,7 +51,7 @@ function MainLayout() {
                   ? 'bg-[#241A0B]/95 border-[#F7931A]/80 text-[#F0B90B]'
                   : toast.type === 'error'
                   ? 'bg-[#2D0A11]/95 border-[#E02424]/80 text-rose-300 shadow-glow-raven'
-                  : 'bg-[#121B2D]/95 border-[#1F2D48] text-white'
+                  : 'bg-card/95 border-line text-ink1'
               }`}
             >
               {toast.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />}
