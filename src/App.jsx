@@ -1,9 +1,10 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import Header from './components/Header';
 import AuthModal from './components/AuthModal';
 import UserSearchModal from './components/UserSearchModal';
 import PublicProfileModal from './components/PublicProfileModal';
+import OnboardingScreen from './components/OnboardingScreen';
 import { AlertCircle, CheckCircle2, Info } from 'lucide-react';
 
 const DexScreen = lazy(() => import('./components/DexScreen'));
@@ -112,10 +113,35 @@ function MainLayout() {
   );
 }
 
+// (S13) Gate de onboarding: se muestra una sola vez por dispositivo.
+function OnboardingGate() {
+  const { setActiveTab } = useApp();
+  const [seen, setSeen] = useState(() => {
+    try { return localStorage.getItem('gremami_onboarding_seen') === '1'; } catch (e) { return true; }
+  });
+
+  const markSeen = () => {
+    try { localStorage.setItem('gremami_onboarding_seen', '1'); } catch (e) {}
+    setSeen(true);
+  };
+
+  if (!seen) {
+    return (
+      <OnboardingScreen
+        onSkip={markSeen}
+        onComplete={markSeen}
+        onExplore={() => { markSeen(); setActiveTab('map'); }}
+      />
+    );
+  }
+
+  return <MainLayout />;
+}
+
 export default function App() {
   return (
     <AppProvider>
-      <MainLayout />
+      <OnboardingGate />
     </AppProvider>
   );
 }
