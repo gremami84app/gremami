@@ -1127,3 +1127,45 @@ BEGIN
   LIMIT 50;
 END;
 $$;
+
+-- ====================================================================
+-- 24. PERMISOS (GRANTS) — evita 403 de PostgREST en instalaciones nuevas
+-- --------------------------------------------------------------------
+-- Sin estos GRANT, PostgREST responde 403 (42501 permission denied)
+-- ANTES de evaluar la RLS: las políticas nunca llegan a aplicarse.
+-- RLS sigue siendo la que filtra filas; los GRANT solo abren la puerta.
+-- Idempotente. Solo permisos: no modifica datos ni estructura.
+-- ====================================================================
+GRANT USAGE ON SCHEMA public TO anon, authenticated;
+
+-- ---------- LECTURA (authenticated) ----------
+GRANT SELECT ON
+  public.profiles, public.profiles_public, public.orders, public.mandados,
+  public.offers, public.bids, public.messages, public.reviews,
+  public.user_blocks, public.user_reports, public.dex_orders,
+  public.wallets, public.valens_transactions, public.transactions,
+  public.deliveries, public.token_genesis
+TO authenticated;
+
+-- ---------- ESCRITURA (authenticated) — la RLS decide qué filas ----------
+GRANT INSERT, UPDATE ON public.profiles TO authenticated;
+GRANT INSERT, UPDATE ON public.orders TO authenticated;
+GRANT INSERT, UPDATE ON public.offers TO authenticated;
+GRANT INSERT ON public.bids TO authenticated;
+GRANT INSERT ON public.messages TO authenticated;
+GRANT INSERT ON public.reviews TO authenticated;
+GRANT INSERT, DELETE ON public.user_blocks TO authenticated;
+GRANT INSERT ON public.user_reports TO authenticated;
+GRANT INSERT, UPDATE ON public.dex_orders TO authenticated;
+GRANT INSERT ON public.wallets TO authenticated;
+GRANT INSERT ON public.deliveries TO authenticated;
+
+-- ---------- Secuencias (token_genesis.id es SERIAL) ----------
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO authenticated;
+
+-- ---------- RPCs ----------
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO authenticated;
+
+-- ---------- Visitantes (mapa público y tokenomics) ----------
+GRANT SELECT ON public.profiles_public TO anon;
+GRANT SELECT ON public.token_genesis TO anon;
