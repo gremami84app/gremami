@@ -4,12 +4,50 @@
 @tailwind utilities;
 
 :root {
+  /* (S09.5) Acento configurable por tema — se aplica con <html data-accent="..."> */
+  --accent: #F7931A;
+  --accent-strong: #E07D09;
+  --accent-soft: rgba(247, 147, 26, 0.15);
+  --accent-ring: rgba(247, 147, 26, 0.45);
+
+  /* Superficies base del documento */
+  --page-bg: #0A1128;
+  --page-fg: #FFFFFF;
+
   color-scheme: dark;
 }
 
+html[data-accent="sierras"] {
+  --accent: #0ECB81;
+  --accent-strong: #0A8A56;
+  --accent-soft: rgba(14, 203, 129, 0.15);
+  --accent-ring: rgba(14, 203, 129, 0.45);
+}
+
+html[data-accent="oceano"] {
+  --accent: #3B82F6;
+  --accent-strong: #2563EB;
+  --accent-soft: rgba(59, 130, 246, 0.15);
+  --accent-ring: rgba(59, 130, 246, 0.45);
+}
+
+html[data-accent="grafito"] {
+  --accent: #94A3B8;
+  --accent-strong: #64748B;
+  --accent-soft: rgba(148, 163, 184, 0.15);
+  --accent-ring: rgba(148, 163, 184, 0.45);
+}
+
+/* Modo Día: el fondo base no debe heredar el navy del modo noche */
+html[data-mode="day"] {
+  --page-bg: #F1F5F9;
+  --page-fg: #0F172A;
+  color-scheme: light;
+}
+
 body {
-  background-color: #0A1128;
-  color: #FFFFFF;
+  background-color: var(--page-bg);
+  color: var(--page-fg);
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;

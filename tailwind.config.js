@@ -31,6 +31,13 @@ export default {
           greenDark: '#0A8A56',
           muted: '#8C9BB4',
           light: '#EAECEF'
+        },
+        // (S09.5) Acento dinámico: 4 temas vía variables CSS (data-accent en <html>)
+        accent: {
+          DEFAULT: 'var(--accent)',
+          strong: 'var(--accent-strong)',
+          soft: 'var(--accent-soft)',
+          ring: 'var(--accent-ring)'
         }
       },
       fontFamily: {

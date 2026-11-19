@@ -15,11 +15,11 @@ import React from 'react';
 const BASE =
   'inline-flex items-center justify-center gap-2 font-bold transition-all active:scale-95 ' +
   'disabled:opacity-50 disabled:pointer-events-none ' +
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F7931A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1128]';
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-ring focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1128]';
 
 const VARIANTS = {
-  primary: 'min-h-touch min-w-touch px-4 rounded-xl bg-[#F7931A] text-slate-950 hover:bg-[#E07D09] shadow-md',
-  secondary: 'min-h-touch min-w-touch px-4 rounded-xl bg-[#1A253D] text-white border border-[#2D3E61] hover:border-[#F7931A] hover:bg-[#22304E]',
+  primary: 'min-h-touch min-w-touch px-4 rounded-xl bg-accent text-slate-950 hover:bg-accent-strong shadow-md',
+  secondary: 'min-h-touch min-w-touch px-4 rounded-xl bg-[#1A253D] text-white border border-[#2D3E61] hover:border-accent hover:bg-[#22304E]',
   ghost: 'min-h-touch min-w-touch px-3 rounded-xl text-slate-200 hover:bg-[#1A253D]',
   icon: 'min-h-touch min-w-touch p-0 rounded-xl border'
 };

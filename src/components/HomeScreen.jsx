@@ -171,7 +171,7 @@ export default function HomeScreen() {
         type="button"
         onClick={() => setIsRequestOpen(true)}
         aria-label="Pedir un envío"
-        className="w-full min-h-touch rounded-2xl bg-gradient-to-r from-[#F7931A] to-[#E07D09] hover:from-[#F0B90B] hover:to-[#F7931A] text-slate-950 font-black text-sm shadow-glow-orange flex items-center justify-center gap-2 active:scale-[0.99] transition-all"
+        className="w-full min-h-touch rounded-2xl bg-accent hover:bg-accent-strong text-slate-950 font-black text-sm shadow-glow-orange flex items-center justify-center gap-2 active:scale-[0.99] transition-all"
       >
         <Sparkles className="w-5 h-5" aria-hidden="true" />
         Pedir un envío

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { IconButton } from '../ui/Button';
 import {
@@ -48,6 +48,21 @@ export default function Header() {
   } = useApp();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // (S09.5) Tema de acento (4 paletas) + sincronización con <html data-accent/data-mode>.
+  // Se persiste en localStorage sin tocar AppContext.
+  const [accent, setAccent] = useState(() => {
+    try { return localStorage.getItem('gremami_accent') || 'ambar'; } catch (e) { return 'ambar'; }
+  });
+
+  useEffect(() => {
+    document.documentElement.dataset.accent = accent;
+    try { localStorage.setItem('gremami_accent', accent); } catch (e) {}
+  }, [accent]);
+
+  useEffect(() => {
+    document.documentElement.dataset.mode = theme === 'light' ? 'day' : 'night';
+  }, [theme]);
 
   const isDark = theme === 'dark';
   const isCadete = role === 'cadete';
@@ -520,6 +535,48 @@ export default function Header() {
               }`}>
                 ⚙️ Ajustes y Apariencia
               </p>
+
+              {/* (S09.5) Selector de tema de acento (4 paletas) */}
+              <div className={`mb-2 rounded-xl border p-2.5 ${
+                isDark ? 'bg-[#121B2D] border-[#1F2D48]' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <p className={`text-xs font-bold mb-2 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                  🎨 Tema de color
+                </p>
+                <div className="grid grid-cols-4 gap-1.5" role="radiogroup" aria-label="Tema de color">
+                  {[
+                    { id: 'ambar', label: 'Ámbar', color: '#F7931A' },
+                    { id: 'sierras', label: 'Sierras', color: '#0ECB81' },
+                    { id: 'oceano', label: 'Océano', color: '#3B82F6' },
+                    { id: 'grafito', label: 'Grafito', color: '#94A3B8' }
+                  ].map((t) => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={accent === t.id}
+                      onClick={() => setAccent(t.id)}
+                      title={`Tema ${t.label}`}
+                      className={`min-h-touch rounded-xl border-2 flex flex-col items-center justify-center gap-1 transition-all active:scale-95 ${
+                        accent === t.id
+                          ? 'border-white/80 bg-white/5'
+                          : isDark
+                          ? 'border-[#1F2D48] hover:border-white/40'
+                          : 'border-slate-200 hover:border-slate-400'
+                      }`}
+                    >
+                      <span
+                        className="w-4 h-4 rounded-full border border-black/20"
+                        style={{ backgroundColor: t.color }}
+                        aria-hidden="true"
+                      />
+                      <span className={`text-xs font-semibold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                        {t.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
               <button
                 onClick={toggleTheme}
