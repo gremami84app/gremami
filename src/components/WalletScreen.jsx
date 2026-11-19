@@ -252,7 +252,7 @@ export default function WalletScreen() {
           <ChevronDown className="w-4 h-4 rotate-90" />
           <span>Volver al Inicio</span>
         </button>
-        <span className={`text-[10px] font-mono px-2 py-0.5 rounded-lg border ${
+        <span className={`text-xs font-mono px-2 py-0.5 rounded-lg border ${
           walletSectionTab === 'wallet'
             ? isDark ? 'text-[#F0B90B] bg-[#121B2D] border-[#1F2D48]' : 'text-amber-700 bg-amber-50 border-amber-200 font-bold'
             : isDark ? 'text-emerald-400 bg-[#064E3B]/40 border-emerald-500/40' : 'text-emerald-700 bg-emerald-50 border-emerald-300 font-bold'
@@ -293,9 +293,6 @@ export default function WalletScreen() {
         >
           <GraduationCap className={`w-4 h-4 ${walletSectionTab === 'school' ? 'text-black' : 'text-[#F0B90B]'}`} />
           <span>🎓 Escuela Cripto</span>
-          {completedModules.length < totalModules && (
-            <span className="w-2 h-2 rounded-full bg-[#E02424] absolute top-2 right-2 animate-pulse" />
-          )}
         </button>
       </div>
 
@@ -320,9 +317,9 @@ export default function WalletScreen() {
                 isDark ? 'bg-[#021A15]/90 border-emerald-500/40' : 'bg-emerald-100 border-emerald-300 text-emerald-900'
               }`}>
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[11px] font-bold">Cobros Fiduciarios P2P</span>
+                <span className="text-xs font-bold">Cobros Fiduciarios P2P</span>
               </div>
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+              <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
                 0% Comisión Apps
               </span>
             </div>
@@ -332,7 +329,7 @@ export default function WalletScreen() {
               <p className={`text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-emerald-300/80' : 'text-emerald-800'}`}>
                 Saldo Total Recaudado ($ ARS)
               </p>
-              <span className="text-[10px] font-mono text-emerald-400 font-bold">
+              <span className="text-xs font-mono text-emerald-400 font-bold">
                 Cobros verificados
               </span>
             </div>
@@ -354,12 +351,12 @@ export default function WalletScreen() {
               }`}>
                 <div className="flex items-center space-x-1.5 mb-1">
                   <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className={`text-[10px] font-bold uppercase tracking-wider ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                  <span className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
                     Ganancias de la Semana
                   </span>
                 </div>
                 <p className="text-base font-bold font-mono text-emerald-400">
-                  ${gananciasSemanaArs.toLocaleString('es-AR')} <span className="text-[10px] font-normal">ARS</span>
+                  ${gananciasSemanaArs.toLocaleString('es-AR')} <span className="text-xs font-normal">ARS</span>
                 </p>
               </div>
 
@@ -368,12 +365,12 @@ export default function WalletScreen() {
               }`}>
                 <div className="flex items-center space-x-1.5 mb-1">
                   <PiggyBank className="w-3.5 h-3.5 text-amber-400" />
-                  <span className={`text-[10px] font-bold uppercase tracking-wider ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                  <span className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
                     Comisiones de Apps Ahorradas
                   </span>
                 </div>
                 <p className="text-base font-bold font-mono text-amber-400">
-                  +${comisionesAhorradasArs.toLocaleString('es-AR')} <span className="text-[10px] font-normal text-emerald-300">(30%)</span>
+                  +${comisionesAhorradasArs.toLocaleString('es-AR')} <span className="text-xs font-normal text-emerald-300">(30%)</span>
                 </p>
               </div>
             </div>
@@ -404,7 +401,8 @@ export default function WalletScreen() {
                 }`}
               >
                 {copiedAlias ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                <span className="truncate">Copiar Alias ({activeFiatProvider})</span>
+                {/* (S09.0) Etiqueta corta + tooltip: antes se truncaba como "Copiar Alias (Mercad…" */}
+                <span className="truncate" title={`Copiar Alias de ${activeFiatProvider}`}>Copiar Alias</span>
               </button>
             </div>
           </div>
@@ -425,15 +423,15 @@ export default function WalletScreen() {
                 isDark ? 'bg-[#070C1E]/90 border-[#1F2D48]' : 'bg-slate-100 border-slate-200'
               }`}>
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className={`text-[11px] font-mono ${isDark ? 'text-gray-200' : 'text-slate-700'}`}>Valens Testnet L1</span>
+                <span className={`text-xs font-mono ${isDark ? 'text-gray-200' : 'text-slate-700'}`}>Valens Testnet L1</span>
               </div>
               <div className="flex items-center space-x-1.5">
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${
+                <span className={`text-xs font-black px-2 py-0.5 rounded-full border ${
                   isDark ? 'text-[#F0B90B] bg-[#F7931A]/10 border-[#F7931A]/30' : 'text-amber-800 bg-amber-100 border-amber-300 font-bold'
                 }`}>
                   1.000.000.000.000 VAL (1 Billón)
                 </span>
-                <span className={`text-[11px] font-mono ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+                <span className={`text-xs font-mono ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
                   Bloque #840,129
                 </span>
               </div>
@@ -444,7 +442,7 @@ export default function WalletScreen() {
               <p className={`text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
                 Saldo Disponible
               </p>
-              <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border shadow-xs flex items-center gap-1 ${
+              <span className={`text-xs font-black px-2.5 py-0.5 rounded-full border shadow-xs flex items-center gap-1 ${
                 isDark 
                   ? 'bg-gradient-to-r from-[#F7931A]/20 to-[#E02424]/20 text-[#F0B90B] border-[#F7931A]/40' 
                   : 'bg-amber-100 text-amber-900 border-amber-300 font-bold'
@@ -471,7 +469,7 @@ export default function WalletScreen() {
                   setShowQrReceiveModal(true);
                 }}
                 type="button"
-                className={`min-h-[44px] flex items-center justify-center flex-col gap-1 py-2 px-2 rounded-xl text-[11px] font-semibold border shadow-md transition-all active:scale-[0.98] ${
+                className={`min-h-[44px] flex items-center justify-center flex-col gap-1 py-2 px-2 rounded-xl text-xs font-semibold border shadow-md transition-all active:scale-[0.98] ${
                   isDark
                     ? 'bg-[#1A253D] hover:bg-[#202E4B] text-white border-[#2D3E61]'
                     : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-300'
@@ -484,7 +482,7 @@ export default function WalletScreen() {
               <button
                 onClick={() => setShowSendModal(true)}
                 type="button"
-                className={`min-h-[44px] flex items-center justify-center flex-col gap-1 py-2 px-2 rounded-xl text-[11px] font-semibold border shadow-md transition-all active:scale-[0.98] ${
+                className={`min-h-[44px] flex items-center justify-center flex-col gap-1 py-2 px-2 rounded-xl text-xs font-semibold border shadow-md transition-all active:scale-[0.98] ${
                   isDark
                     ? 'bg-[#1A253D] hover:bg-[#202E4B] text-white border-[#2D3E61]'
                     : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-300'
@@ -497,7 +495,7 @@ export default function WalletScreen() {
               <button
                 onClick={requestFaucet}
                 type="button"
-                className="min-h-[44px] flex items-center justify-center flex-col gap-1 py-2 px-2 rounded-xl bg-gradient-to-r from-[#F7931A] to-[#E07D09] hover:from-[#F0B90B] hover:to-[#F7931A] text-black text-[11px] font-bold shadow-glow-orange transition-all active:scale-[0.98]"
+                className="min-h-[44px] flex items-center justify-center flex-col gap-1 py-2 px-2 rounded-xl bg-gradient-to-r from-[#F7931A] to-[#E07D09] hover:from-[#F0B90B] hover:to-[#F7931A] text-black text-xs font-bold shadow-glow-orange transition-all active:scale-[0.98]"
               >
                 <Sparkles className="w-4 h-4 fill-black" />
                 <span>Grifo (+5 VAL)</span>
@@ -514,12 +512,12 @@ export default function WalletScreen() {
                 <Key className="w-4 h-4 text-[#F7931A]" />
                 <span className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Tu Clave Pública (Dirección)</span>
               </div>
-              <span className="text-[10px] text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-lg border border-emerald-700/50 font-medium">
+              <span className="text-xs text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-lg border border-emerald-700/50 font-medium">
                 Segura para compartir
               </span>
             </div>
 
-            <p className={`text-[11px] mb-2.5 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-600'}`}>
+            <p className={`text-xs mb-2.5 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-600'}`}>
               Esta es tu dirección pública en Valens L1 para recibir tokens, propinas o verificar tus firmas sin intermediarios.
             </p>
 
@@ -533,7 +531,7 @@ export default function WalletScreen() {
                 onClick={handleCopyPublicKey}
                 className={`p-2 rounded-lg transition-all flex items-center space-x-1 flex-shrink-0 ${
                   copiedKey
-                    ? 'bg-emerald-500 text-black font-bold text-[10px]'
+                    ? 'bg-emerald-500 text-black font-bold text-xs'
                     : isDark
                     ? 'bg-[#1A253D] text-gray-200 hover:text-white hover:bg-[#202E4B]'
                     : 'bg-slate-200 text-slate-800 hover:bg-slate-300'
@@ -547,7 +545,7 @@ export default function WalletScreen() {
                 ) : (
                   <>
                     <Copy className="w-3.5 h-3.5" />
-                    <span className="text-[10px]">Copiar</span>
+                    <span className="text-xs">Copiar</span>
                   </>
                 )}
               </button>
@@ -562,7 +560,7 @@ export default function WalletScreen() {
               <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 Historial de Movimientos On-Chain
               </h3>
-              <span className={`text-[10px] font-mono ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+              <span className={`text-xs font-mono ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                 {transactions.length} transacciones
               </span>
             </div>
@@ -591,7 +589,7 @@ export default function WalletScreen() {
                     </div>
                     <div className="min-w-0">
                       <p className={`font-semibold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>{tx.title}</p>
-                      <p className={`text-[10px] font-mono truncate ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+                      <p className={`text-xs font-mono truncate ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
                         {tx.date} • {tx.hash}
                       </p>
                     </div>
@@ -604,7 +602,7 @@ export default function WalletScreen() {
                     >
                       {tx.amount > 0 ? `+${Math.floor(Math.abs(tx.amount))}` : `-${Math.floor(Math.abs(tx.amount))}`} VAL
                     </p>
-                    <span className={`text-[9px] ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>{tx.status}</span>
+                    <span className={`text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>{tx.status}</span>
                   </div>
                 </div>
               ))}
@@ -633,7 +631,7 @@ export default function WalletScreen() {
                 </div>
                 <div>
                   <h3 className={`text-base font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Escuela Cripto P2P</h3>
-                  <p className={`text-[11px] ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+                  <p className={`text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
                     Educación soberana y autocustodia para Alta Gracia
                   </p>
                 </div>
@@ -657,7 +655,7 @@ export default function WalletScreen() {
                   <span>Progreso: {completedModules.length} de {totalModules} Módulos ({progressPercentage}%)</span>
                 </span>
                 {isAllCompleted && (
-                  <span className="text-[10px] font-black text-emerald-400 animate-pulse">
+                  <span className="text-xs font-black text-emerald-400 animate-pulse">
                     🎓 ¡Graduado Soberano!
                   </span>
                 )}
@@ -671,7 +669,7 @@ export default function WalletScreen() {
               </div>
 
               {isAllCompleted ? (
-                <p className="text-[11px] text-emerald-400 mt-2.5 font-semibold flex items-center gap-1.5">
+                <p className="text-xs text-emerald-400 mt-2.5 font-semibold flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                   <span>¡Felicitaciones! Has completado todos los módulos formativos de soberanía monetaria.</span>
                 </p>
@@ -723,7 +721,7 @@ export default function WalletScreen() {
                             {module.title}
                           </h4>
                           {isCompleted && (
-                            <span className="text-[9px] font-bold text-emerald-400 bg-emerald-950/70 px-1.5 py-0.5 rounded border border-emerald-600/50">
+                            <span className="text-xs font-bold text-emerald-400 bg-emerald-950/70 px-1.5 py-0.5 rounded border border-emerald-600/50">
                               ✓ Completado
                             </span>
                           )}
@@ -754,12 +752,12 @@ export default function WalletScreen() {
                       </div>
 
                       <div className="space-y-1.5 pl-1">
-                        <p className={`text-[10px] font-bold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                        <p className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                           Puntos Clave del Módulo:
                         </p>
                         <ul className="space-y-1.5">
                           {module.points.map((pt, i) => (
-                            <li key={i} className="flex items-start space-x-2 text-[11px]">
+                            <li key={i} className="flex items-start space-x-2 text-xs">
                               <span className="text-[#F7931A] font-bold">•</span>
                               <span className={isDark ? 'text-gray-200' : 'text-slate-700'}>{pt}</span>
                             </li>
@@ -769,7 +767,7 @@ export default function WalletScreen() {
 
                       {/* Botón interactivo para marcar módulo como completado */}
                       <div className="pt-2 flex items-center justify-between border-t border-slate-700/30">
-                        <span className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                        <span className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                           {isCompleted ? 'Módulo verificado' : 'Completa la lectura'}
                         </span>
                         <button
@@ -822,7 +820,7 @@ export default function WalletScreen() {
                     key={q.id}
                     type="button"
                     onClick={() => setCurrentTriviaIndex(idx)}
-                    className={`w-6 h-6 rounded-lg text-[10px] font-bold border transition-all ${
+                    className={`w-6 h-6 rounded-lg text-xs font-bold border transition-all ${
                       currentTriviaIndex === idx
                         ? 'bg-[#F7931A] text-black border-[#F7931A]'
                         : triviaClaimed[q.id]
@@ -848,12 +846,12 @@ export default function WalletScreen() {
               return (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className={`text-[10px] font-mono font-bold uppercase tracking-wider ${
+                    <span className={`text-xs font-mono font-bold uppercase tracking-wider ${
                       isDark ? 'text-amber-400' : 'text-amber-700'
                     }`}>
                       {currentQ.title}
                     </span>
-                    <span className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                    <span className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                       {currentTriviaIndex + 1} de {SECURITY_TRIVIA_QUESTIONS.length}
                     </span>
                   </div>
@@ -882,7 +880,7 @@ export default function WalletScreen() {
                           key={idx}
                           type="button"
                           onClick={() => handleTriviaAnswer(currentQ.id, idx)}
-                          className={`w-full text-left p-2.5 rounded-xl text-[11px] transition-all border flex items-start gap-2 ${btnStyle}`}
+                          className={`w-full text-left p-2.5 rounded-xl text-xs transition-all border flex items-start gap-2 ${btnStyle}`}
                         >
                           <span className="font-bold flex-shrink-0">{['A', 'B', 'C'][idx]}.</span>
                           <span>{option}</span>
@@ -958,7 +956,7 @@ export default function WalletScreen() {
               </div>
               <div className="text-left">
                 <h3 className="text-sm font-bold">Enviar ValensCoin</h3>
-                <p className={`text-[10px] ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>Transferencia directa L1 (0 decimales)</p>
+                <p className={`text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>Transferencia directa L1 (0 decimales)</p>
               </div>
             </div>
 
@@ -967,13 +965,13 @@ export default function WalletScreen() {
               <div className={`p-3 rounded-xl border text-center ${
                 isDark ? 'bg-[#070C1E] border-[#1F2D48]' : 'bg-amber-50 border-amber-200'
               }`}>
-                <p className={`text-[11px] mb-0.5 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>Saldo disponible</p>
+                <p className={`text-xs mb-0.5 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>Saldo disponible</p>
                 <p className="text-2xl font-black text-[#F0B90B] font-mono">{Math.floor(balance)} VAL</p>
               </div>
 
               {/* Dirección de destino */}
               <div className="text-left">
-                <label className={`text-[11px] font-bold block mb-1 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                <label className={`text-xs font-bold block mb-1 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
                   Dirección de destino (valens1q...):
                 </label>
                 <input
@@ -1000,7 +998,7 @@ export default function WalletScreen() {
               {/* Monto en VAL */}
               <div className="text-left">
                 <div className="flex items-center justify-between mb-1">
-                  <label className={`text-[11px] font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                  <label className={`text-xs font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
                     Monto a enviar (VAL enteros):
                   </label>
                   <div className="flex items-center space-x-1">
@@ -1009,7 +1007,7 @@ export default function WalletScreen() {
                         key={amt}
                         type="button"
                         onClick={() => setSendAmount(String(amt))}
-                        className={`text-[10px] px-1.5 py-0.5 rounded border font-mono transition-colors ${
+                        className={`text-xs px-1.5 py-0.5 rounded border font-mono transition-colors ${
                           isDark ? 'bg-[#1A253D] border-[#2D3E61] text-slate-300 hover:text-white' : 'bg-slate-100 border-slate-200 text-slate-700'
                         }`}
                       >
@@ -1019,7 +1017,7 @@ export default function WalletScreen() {
                     <button
                       type="button"
                       onClick={() => setSendAmount(String(Math.floor(balance)))}
-                      className={`text-[10px] px-1.5 py-0.5 rounded border font-mono font-bold transition-colors ${
+                      className={`text-xs px-1.5 py-0.5 rounded border font-mono font-bold transition-colors ${
                         isDark ? 'bg-[#F7931A]/20 border-[#F7931A]/40 text-[#F0B90B]' : 'bg-amber-100 border-amber-300 text-amber-800'
                       }`}
                     >
@@ -1039,7 +1037,7 @@ export default function WalletScreen() {
                   }`}
                 />
                 {sendAmount && parseInt(sendAmount) > 0 && (
-                  <p className={`text-[10px] mt-1 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+                  <p className={`text-xs mt-1 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
                     ≈ ${(parseInt(sendAmount) * 2).toFixed(0)} USD • ${(parseInt(sendAmount) * 2500).toLocaleString('es-AR')} ARS
                   </p>
                 )}
@@ -1050,7 +1048,7 @@ export default function WalletScreen() {
                 isDark ? 'bg-[#E02424]/10 border-[#E02424]/30' : 'bg-red-50 border-red-200'
               }`}>
                 <AlertTriangle className="w-3.5 h-3.5 text-[#E02424] flex-shrink-0 mt-0.5" />
-                <p className="text-[10px] text-[#E02424] leading-relaxed">
+                <p className="text-xs text-[#E02424] leading-relaxed">
                   Las transacciones en Valens Testnet son <strong>irreversibles</strong>. Verifica la dirección antes de confirmar.
                 </p>
               </div>
@@ -1191,7 +1189,7 @@ export default function WalletScreen() {
 
                 {/* Monto opcional a solicitar */}
                 <div className="text-left">
-                  <label className={`text-[10px] font-bold block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                  <label className={`text-xs font-bold block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                     Monto a solicitar en VAL (opcional):
                   </label>
                   <input
@@ -1210,8 +1208,8 @@ export default function WalletScreen() {
                 <div className={`p-2.5 rounded-xl border text-left ${
                   isDark ? 'bg-[#070C1E] border-[#1F2D48]' : 'bg-slate-50 border-slate-200'
                 }`}>
-                  <span className="text-[10px] text-slate-400 block mb-0.5">Clave Pública (Dirección Testnet L1):</span>
-                  <span className="text-[11px] font-mono text-[#F0B90B] break-all select-all font-semibold block">
+                  <span className="text-xs text-slate-400 block mb-0.5">Clave Pública (Dirección Testnet L1):</span>
+                  <span className="text-xs font-mono text-[#F0B90B] break-all select-all font-semibold block">
                     {userPublicKey}
                   </span>
                   <span className="text-[9.5px] font-mono text-slate-400 break-all select-all block mt-1.5 border-t border-slate-800/40 pt-1">
@@ -1262,7 +1260,7 @@ export default function WalletScreen() {
                       <p className="text-xs font-black text-emerald-400 truncate">
                         {activeFiatProvider}
                       </p>
-                      <p className={`text-[10px] truncate ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                      <p className={`text-xs truncate ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                         {activeProviderInfo?.badge || 'Billetera Virtual'} • 0% Comisiones
                       </p>
                     </div>
@@ -1289,7 +1287,7 @@ export default function WalletScreen() {
                   <div className={`p-3 rounded-2xl border space-y-2.5 ${
                     isDark ? 'bg-[#070C1E] border-emerald-500/40' : 'bg-emerald-50 border-emerald-300'
                   }`}>
-                    <p className="text-[11px] font-bold text-slate-300">
+                    <p className="text-xs font-bold text-slate-300">
                       Seleccionar Billetera Virtual o Banco:
                     </p>
                     <div className="grid grid-cols-3 gap-1.5 max-h-40 overflow-y-auto no-scrollbar">
@@ -1314,7 +1312,7 @@ export default function WalletScreen() {
                             }`}
                           >
                             <span className="text-sm mb-0.5">{prov.iconEmoji}</span>
-                            <span className="text-[10px] truncate leading-tight">{prov.shortName}</span>
+                            <span className="text-xs truncate leading-tight">{prov.shortName}</span>
                           </button>
                         );
                       })}
@@ -1322,7 +1320,7 @@ export default function WalletScreen() {
 
                     <div className="space-y-1.5 pt-1">
                       <div>
-                        <label className="text-[10px] font-bold text-slate-400 block mb-0.5">
+                        <label className="text-xs font-bold text-slate-400 block mb-0.5">
                           Alias ({walletFormFiatProvider}):
                         </label>
                         <input
@@ -1337,7 +1335,7 @@ export default function WalletScreen() {
                       </div>
 
                       <div>
-                        <label className="text-[10px] font-bold text-slate-400 block mb-0.5">
+                        <label className="text-xs font-bold text-slate-400 block mb-0.5">
                           CBU o CVU (22 dígitos):
                         </label>
                         <input
@@ -1409,7 +1407,7 @@ export default function WalletScreen() {
                       isDark ? 'bg-[#070C1E] border-emerald-500/30' : 'bg-emerald-50/70 border-emerald-200'
                     }`}>
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] text-emerald-400 font-bold block">
+                        <span className="text-xs text-emerald-400 font-bold block">
                           Alias de Cobro ({activeFiatProvider}):
                         </span>
                         <span className="text-[9.5px] font-mono text-slate-400">
@@ -1423,7 +1421,7 @@ export default function WalletScreen() {
                         <button
                           type="button"
                           onClick={handleCopyAlias}
-                          className="px-2.5 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-bold text-[11px] flex items-center gap-1 flex-shrink-0 active:scale-95 transition-all shadow-sm"
+                          className="px-2.5 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs flex items-center gap-1 flex-shrink-0 active:scale-95 transition-all shadow-sm"
                         >
                           {copiedAlias ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                           <span>{copiedAlias ? '¡Listo!' : 'Copiar'}</span>
@@ -1431,7 +1429,7 @@ export default function WalletScreen() {
                       </div>
 
                       {/* Desglose de Titular, CUIT y CBU */}
-                      <div className="pt-2 border-t border-emerald-500/20 grid grid-cols-2 gap-2 text-[10px]">
+                      <div className="pt-2 border-t border-emerald-500/20 grid grid-cols-2 gap-2 text-xs">
                         <div>
                           <span className="text-slate-400 block">Titular:</span>
                           <span className="font-bold text-slate-200 truncate block">
@@ -1465,17 +1463,17 @@ export default function WalletScreen() {
                       <span>{copiedAlias ? `¡Alias de ${activeFiatProvider} Copiado!` : `Copiar Alias de ${activeFiatProvider}`}</span>
                     </button>
 
-                    <div className={`p-2.5 rounded-xl border text-[11px] space-y-1 ${
+                    <div className={`p-2.5 rounded-xl border text-xs space-y-1 ${
                       isDark ? 'bg-[#0B132B] border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
                     }`}>
                       <p className="font-bold text-emerald-400">💡 Instrucciones de Cobro sin Comisión:</p>
-                      <p className="text-[10px] leading-relaxed">
+                      <p className="text-xs leading-relaxed">
                         • El cliente te transfiere directamente desde Mercado Pago, Ualá, Lemon, Brubank o su banco.
                       </p>
-                      <p className="text-[10px] leading-relaxed">
+                      <p className="text-xs leading-relaxed">
                         • 0% retenciones corporativas (ahorras el 30% que cobran otras aplicaciones).
                       </p>
-                      <p className="text-[10px] leading-relaxed">
+                      <p className="text-xs leading-relaxed">
                         • Acreditación instantánea en tu cuenta sin intermediarios.
                       </p>
                     </div>

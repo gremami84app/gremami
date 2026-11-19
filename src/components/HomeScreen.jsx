@@ -75,7 +75,7 @@ export default function HomeScreen() {
         <div className="relative z-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+              <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border ${
                 isDark
                   ? 'bg-gradient-to-r from-[#F7931A]/20 to-[#E02424]/20 text-[#F0B90B] border-[#F7931A]/30'
                   : 'bg-amber-100 text-amber-800 border-amber-300'
@@ -83,7 +83,7 @@ export default function HomeScreen() {
                 📍 Alta Gracia, Córdoba
               </span>
             </div>
-            <span className={`text-[11px] font-mono flex items-center ${isDark ? 'text-[#8C9BB4]' : 'text-slate-600'}`}>
+            <span className={`text-xs font-mono flex items-center ${isDark ? 'text-[#8C9BB4]' : 'text-slate-600'}`}>
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse mr-1.5" />
               {visiblePeers.length} Nodos Activos
             </span>
@@ -107,7 +107,7 @@ export default function HomeScreen() {
               <span className={`text-xs font-black font-mono block ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {visiblePeers.length} Nodos
               </span>
-              <span className={`text-[9px] ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>Alta Gracia</span>
+              <span className={`text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>Alta Gracia</span>
             </div>
             <div className={`p-2 rounded-xl border ${
               isDark ? 'bg-[#070C1E]/70 border-[#1F2D48]/80' : 'bg-white border-slate-200 shadow-xs'
@@ -115,7 +115,7 @@ export default function HomeScreen() {
               <span className="text-xs font-black text-[#F7931A] font-mono block">
                 $1.500 ARS
               </span>
-              <span className={`text-[9px] ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>Tarifa base sugerida</span>
+              <span className={`text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>Tarifa base sugerida</span>
             </div>
             <div className={`p-2 rounded-xl border ${
               isDark ? 'bg-[#070C1E]/70 border-[#1F2D48]/80' : 'bg-white border-slate-200 shadow-xs'
@@ -123,7 +123,7 @@ export default function HomeScreen() {
               <span className="text-xs font-black text-emerald-500 font-mono block">
                 0% Comisión
               </span>
-              <span className={`text-[9px] ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>Ahorro del 30%</span>
+              <span className={`text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>Ahorro del 30%</span>
             </div>
           </div>
         </div>
@@ -144,14 +144,14 @@ export default function HomeScreen() {
               </span>
               <div>
                 <p className={`text-xs font-bold ${isDark ? 'text-white' : 'text-emerald-950'}`}>Panel de Cadete Activo en Alta Gracia</p>
-                <p className={`text-[10px] ${isDark ? 'text-emerald-300' : 'text-emerald-700'}`}>
+                <p className={`text-xs ${isDark ? 'text-emerald-300' : 'text-emerald-700'}`}>
                   Estás emitiendo señal en el mapa para las 6 categorías
                 </p>
               </div>
             </div>
             <button
               onClick={() => setActiveTab('map')}
-              className={`px-2.5 py-1 rounded-xl text-[11px] font-semibold border ${
+              className={`px-2.5 py-1 rounded-xl text-xs font-semibold border ${
                 isDark
                   ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'
                   : 'bg-emerald-600 text-white border-emerald-700 hover:bg-emerald-700'
@@ -178,11 +178,11 @@ export default function HomeScreen() {
               <h4 className={`text-xs font-black tracking-tight truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 🌟 TODAS las Categorías y Locales
               </h4>
-              <span className="text-[9px] font-mono font-bold bg-[#F7931A]/20 text-[#F7931A] px-1.5 py-0.2 rounded border border-[#F7931A]/40 flex-shrink-0">
+              <span className="text-xs font-mono font-bold bg-[#F7931A]/20 text-[#F7931A] px-1.5 py-0.2 rounded border border-[#F7931A]/40 flex-shrink-0">
                 {visiblePeers.length} Nodos
               </span>
             </div>
-            <p className={`text-[10px] truncate mt-0.5 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+            <p className={`text-xs truncate mt-0.5 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
               Ver simultáneamente transportes, fletes y comercios de Alta Gracia
             </p>
           </div>
@@ -205,7 +205,7 @@ export default function HomeScreen() {
               Servicios de Transporte y Envíos
             </h3>
           </div>
-          <span className={`text-[10px] ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>50 Nodos Activos</span>
+          <span className={`text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>50 Nodos Activos</span>
         </div>
 
         {/* 5 Tarjetas de Transporte: Caminando, Bici, Moto, Auto, Fletes */}
@@ -265,7 +265,7 @@ export default function HomeScreen() {
                           {cat.title}
                         </h4>
                         <span
-                          className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${
+                          className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
                             cat.id === 'caminando'
                               ? isDark ? 'bg-emerald-950/60 text-emerald-400 border-emerald-700/50' : 'bg-emerald-100 text-emerald-800 border-emerald-300'
                               : cat.id === 'bicicleta'
@@ -281,18 +281,18 @@ export default function HomeScreen() {
                         </span>
                       </div>
 
-                      <p className={`text-[11px] mt-0.5 leading-snug ${isDark ? 'text-[#8C9BB4]' : 'text-slate-600'}`}>
+                      <p className={`text-xs mt-0.5 leading-snug ${isDark ? 'text-[#8C9BB4]' : 'text-slate-600'}`}>
                         {cat.subtitle}
                       </p>
 
-                      <div className={`mt-2 flex items-center justify-between text-[10px] pt-1.5 border-t ${
-                        isDark ? 'border-[#1F2D48]/60 text-[#8C9BB4]' : 'border-slate-100 text-slate-500'
+                      <div className={`mt-2 flex items-center justify-between text-xs ${
+                        isDark ? 'text-[#8C9BB4]' : 'text-slate-500'
                       }`}>
-                        <span className={`flex items-center font-mono ${isDark ? 'text-white' : 'text-slate-700'}`}>
+                        <span className={`flex items-center ${isDark ? 'text-white' : 'text-slate-700'}`}>
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5" />
                           <strong>{count}</strong> en Alta Gracia
                         </span>
-                        <span className="font-mono text-[#F7931A] font-bold flex items-center group-hover:translate-x-0.5 transition-transform">
+                        <span className="text-[#F7931A] font-bold flex items-center group-hover:translate-x-0.5 transition-transform">
                           <span>Ver en mapa</span>
                           <ArrowRight className="w-3 h-3 ml-1" />
                         </span>
@@ -314,7 +314,7 @@ export default function HomeScreen() {
               Comercios y Negocios de Barrio
             </h3>
           </div>
-          <span className={`text-[10px] ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>10 Nodos Activos</span>
+          <span className={`text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>10 Nodos Activos</span>
         </div>
 
         {/* Tarjeta de Negocios Locales */}
@@ -350,25 +350,25 @@ export default function HomeScreen() {
                       }`}>
                         {cat.title}
                       </h4>
-                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
                         isDark ? 'bg-amber-950/60 text-amber-300 border-amber-700/50' : 'bg-amber-100 text-amber-800 border-amber-300'
                       }`}>
                         {count} locales activos
                       </span>
                     </div>
 
-                    <p className={`text-[11px] mt-0.5 leading-snug ${isDark ? 'text-[#8C9BB4]' : 'text-slate-600'}`}>
+                    <p className={`text-xs mt-0.5 leading-snug ${isDark ? 'text-[#8C9BB4]' : 'text-slate-600'}`}>
                       {cat.subtitle}
                     </p>
 
-                    <div className={`mt-2 flex items-center justify-between text-[10px] pt-1.5 border-t ${
-                      isDark ? 'border-[#1F2D48]/60 text-[#8C9BB4]' : 'border-slate-100 text-slate-500'
+                    <div className={`mt-2 flex items-center justify-between text-xs ${
+                      isDark ? 'text-[#8C9BB4]' : 'text-slate-500'
                     }`}>
-                      <span className={`flex items-center font-mono ${isDark ? 'text-white' : 'text-slate-700'}`}>
+                      <span className={`flex items-center ${isDark ? 'text-white' : 'text-slate-700'}`}>
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5" />
                         <strong>{count}</strong> comercios en Alta Gracia
                       </span>
-                      <span className="font-mono text-[#F7931A] font-bold flex items-center group-hover:translate-x-0.5 transition-transform">
+                      <span className="text-[#F7931A] font-bold flex items-center group-hover:translate-x-0.5 transition-transform">
                         <span>Ver en mapa</span>
                         <ArrowRight className="w-3 h-3 ml-1" />
                       </span>
@@ -392,7 +392,7 @@ export default function HomeScreen() {
           </div>
           <div>
             <h4 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Mercado P2P DEX</h4>
-            <p className={`text-[10px] ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>Donaciones y canje de ValensCoin entre vecinos</p>
+            <p className={`text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>Donaciones y canje de ValensCoin entre vecinos</p>
           </div>
         </div>
         <button
@@ -411,7 +411,7 @@ export default function HomeScreen() {
         <ShieldCheck className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
         <div className="space-y-0.5 leading-relaxed">
           <p className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Acuerdos P2P Directos y Seguros</p>
-          <p className="text-[11px]">
+          <p className="text-xs">
             La relación es entre tú y el cadete o comercio de Alta Gracia. Sin comisiones abusivas ni intermediarios financieros.
           </p>
         </div>
