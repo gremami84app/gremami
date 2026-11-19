@@ -269,63 +269,19 @@ export default function HomeScreen() {
                   key={cat.id}
                   type="button"
                   onClick={() => selectCategoryAndGoToMap(cat.id)}
-                  className={`w-full text-left rounded-2xl border p-3.5 shadow-md transition-all duration-200 group active:scale-[0.98] relative overflow-hidden ${
-                    isDark
-                      ? 'bg-[#121B2D] hover:bg-[#18243C] border-[#1F2D48] hover:border-[#2D3E61]'
-                      : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-accent/40 shadow-sm'
-                  }`}
+                  className="w-full text-left rounded-card border border-line bg-card p-3.5 shadow-elev1 transition-all duration-200 group active:scale-[0.98] hover:border-accent/40"
                 >
-                  <div
-                    className={`absolute top-0 left-0 bottom-0 w-1 transition-all ${
-                      cat.id === 'caminando'
-                        ? 'bg-emerald-400 group-hover:w-1.5'
-                        : cat.id === 'bicicleta'
-                        ? 'bg-accent group-hover:w-1.5'
-                        : cat.id === 'motocicleta'
-                        ? 'bg-[#F0B90B] group-hover:w-1.5 shadow-glow-gold'
-                        : cat.id === 'automovil'
-                        ? 'bg-[#E02424] group-hover:w-1.5 shadow-glow-raven'
-                        : 'bg-blue-500 group-hover:w-1.5 shadow-glow-blue'
-                    }`}
-                  />
-
-                  <div className="flex items-start space-x-3.5 pl-1.5">
-                    <div
-                      className={`w-13 h-13 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-105 ${
-                        cat.id === 'caminando'
-                          ? isDark ? 'bg-emerald-950/40 border border-emerald-500/40' : 'bg-emerald-100 border border-emerald-300'
-                          : cat.id === 'bicicleta'
-                          ? isDark ? 'bg-accent/15 border border-accent/40' : 'bg-orange-100 border border-orange-300'
-                          : cat.id === 'motocicleta'
-                          ? isDark ? 'bg-[#F0B90B]/15 border border-[#F0B90B]/40' : 'bg-accent/15 border border-accent/40'
-                          : cat.id === 'automovil'
-                          ? isDark ? 'bg-[#E02424]/15 border border-[#E02424]/40' : 'bg-rose-100 border border-rose-300'
-                          : isDark ? 'bg-blue-600/15 border border-blue-500/40' : 'bg-blue-100 border border-blue-300'
-                      }`}
-                    >
+                  <div className="flex items-start space-x-3.5">
+                    <div className="w-12 h-12 rounded-card flex items-center justify-center flex-shrink-0 bg-accent/12 border border-accent/25 text-accent transition-transform duration-200 group-hover:scale-105">
                       {getCategoryIcon(cat.iconName)}
                     </div>
 
                     <div className="flex-1 min-w-0 pr-2">
                       <div className="flex items-center justify-between">
-                        <h4 className={`text-sm font-bold group-hover:text-accent transition-colors truncate ${
-                          isDark ? 'text-white' : 'text-slate-900'
-                        }`}>
+                        <h4 className="text-base font-semibold tracking-tight text-ink1 group-hover:text-accent transition-colors truncate">
                           {cat.title}
                         </h4>
-                        <span
-                          className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
-                            cat.id === 'caminando'
-                              ? isDark ? 'bg-emerald-950/60 text-emerald-400 border-emerald-700/50' : 'bg-emerald-100 text-emerald-800 border-emerald-300'
-                              : cat.id === 'bicicleta'
-                              ? isDark ? 'bg-accent/15 text-[#F0B90B] border-accent/40' : 'bg-orange-100 text-orange-800 border-orange-300'
-                              : cat.id === 'motocicleta'
-                              ? isDark ? 'bg-[#F0B90B]/15 text-[#F0B90B] border-[#F0B90B]/40' : 'bg-accent/15 text-amber-800 border-accent/40'
-                              : cat.id === 'automovil'
-                              ? isDark ? 'bg-[#E02424]/15 text-rose-400 border-[#E02424]/40' : 'bg-rose-100 text-rose-800 border-rose-300'
-                              : isDark ? 'bg-blue-950/60 text-blue-400 border-blue-700/50' : 'bg-blue-100 text-blue-800 border-blue-300'
-                          }`}
-                        >
+                        <span className="text-2xs font-medium px-2 py-0.5 rounded-full border border-line bg-elev text-ink3">
                           {count} activos
                         </span>
                       </div>

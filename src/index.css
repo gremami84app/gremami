@@ -100,6 +100,20 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* (S06) Foco visible único para todos los controles (incluye Header) */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-control);
+}
+
+/* (S06) Hovers solo en dispositivos con puntero real */
+@media (hover: none) {
+  .group:hover .group-hover\:scale-105 {
+    transform: none !important;
+  }
+}
+
 /* (S09.7) Movimiento accesible */
 @media (prefers-reduced-motion: reduce) {
   *,

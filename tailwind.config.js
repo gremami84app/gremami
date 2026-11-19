@@ -59,6 +59,20 @@ export default {
       minWidth: {
         touch: '44px'
       },
+      // (S06) Rampa tipográfica única: 11/12/13/15/17/22/32
+      fontSize: {
+        '2xs': ['11px', { lineHeight: '1.35' }],
+        xs: ['12px', { lineHeight: '1.45' }],
+        sm: ['13px', { lineHeight: '1.5' }],
+        base: ['15px', { lineHeight: '1.5' }],
+        md: ['17px', { lineHeight: '1.3' }],
+        xl: ['22px', { lineHeight: '1.25' }],
+        '3xl': ['32px', { lineHeight: '1.1' }]
+      },
+      letterSpacing: {
+        tight: '-0.02em',
+        tighter: '-0.03em'
+      },
       borderRadius: {
         control: 'var(--radius-control)',
         card: 'var(--radius-card)',
