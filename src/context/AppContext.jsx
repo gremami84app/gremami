@@ -37,6 +37,31 @@ export const EXCHANGE_RATES = {
   USD_PER_VALENS: 2.0
 };
 
+// (S07.5) Traduce el resultado de persistencia a un aviso para el usuario.
+// Devuelve null cuando la operación SÍ se sincronizó (o cuando el fallo es benigno).
+const isRemoteOk = (res) =>
+  Boolean(res && (res.remote === true || res.delivery?.remote === true || res.reason === 'already-exists'));
+
+const persistenceWarning = (res) => {
+  if (isRemoteOk(res)) return null;
+  if (res?.step === 'order') {
+    return '⚠️ No se pudo registrar la orden en el servidor: quedó solo en este dispositivo.';
+  }
+  const reason = res?.reason || res?.delivery?.reason;
+  switch (reason) {
+    case 'no-session':
+      return '⚠️ Sin sesión iniciada: se guardó solo en este dispositivo.';
+    case 'offline':
+      return '⚠️ Supabase no está configurado: se guardó solo en este dispositivo.';
+    case 'invalid-uuid':
+    case 'invalid-client-id':
+    case 'invalid-cadet-id':
+      return '⚠️ Faltan datos válidos: se guardó solo en este dispositivo.';
+    default:
+      return '⚠️ Guardado localmente, pero falló la sincronización con el servidor.';
+  }
+};
+
 // Fórmula de Haversine — distancia entre dos puntos GPS en kilómetros
 const haversineKm = (lat1, lng1, lat2, lng2) => {
   const R = 6371;
@@ -1131,13 +1156,26 @@ export function AppProvider({ children }) {
           delivery_pin: inputPin
         },
         delivery: deliveryPayload
-      }).catch((err) => {
-        console.warn('Aviso de persistencia de entrega (no bloqueante):', err?.message || err);
-      });
+      })
+        .then((res) => {
+          const warning = persistenceWarning(res);
+          if (warning) {
+            console.warn('[S07.5] Entrega no sincronizada:', res);
+            showToast(warning, 'warning');
+          }
+        })
+        .catch((err) => {
+          console.error('[S07.5] Error inesperado al guardar entrega:', err);
+          showToast('⚠️ La entrega quedó solo en este dispositivo.', 'warning');
+        });
     } else {
-      recordDeliveryTransactionInSupabase(deliveryPayload).catch((err) => {
-        console.warn('Aviso de respaldo local de entrega (sin sesión):', err?.message || err);
-      });
+      recordDeliveryTransactionInSupabase(deliveryPayload)
+        .then(() => {
+          showToast('⚠️ Entrega verificada localmente (sin sesión: no se sincronizó).', 'warning');
+        })
+        .catch((err) => {
+          console.warn('Aviso de respaldo local de entrega (sin sesión):', err?.message || err);
+        });
     }
 
     // 2. Registrar en historial de órdenes y entregas (ordersHistory)
@@ -1289,8 +1327,8 @@ export function AppProvider({ children }) {
 
     setLiveRequests((prev) => [newReq, ...prev]);
     playP2PAlertChime();
-    showToast('🚀 ¡Solicitud publicada en vivo a todos los prestadores de Alta Gracia!', 'success');
 
+    // (S07.5) El toast refleja el resultado REAL de la persistencia, no un optimismo.
     if (authUid) {
       saveOrderToSupabase({
         id: requestId,
@@ -1303,9 +1341,22 @@ export function AppProvider({ children }) {
         destination_address: newReq.destination,
         price_ars: 2500,
         reward_val: 1.0
-      }).catch((err) => {
-        console.warn('Aviso al persistir pedido en Supabase (no bloqueante):', err?.message || err);
-      });
+      })
+        .then((res) => {
+          const warning = persistenceWarning(res);
+          if (warning) {
+            console.warn('[S07.5] Pedido no sincronizado:', res);
+            showToast(warning, 'warning');
+          } else {
+            showToast('🚀 ¡Solicitud publicada y sincronizada!', 'success');
+          }
+        })
+        .catch((err) => {
+          console.error('[S07.5] Error inesperado al guardar pedido:', err);
+          showToast('⚠️ Guardado localmente, pero falló la sincronización.', 'warning');
+        });
+    } else {
+      showToast('🚀 ¡Solicitud publicada! (sin sesión: queda solo en este dispositivo)', 'warning');
     }
 
     return newReq;
@@ -1543,9 +1594,22 @@ export function AppProvider({ children }) {
         origin_lng: lng,
         price_ars: feeArs,
         reward_val: feeValens
-      }).catch((err) => {
-        console.warn('Aviso al persistir subasta en Supabase (no bloqueante):', err?.message || err);
-      });
+      })
+        .then((res) => {
+          const warning = persistenceWarning(res);
+          if (warning) {
+            console.warn('[S07.5] Subasta no sincronizada:', res);
+            showToast(warning, 'warning');
+          } else {
+            showToast('📢 ¡Subasta publicada y sincronizada!', 'success');
+          }
+        })
+        .catch((err) => {
+          console.error('[S07.5] Error inesperado al guardar subasta:', err);
+          showToast('⚠️ Guardado localmente, pero falló la sincronización.', 'warning');
+        });
+    } else {
+      showToast('📢 ¡Subasta publicada! (sin sesión: queda solo en este dispositivo)', 'warning');
     }
 
     return newReq;
