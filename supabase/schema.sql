@@ -31,6 +31,7 @@ DROP TABLE IF EXISTS public.profiles CASCADE;
 
 -- Funciones previas (evita "cannot change return type of existing function")
 DROP FUNCTION IF EXISTS public.search_community_users(text) CASCADE;
+DROP FUNCTION IF EXISTS public.set_order_pin(uuid, text) CASCADE;
 DROP FUNCTION IF EXISTS public.claim_faucet_tokens(uuid) CASCADE;
 DROP FUNCTION IF EXISTS public.transfer_valens_tokens(uuid, text, integer) CASCADE;
 DROP FUNCTION IF EXISTS public.release_reward_by_pin(uuid, text, uuid) CASCADE;
@@ -106,7 +107,9 @@ CREATE TABLE IF NOT EXISTS public.orders (
   base_price_ars NUMERIC(12, 2) DEFAULT 2500.0, -- compatibilidad
   reward_val NUMERIC(8, 2) NOT NULL DEFAULT 1.0,
   val_incentive NUMERIC(8, 2) DEFAULT 1.0, -- compatibilidad
-  delivery_pin VARCHAR(4) NOT NULL DEFAULT lpad((floor(random() * 9000) + 1000)::int::text, 4, '0'),
+  -- (S08) El PIN ya NO se guarda en claro: solo su hash bcrypt.
+  delivery_pin VARCHAR(4),   -- obsoleto: se mantiene por compatibilidad y queda NULL
+  pin_hash TEXT,             -- hash bcrypt (pgcrypto) del PIN de entrega
   pin_attempts INT NOT NULL DEFAULT 0,
   whatsapp_shared BOOLEAN NOT NULL DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -248,6 +251,9 @@ CREATE TABLE IF NOT EXISTS public.wallets (
   balance_val NUMERIC(14, 2) NOT NULL DEFAULT 10.0,
   ars_collected NUMERIC(14, 2) DEFAULT 0.0, -- compatibilidad
   valens_balance NUMERIC(14, 2) DEFAULT 10.0, -- compatibilidad
+  -- (S12.0) Se declara acá y no en la sección 19: la política wallets_insert_own_initial
+  -- (sección 15) la referencia antes, y con check_function_bodies daba 42703.
+  balance_valens BIGINT DEFAULT 10,
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -281,7 +287,7 @@ CREATE TABLE IF NOT EXISTS public.deliveries (
   client_name TEXT NOT NULL,
   amount_ars NUMERIC(14, 2) NOT NULL,
   amount_val NUMERIC(14, 2) NOT NULL,
-  pin TEXT NOT NULL,
+  pin TEXT,                  -- (S08) obsoleto: el PIN vive como hash en orders.pin_hash
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -459,6 +465,50 @@ CREATE TRIGGER trg_sync_order_columns
   FOR EACH ROW EXECUTE FUNCTION public.sync_order_columns();
 
 -- ====================================================================
+-- 13a. FUNCIÓN RPC: REGISTRO DEL PIN (S08) — hash bcrypt
+-- ====================================================================
+CREATE OR REPLACE FUNCTION public.set_order_pin(
+  p_order_id UUID,
+  p_pin      TEXT
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_order RECORD;
+BEGIN
+  IF auth.uid() IS NULL THEN
+    RETURN jsonb_build_object('success', false, 'error', 'No autorizado');
+  END IF;
+
+  IF p_pin IS NULL OR length(btrim(p_pin)) < 4 THEN
+    RETURN jsonb_build_object('success', false, 'error', 'PIN inválido (mínimo 4 caracteres)');
+  END IF;
+
+  SELECT * INTO v_order FROM public.orders WHERE id = p_order_id FOR UPDATE;
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object('success', false, 'error', 'Orden no encontrada');
+  END IF;
+
+  -- Solo el cliente dueño de la orden define el PIN
+  IF v_order.client_id IS DISTINCT FROM auth.uid() THEN
+    RETURN jsonb_build_object('success', false, 'error', 'Solo el cliente puede definir el PIN');
+  END IF;
+
+  UPDATE public.orders
+  SET pin_hash     = crypt(btrim(p_pin), gen_salt('bf')),
+      delivery_pin = NULL,
+      pin_attempts = 0,
+      updated_at   = NOW()
+  WHERE id = p_order_id;
+
+  RETURN jsonb_build_object('success', true, 'order_id', p_order_id);
+END;
+$$;
+
+-- ====================================================================
 -- 13. FUNCIÓN RPC: LIBERACIÓN POR PIN CON CONTROL DE INTENTOS
 -- ====================================================================
 CREATE OR REPLACE FUNCTION public.release_reward_by_pin(
@@ -491,8 +541,12 @@ BEGIN
     RETURN jsonb_build_object('success', false, 'error', 'Orden no encontrada');
   END IF;
 
-  -- Autorización: solo el cliente o el cadete de la orden pueden liberar el pago
-  IF auth.uid() NOT IN (v_order.client_id, v_order.cadete_id, v_order.assigned_cadet_id) THEN
+  -- (S12.1 / B2) Puede liberar el CLIENTE o el CADETE asignado a la entrega.
+  -- La posesión del PIN (hash bcrypt) sigue siendo la prueba real: el cadete
+  -- no puede leerlo porque nunca se guarda en claro.
+  IF auth.uid() IS DISTINCT FROM v_order.client_id
+     AND auth.uid() IS DISTINCT FROM v_order.cadete_id
+     AND auth.uid() IS DISTINCT FROM v_order.assigned_cadet_id THEN
     RETURN jsonb_build_object('success', false, 'error', 'No autorizado para liberar esta orden');
   END IF;
 
@@ -508,8 +562,8 @@ BEGIN
     );
   END IF;
 
-  -- 3. Validar PIN
-  IF TRIM(v_order.delivery_pin) <> TRIM(p_pin) THEN
+  -- 3. Validar PIN contra el hash bcrypt (nunca contra texto plano)
+  IF v_order.pin_hash IS NULL OR crypt(TRIM(p_pin), v_order.pin_hash) <> v_order.pin_hash THEN
     UPDATE public.orders
     SET pin_attempts = COALESCE(pin_attempts, 0) + 1, updated_at = NOW()
     WHERE id = p_order_id;
@@ -670,6 +724,25 @@ CREATE POLICY "offers_insert_policy" ON public.offers
 DROP POLICY IF EXISTS "offers_update_policy" ON public.offers;
 CREATE POLICY "offers_update_policy" ON public.offers
   FOR UPDATE USING (auth.uid() = cadete_id);
+
+-- (S12.1 / B1) El CLIENTE dueño de la orden también puede aceptar/rechazar ofertas.
+-- Sin esto, aceptar un cadete fallaba con 403: la única política de UPDATE era
+-- del cadete sobre su propia oferta.
+DROP POLICY IF EXISTS "offers_update_client" ON public.offers;
+CREATE POLICY "offers_update_client" ON public.offers
+  FOR UPDATE
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.orders o
+      WHERE o.id = offers.order_id AND o.client_id = auth.uid()
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.orders o
+      WHERE o.id = offers.order_id AND o.client_id = auth.uid()
+    )
+  );
 
 DROP POLICY IF EXISTS "bids_select_policy" ON public.bids;
 CREATE POLICY "bids_select_policy" ON public.bids
