@@ -59,6 +59,113 @@ function formatScheduled(dateStr, timeStr) {
   }
 }
 
+// (S12c) Autocompletado local: Photon sin API key, sesgado a Alta Gracia.
+const PHOTON_BIAS = 'lat=-31.658&lon=-64.428';
+const PHOTON_BBOX = '-64.50,-31.72,-64.36,-31.58';
+
+function formatPlace(p) {
+  return [p.name, p.street, p.housenumber, p.district, p.city]
+    .filter(Boolean)
+    .filter((v, i, arr) => arr.indexOf(v) === i)
+    .join(', ');
+}
+
+function AddressField({ id, label, value, onChange, onPick, placeholder }) {
+  const [items, setItems] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(-1);
+
+  useEffect(() => {
+    const q = value.trim();
+    if (q.length < 3) { setItems([]); setOpen(false); return; }
+    const ctrl = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&${PHOTON_BIAS}&limit=8&lang=es`;
+        const res = await fetch(url, { signal: ctrl.signal });
+        if (!res.ok) throw new Error(String(res.status));
+        const data = await res.json();
+        const list = (data.features || [])
+          .map((f) => ({
+            label: formatPlace(f.properties || {}),
+            lat: f.geometry?.coordinates?.[1],
+            lng: f.geometry?.coordinates?.[0]
+          }))
+          // (S12c) Photon no acepta `bbox`: acotamos Alta Gracia en cliente.
+          .filter(
+            (r) =>
+              r.label &&
+              Number.isFinite(r.lat) &&
+              Number.isFinite(r.lng) &&
+              r.lat >= -31.72 && r.lat <= -31.58 &&
+              r.lng >= -64.50 && r.lng <= -64.36
+          )
+          .slice(0, 6);
+        setItems(list);
+        setOpen(list.length > 0);
+        setActive(-1);
+      } catch (err) {
+        // Fallback silencioso: el usuario sigue escribiendo texto libre.
+        if (err.name !== 'AbortError') { setItems([]); setOpen(false); }
+      }
+    }, 400);
+    return () => { clearTimeout(timer); ctrl.abort(); };
+  }, [value]);
+
+  const pick = (r) => {
+    onChange(r.label);
+    onPick({ lat: r.lat, lng: r.lng });
+    setOpen(false);
+  };
+
+  const handleKeys = (e) => {
+    if (!open || items.length === 0) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActive((i) => Math.min(i + 1, items.length - 1)); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((i) => Math.max(i - 1, 0)); }
+    else if (e.key === 'Enter' && active >= 0) { e.preventDefault(); pick(items[active]); }
+    else if (e.key === 'Escape') { setOpen(false); }
+  };
+
+  return (
+    <div className="relative">
+      <label htmlFor={id} className="block text-xs font-bold text-ink3 mb-1.5">{label}</label>
+      <input
+        id={id}
+        type="text"
+        role="combobox"
+        aria-expanded={open}
+        aria-controls={`${id}-list`}
+        aria-autocomplete="list"
+        value={value}
+        onChange={(e) => { onChange(e.target.value); setOpen(true); }}
+        onKeyDown={handleKeys}
+        placeholder={placeholder}
+        className="w-full min-h-touch rounded-control px-3 bg-app border border-line text-sm text-ink1 placeholder:text-ink3 focus:outline-none focus:border-accent"
+      />
+      {open && items.length > 0 && (
+        <ul
+          id={`${id}-list`}
+          role="listbox"
+          className="absolute z-30 mt-1 w-full rounded-control border border-line bg-card shadow-elev2 max-h-56 overflow-y-auto"
+        >
+          {items.map((r, i) => (
+            <li key={`${r.label}-${i}`} role="option" aria-selected={i === active}>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => pick(r)}
+                className={`w-full text-left px-3 py-2.5 min-h-touch text-xs ${i === active ? 'bg-elev text-ink1' : 'text-ink2'}`}
+              >
+                {r.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export default function RequestSheet({ open, onClose, initialMode = 'urgent' }) {
   const { createServiceRequest, createAuctionRequest } = useApp();
 
@@ -69,6 +176,9 @@ export default function RequestSheet({ open, onClose, initialMode = 'urgent' }) 
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
   const [priceArs, setPriceArs] = useState(2000);
+  // (S12c) Coordenadas elegidas en el autocompletado (listas para el pedido)
+  const [originCoords, setOriginCoords] = useState(null);
+  const [destCoords, setDestCoords] = useState(null);
   const [scheduledDate, setScheduledDate] = useState(todayISO());
   const [scheduledTime, setScheduledTime] = useState('18:00');
 
@@ -250,42 +360,32 @@ export default function RequestSheet({ open, onClose, initialMode = 'urgent' }) 
 
       {step === 2 && (
         <div className="space-y-3">
-          <div>
-            <label htmlFor="req-origin" className="block text-xs font-bold text-[#8C9BB4] mb-1.5">
-              Retiro en
-            </label>
-            <input
-              id="req-origin"
-              type="text"
-              value={origin}
-              onChange={(e) => setOrigin(e.target.value)}
-              placeholder="Plaza Solares, Alta Gracia"
-              className="w-full min-h-touch rounded-xl px-3 bg-[#070C1E] border border-[#1F2D48] text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-accent"
-            />
-          </div>
-          <div>
-            <label htmlFor="req-dest" className="block text-xs font-bold text-[#8C9BB4] mb-1.5">
-              Entrega en
-            </label>
-            <input
-              id="req-dest"
-              type="text"
-              value={destination}
-              onChange={(e) => setDestination(e.target.value)}
-              placeholder="B° Cámara, Alta Gracia"
-              className="w-full min-h-touch rounded-xl px-3 bg-[#070C1E] border border-[#1F2D48] text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-accent"
-            />
-          </div>
+          <AddressField
+            id="req-origin"
+            label="Retiro en"
+            value={origin}
+            onChange={setOrigin}
+            onPick={setOriginCoords}
+            placeholder="Calle y altura, Alta Gracia"
+          />
+          <AddressField
+            id="req-dest"
+            label="Entrega en"
+            value={destination}
+            onChange={setDestination}
+            onPick={setDestCoords}
+            placeholder="Calle y altura, Alta Gracia"
+          />
 
           <div>
-            <p className="text-xs font-bold text-[#8C9BB4] mb-1.5">Atajos de Alta Gracia</p>
+            <p className="text-xs font-bold text-ink3 mb-1.5">Atajos de Alta Gracia</p>
             <div className="flex flex-wrap gap-1.5">
               {QUICK_PLACES.map((place) => (
                 <button
                   key={place}
                   type="button"
                   onClick={() => (origin.trim() ? setDestination(place) : setOrigin(place))}
-                  className="min-h-touch px-3 rounded-xl text-xs font-semibold bg-[#121B2D] border border-[#1F2D48] text-slate-300 hover:border-accent/60 active:scale-95 transition-all flex items-center gap-1"
+                  className="min-h-touch px-3 rounded-control text-xs font-semibold bg-card border border-line text-ink2 hover:border-accent/60 active:scale-95 transition-all flex items-center gap-1"
                 >
                   <MapPin className="w-3.5 h-3.5 text-accent" />
                   {place}
