@@ -515,7 +515,7 @@ export default function WalletScreen() {
                 <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${
                   isDark ? 'text-[#F0B90B] bg-[#F7931A]/10 border-[#F7931A]/30' : 'text-amber-800 bg-amber-100 border-amber-300 font-bold'
                 }`}>
-                  Token de prueba
+                  ValensCoin
                 </span>
               </div>
             </div>
@@ -546,7 +546,7 @@ export default function WalletScreen() {
               <summary className="cursor-pointer font-semibold select-none">¿Qué es ValensCoin?</summary>
               <p className="mt-2 leading-relaxed">
                 Es un <strong>token de agradecimiento</strong>: se suma a tu billetera cada vez que completás un servicio
-                y sirve para propinas y canjes entre vecinos. Es un token de prueba (testnet), sin valor monetario real.
+                y sirve para propinas y canjes entre vecinos de Alta Gracia.
               </p>
               <p className="mt-1 opacity-80">Detalles técnicos: red Valens L1 · 1.000.000.000.000 VAL · sin decimales.</p>
             </details>
@@ -580,15 +580,6 @@ export default function WalletScreen() {
               >
                 <ArrowUpRight className="w-4 h-4 text-[#E02424]" />
                 <span>Enviar VAL</span>
-              </button>
-
-              <button
-                onClick={requestFaucet}
-                type="button"
-                className="min-h-[44px] flex items-center justify-center flex-col gap-1 py-2 px-2 rounded-xl bg-gradient-to-r from-[#F7931A] to-[#E07D09] hover:from-[#F0B90B] hover:to-[#F7931A] text-black text-xs font-bold shadow-glow-orange transition-all active:scale-[0.98]"
-              >
-                <Sparkles className="w-4 h-4 fill-black" />
-                <span>Grifo (+5 VAL)</span>
               </button>
             </div>
           </div>
@@ -1211,7 +1202,7 @@ export default function WalletScreen() {
               }`}>
                 <AlertTriangle className="w-3.5 h-3.5 text-[#E02424] flex-shrink-0 mt-0.5" />
                 <p className="text-xs text-[#E02424] leading-relaxed">
-                  Las transacciones en Valens Testnet son <strong>irreversibles</strong>. Verifica la dirección antes de confirmar.
+                  Las transacciones son <strong>irreversibles</strong>. Verifica la dirección antes de confirmar.
                 </p>
               </div>
 
