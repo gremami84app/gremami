@@ -212,25 +212,24 @@ const createPeerIcon = (node, isSelected, repStatus, formatDistanceKm, isDark) =
     repDot = REP_DOT('#F59E0B');
   }
 
-  // (S07b) Pin premium: cápsula de vidrio compacta, SOLO glifo.
-  // Se eliminó la etiqueta de texto (nombre + reputación + modalidad + barrio +
-  // distancia) que era la causa del amontonamiento: 115×52 px por nodo → 34×34.
-  // Los datos siguen disponibles en el popup al tocar el pin.
-  const pinBg = isDark ? 'rgba(18,23,31,0.82)' : 'rgba(255,255,255,0.92)';
-  const pinBorder = isSelected ? 'var(--accent, #F7931A)' : borderColor;
-  const pinColor = isSelected
-    ? 'var(--accent, #F7931A)'
-    : isDark ? '#E2E8F0' : '#1E293B';
+  // (S08) Pin premium en forma de gota (teardrop): cabeza circular + punta,
+  // sombra profunda, glifo blanco y acento del tema. Escala al seleccionar.
+  const pinAccent = 'var(--accent, #F7931A)';
+  const pinBg = isSelected ? pinAccent : borderColor;
+  const scale = isSelected ? 1.15 : 1;
 
   return L.divIcon({
     className: 'custom-peer-marker',
     html: `
-      <div style="width:34px;height:34px;border-radius:9999px;display:flex;align-items:center;justify-content:center;background:${pinBg};backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1.5px solid ${pinBorder};color:${pinColor};box-shadow:0 2px 10px rgba(0,0,0,0.28)${isSelected ? ', 0 0 0 4px rgba(158,120,40,0.16)' : ''};${isSelected ? 'transform:scale(1.12);' : ''}cursor:pointer;transition:transform 120ms cubic-bezier(.2,.8,.2,1), box-shadow 120ms cubic-bezier(.2,.8,.2,1);">
-        ${PIN_SVG(pinKind, isSelected, 18)}
+      <div style="position:relative;width:30px;height:42px;transform:scale(${scale});transform-origin:50% 100%;transition:transform 140ms cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 6px 10px rgba(0,0,0,.38));">
+        <div style="width:30px;height:30px;border-radius:9999px;background:${pinBg};border:2px solid rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;color:#FFFFFF;">
+          ${PIN_SVG(pinKind, false, 16)}
+        </div>
+        <div style="position:absolute;left:50%;top:24px;width:13px;height:13px;background:${pinBg};border-right:2px solid rgba(255,255,255,.92);border-bottom:2px solid rgba(255,255,255,.92);transform:translateX(-50%) rotate(45deg);border-radius:2px;"></div>
       </div>
     `,
-    iconSize: [34, 34],
-    iconAnchor: [17, 17]
+    iconSize: [30, 42],
+    iconAnchor: [15, 42]
   });
 };
 
