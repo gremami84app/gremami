@@ -28,3 +28,7 @@ yarn-error.log*
 pnpm-debug.log*
 
 .vercel
+
+# (S10) Artefactos de Playwright
+test-results/
+playwright-report/
