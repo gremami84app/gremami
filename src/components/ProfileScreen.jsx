@@ -314,7 +314,7 @@ export default function ProfileScreen() {
         <button
           onClick={() => setActiveTab('home')}
           className={`flex items-center space-x-1.5 text-xs transition-colors ${
-            isDark ? 'text-[#8C9BB4] hover:text-white' : 'text-slate-600 hover:text-slate-900'
+            isDark ? 'text-ink3 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           <ArrowLeft className="w-4 h-4" />
@@ -322,7 +322,7 @@ export default function ProfileScreen() {
         </button>
         <span className={`text-[10px] font-mono px-2 py-0.5 rounded-lg border ${
           isDark
-            ? 'text-[#F0B90B] bg-[#121B2D] border-[#1F2D48]'
+            ? 'text-[#F0B90B] bg-card border-line'
             : 'text-amber-700 bg-amber-50 border-amber-200 font-bold'
         }`}>
           Perfil y Logística P2P
@@ -336,7 +336,7 @@ export default function ProfileScreen() {
             ? 'bg-gradient-to-r from-[#0C2419] to-[#121B2D] border-emerald-500/60 shadow-glow-green'
             : 'bg-emerald-50/90 border-emerald-300 text-emerald-950'
           : isDark
-          ? 'bg-[#121B2D] border-slate-700 text-slate-400'
+          ? 'bg-card border-slate-700 text-slate-400'
           : 'bg-slate-100 border-slate-300 text-slate-600'
       }`}>
         <div className="flex items-center justify-between">
@@ -350,7 +350,7 @@ export default function ProfileScreen() {
               }`} />
             </span>
             <div>
-              <p className={`text-xs font-black ${isOnline ? (isDark ? 'text-white' : 'text-emerald-950') : (isDark ? 'text-slate-300' : 'text-slate-700')}`}>
+              <p className={`text-xs font-black ${isOnline ? (isDark ? 'text-ink1' : 'text-emerald-950') : (isDark ? 'text-slate-300' : 'text-slate-700')}`}>
                 {isOnline ? '🟢 DISPONIBLE PARA TRABAJAR (ONLINE)' : '⚪ MODO DESCONECTADO (OFFLINE)'}
               </p>
               <p className={`text-[10px] ${isOnline ? (isDark ? 'text-emerald-300' : 'text-emerald-700') : (isDark ? 'text-slate-400' : 'text-slate-500')}`}>
@@ -379,7 +379,7 @@ export default function ProfileScreen() {
 
       {/* 2. Tarjeta Principal de Identidad, Foto y Verificación Comunitaria */}
       <div className={`rounded-2xl border p-4 shadow-xl relative overflow-hidden transition-colors ${
-        isDark ? 'bg-[#121B2D] border-[#1F2D48]' : 'bg-white border-slate-200'
+        isDark ? 'bg-card border-line' : 'bg-white border-slate-200'
       }`}>
         <div className="flex items-start justify-between gap-3">
           {/* Avatar con cargador de imagen */}
@@ -412,7 +412,7 @@ export default function ProfileScreen() {
           {/* Datos Resumidos de Identidad */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2">
-              <h2 className={`text-base font-bold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <h2 className={`text-base font-bold truncate ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                 {userProfile.name || userName}
               </h2>
               {userProfile.isIdVerified && (
@@ -422,7 +422,7 @@ export default function ProfileScreen() {
               )}
             </div>
 
-            <p className={`text-[11px] truncate mt-0.5 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-600'}`}>
+            <p className={`text-[11px] truncate mt-0.5 ${isDark ? 'text-ink3' : 'text-slate-600'}`}>
               📍 {userProfile.workZone}
             </p>
 
@@ -430,7 +430,7 @@ export default function ProfileScreen() {
               <div className="flex items-center space-x-1 text-amber-500 font-bold">
                 <Star className="w-3.5 h-3.5 fill-amber-500" />
                 <span>4.96 ★</span>
-                <span className={`text-[10px] font-normal ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>(280 reseñas)</span>
+                <span className={`text-[10px] font-normal ${isDark ? 'text-ink3' : 'text-slate-500'}`}>(280 reseñas)</span>
               </div>
               <span className={isDark ? 'text-[#1F2D48]' : 'text-slate-300'}>|</span>
               <span className={`text-[11px] ${isDark ? 'text-emerald-400' : 'text-emerald-600'} font-medium`}>
@@ -462,7 +462,7 @@ export default function ProfileScreen() {
         {/* Biografía / Resumen de Servicios */}
         {userProfile.bio && (
           <p className={`mt-3 text-xs p-2.5 rounded-xl border leading-relaxed ${
-            isDark ? 'bg-[#070C1E] border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
+            isDark ? 'bg-app border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
           }`}>
             "{userProfile.bio}"
           </p>
@@ -470,12 +470,12 @@ export default function ProfileScreen() {
 
         {/* Documento de Identidad (DNI / Cédula) & Verificación Comunitaria */}
         <div className={`mt-3 pt-3 border-t flex items-center justify-between ${
-          isDark ? 'border-[#1F2D48]' : 'border-slate-200'
+          isDark ? 'border-line' : 'border-slate-200'
         }`}>
           <div className="flex items-center space-x-2 min-w-0">
             <FileText size={16} className="text-[#F7931A] flex-shrink-0" />
             <div className="min-w-0">
-              <p className={`text-[11px] font-bold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <p className={`text-[11px] font-bold truncate ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                 Documento de Identidad (DNI)
               </p>
               <p className={`text-[10px] truncate ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
@@ -521,7 +521,7 @@ export default function ProfileScreen() {
 
       {/* 3. Tarjeta de Autenticación & Cuenta Google (Supabase Auth) */}
       <div className={`rounded-2xl border p-4 shadow-xl transition-all ${
-        isDark ? 'bg-[#121B2D] border-[#1F2D48]' : 'bg-white border-slate-200'
+        isDark ? 'bg-card border-line' : 'bg-white border-slate-200'
       }`}>
         <div className="flex items-center justify-between border-b pb-2.5 mb-3 border-slate-700/40">
           <div className="flex items-center space-x-2.5">
@@ -534,7 +534,7 @@ export default function ProfileScreen() {
               </svg>
             </div>
             <div>
-              <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-white' : 'text-slate-800'}`}>
+              <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-ink1' : 'text-slate-800'}`}>
                 Autenticación & Google OAuth
               </h3>
               <p className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
@@ -557,7 +557,7 @@ export default function ProfileScreen() {
         {currentUser ? (
           <div className="space-y-3">
             <div className={`p-3 rounded-xl border flex items-center justify-between ${
-              isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+              isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
               <div className="flex items-center space-x-3 min-w-0">
                 <img
@@ -566,7 +566,7 @@ export default function ProfileScreen() {
                   className="w-10 h-10 rounded-full object-cover border-2 border-emerald-400/80 flex-shrink-0"
                 />
                 <div className="min-w-0">
-                  <p className={`text-xs font-bold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  <p className={`text-xs font-bold truncate ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                     {currentUser.user_metadata?.full_name || userName}
                   </p>
                   <p className="text-[11px] text-emerald-400 truncate font-mono">
@@ -588,11 +588,11 @@ export default function ProfileScreen() {
             </div>
 
             <div className={`p-2.5 rounded-xl border text-[11px] space-y-1 ${
-              isDark ? 'bg-[#070C1E]/60 border-slate-800/80 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-600'
+              isDark ? 'bg-app/60 border-slate-800/80 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-600'
             }`}>
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Proveedor de Identidad:</span>
-                <span className="font-semibold text-white">Google OAuth (Supabase)</span>
+                <span className="font-semibold text-ink1">Google OAuth (Supabase)</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Sincronización de Perfil:</span>
@@ -625,14 +625,14 @@ export default function ProfileScreen() {
 
       {/* Selector de Pestañas de la Pantalla */}
       <div className={`p-1 rounded-2xl border grid grid-cols-3 gap-1 ${
-        isDark ? 'bg-[#0B132B] border-[#1F2D48]' : 'bg-slate-200 border-slate-300'
+        isDark ? 'bg-card border-line' : 'bg-slate-200 border-slate-300'
       }`}>
         <button
           onClick={() => setActiveSection('profile')}
           className={`py-2 px-1 text-xs font-bold rounded-xl transition-all text-center ${
             activeSection === 'profile'
               ? 'bg-gradient-to-r from-[#F7931A] to-[#E07D09] text-black shadow-glow-orange'
-              : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+              : isDark ? 'text-slate-400 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           ⚙️ Servicios y Vehículo
@@ -643,7 +643,7 @@ export default function ProfileScreen() {
           className={`py-2 px-1 text-xs font-bold rounded-xl transition-all text-center ${
             activeSection === 'milestones'
               ? 'bg-gradient-to-r from-[#F7931A] to-[#E07D09] text-black shadow-glow-orange'
-              : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+              : isDark ? 'text-slate-400 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           🚀 Hitos y Referidos
@@ -654,7 +654,7 @@ export default function ProfileScreen() {
           className={`py-2 px-1 text-xs font-bold rounded-xl transition-all text-center ${
             activeSection === 'metrics'
               ? 'bg-gradient-to-r from-[#F7931A] to-[#E07D09] text-black shadow-glow-orange'
-              : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+              : isDark ? 'text-slate-400 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           📊 Métricas y Finanzas
@@ -664,12 +664,12 @@ export default function ProfileScreen() {
       {/* SECCIÓN A: SERVICIOS, VEHÍCULO Y COBERTURA (Formulario Completo) */}
       {activeSection === 'profile' && (
         <div className={`p-4 rounded-2xl border space-y-4 shadow-xl transition-colors ${
-          isDark ? 'bg-[#121B2D] border-[#1F2D48]' : 'bg-white border-slate-200'
+          isDark ? 'bg-card border-line' : 'bg-white border-slate-200'
         }`}>
           <div className="flex items-center justify-between border-b pb-2.5 border-slate-700/40">
             <div className="flex items-center space-x-2">
               <Truck className="w-4 h-4 text-[#F7931A]" />
-              <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-white' : 'text-slate-800'}`}>
+              <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-ink1' : 'text-slate-800'}`}>
                 Datos de Servicio, Fletes y Redes Sociales
               </h3>
             </div>
@@ -678,7 +678,7 @@ export default function ProfileScreen() {
               className={`text-[11px] font-bold px-2.5 py-1 rounded-xl border transition-all ${
                 isEditingProfile
                   ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
-                  : isDark ? 'bg-[#070C1E] text-slate-300 border-slate-700' : 'bg-slate-100 text-slate-700 border-slate-300'
+                  : isDark ? 'bg-app text-slate-300 border-slate-700' : 'bg-slate-100 text-slate-700 border-slate-300'
               }`}
             >
               {isEditingProfile ? 'Cancelar' : 'Editar Formulario'}
@@ -695,14 +695,14 @@ export default function ProfileScreen() {
                 value={formName}
                 onChange={(e) => setFormName(e.target.value)}
                 className={`w-full border rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#F7931A] disabled:opacity-75 ${
-                  isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                  isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                 }`}
               />
             </div>
 
             {/* Módulo: Configurar Métodos de Cobro FIAT ($ ARS) */}
             <div className={`p-4 rounded-2xl border space-y-3 transition-all shadow-md ${
-              isDark ? 'bg-[#0B132B] border-emerald-500/40' : 'bg-emerald-50/60 border-emerald-300'
+              isDark ? 'bg-card border-emerald-500/40' : 'bg-emerald-50/60 border-emerald-300'
             }`}>
               <div className="flex flex-wrap items-center justify-between gap-1.5 pb-2 border-b border-emerald-500/20">
                 <div className="flex items-center gap-2">
@@ -743,9 +743,9 @@ export default function ProfileScreen() {
                         }}
                         className={`p-2 rounded-xl border text-left flex flex-col justify-between transition-all active:scale-95 ${
                           isSelected
-                            ? 'bg-emerald-500/20 border-emerald-400 shadow-sm text-white'
+                            ? 'bg-emerald-500/20 border-emerald-400 shadow-sm text-ink1'
                             : isDark
-                            ? 'bg-[#121B2D] border-slate-700/80 text-slate-300 hover:border-slate-500'
+                            ? 'bg-card border-slate-700/80 text-slate-300 hover:border-slate-500'
                             : 'bg-white border-slate-200 text-slate-700 hover:border-emerald-300'
                         }`}
                       >
@@ -778,7 +778,7 @@ export default function ProfileScreen() {
                       Entidad Seleccionada:
                     </label>
                     <div className={`px-3 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 ${
-                      isDark ? 'bg-[#121B2D] border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-800'
+                      isDark ? 'bg-card border-slate-700 text-ink1' : 'bg-white border-slate-300 text-slate-800'
                     }`}>
                       <Building2 className="w-3.5 h-3.5 text-emerald-400" />
                       <span className="truncate">{formFiatProvider}</span>
@@ -796,7 +796,7 @@ export default function ProfileScreen() {
                         onChange={(e) => setFormFiatAlias(e.target.value)}
                         placeholder="ej. cadete.gremami.mp"
                         className={`flex-1 border rounded-xl px-3 py-2 text-xs font-mono font-bold focus:outline-none focus:border-emerald-400 ${
-                          isDark ? 'bg-[#121B2D] border-slate-700 text-emerald-300' : 'bg-white border-emerald-300 text-emerald-800'
+                          isDark ? 'bg-card border-slate-700 text-emerald-300' : 'bg-white border-emerald-300 text-emerald-800'
                         }`}
                       />
                       <button
@@ -806,7 +806,7 @@ export default function ProfileScreen() {
                           copiedAlias
                             ? 'bg-emerald-500 text-black border-emerald-400'
                             : isDark
-                            ? 'bg-[#18243C] text-slate-200 border-slate-700 hover:text-white'
+                            ? 'bg-[#18243C] text-slate-200 border-slate-700 hover:text-ink1'
                             : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
                         }`}
                         title="Copiar Alias de Cobro"
@@ -829,7 +829,7 @@ export default function ProfileScreen() {
                     placeholder="ej. 0000003100049281729384"
                     maxLength={22}
                     className={`w-full border rounded-xl px-3 py-2 text-xs font-mono font-bold focus:outline-none focus:border-emerald-400 ${
-                      isDark ? 'bg-[#121B2D] border-slate-700 text-slate-200' : 'bg-white border-slate-300 text-slate-800'
+                      isDark ? 'bg-card border-slate-700 text-slate-200' : 'bg-white border-slate-300 text-slate-800'
                     }`}
                   />
                 </div>
@@ -846,7 +846,7 @@ export default function ProfileScreen() {
                       onChange={(e) => setFormFiatHolderName(e.target.value)}
                       placeholder="ej. Satoshi Dev Nakamoto"
                       className={`w-full border rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-emerald-400 ${
-                        isDark ? 'bg-[#121B2D] border-slate-700 text-slate-200' : 'bg-white border-slate-300 text-slate-800'
+                        isDark ? 'bg-card border-slate-700 text-slate-200' : 'bg-white border-slate-300 text-slate-800'
                       }`}
                     />
                   </div>
@@ -861,7 +861,7 @@ export default function ProfileScreen() {
                       onChange={(e) => setFormFiatCuit(e.target.value)}
                       placeholder="ej. 20-38492019-4"
                       className={`w-full border rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-emerald-400 ${
-                        isDark ? 'bg-[#121B2D] border-slate-700 text-slate-200' : 'bg-white border-slate-300 text-slate-800'
+                        isDark ? 'bg-card border-slate-700 text-slate-200' : 'bg-white border-slate-300 text-slate-800'
                       }`}
                     />
                   </div>
@@ -897,7 +897,7 @@ export default function ProfileScreen() {
                 onChange={(e) => setFormBio(e.target.value)}
                 placeholder="Detallá tus especialidades, disponibilidad horaria y condiciones de entrega..."
                 className={`w-full border rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#F7931A] disabled:opacity-75 leading-relaxed ${
-                  isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                  isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                 }`}
               />
             </div>
@@ -914,14 +914,14 @@ export default function ProfileScreen() {
                 onChange={(e) => setFormWorkZone(e.target.value)}
                 placeholder="Ej. Alta Gracia, Anisacate, Valle de Paravachasca y Córdoba Capital"
                 className={`w-full border rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#F7931A] disabled:opacity-75 ${
-                  isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                  isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                 }`}
               />
             </div>
 
             {/* Mapa GPS en Vivo y Posición Satelital */}
             <div className={`p-3 rounded-2xl border space-y-2.5 ${
-              isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+              isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -960,7 +960,7 @@ export default function ProfileScreen() {
 
             {/* Selector de Vehículo y Fletes */}
             <div className={`p-3 rounded-2xl border space-y-3 ${
-              isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+              isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
               <div className="flex items-center justify-between">
                 <label className="block text-[11px] font-bold text-[#F7931A]">
@@ -988,7 +988,7 @@ export default function ProfileScreen() {
                       formCategory === c.id
                         ? 'bg-[#F7931A] text-slate-950 border-amber-400 font-bold shadow-sm'
                         : isDark
-                        ? 'bg-[#121B2D] border-slate-700 text-slate-300'
+                        ? 'bg-card border-slate-700 text-slate-300'
                         : 'bg-white border-slate-300 text-slate-700'
                     }`}
                   >
@@ -1008,7 +1008,7 @@ export default function ProfileScreen() {
                     onChange={(e) => setFormVehicleType(e.target.value)}
                     placeholder="Ej. Pick-up / Camión Volcador"
                     className={`w-full border rounded-xl px-2.5 py-1.5 text-xs ${
-                      isDark ? 'bg-[#121B2D] border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
+                      isDark ? 'bg-card border-slate-700 text-ink1' : 'bg-white border-slate-300 text-slate-900'
                     }`}
                   />
                 </div>
@@ -1022,7 +1022,7 @@ export default function ProfileScreen() {
                     onChange={(e) => setFormLoadCapacity(e.target.value)}
                     placeholder="Ej. 1.500 kg / 8 m³"
                     className={`w-full border rounded-xl px-2.5 py-1.5 text-xs ${
-                      isDark ? 'bg-[#121B2D] border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
+                      isDark ? 'bg-card border-slate-700 text-ink1' : 'bg-white border-slate-300 text-slate-900'
                     }`}
                   />
                 </div>
@@ -1048,7 +1048,7 @@ export default function ProfileScreen() {
 
             {/* 🎯 Radio de Alertas Cercanas */}
             <div className={`p-3 rounded-2xl border space-y-3 ${
-              isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+              isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
               <div className="flex items-center justify-between">
                 <label className="block text-[11px] font-bold text-[#F7931A]">
@@ -1077,7 +1077,7 @@ export default function ProfileScreen() {
                       (userProfile.mobilityMode ?? 'moto') === m.id
                         ? 'bg-[#F7931A] text-slate-950 border-amber-400 font-bold shadow-sm'
                         : isDark
-                        ? 'bg-[#121B2D] border-slate-700 text-slate-300 hover:border-slate-500'
+                        ? 'bg-card border-slate-700 text-slate-300 hover:border-slate-500'
                         : 'bg-white border-slate-300 text-slate-700 hover:border-amber-300'
                     }`}
                   >
@@ -1113,7 +1113,7 @@ export default function ProfileScreen() {
 
             {/* Redes Sociales y Contacto Directo */}
             <div className={`p-3 rounded-2xl border space-y-2.5 ${
-              isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+              isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
               <label className="block text-[11px] font-bold text-slate-400">
                 Vinculación de Redes Sociales y Mensajería:
@@ -1128,7 +1128,7 @@ export default function ProfileScreen() {
                     value={formInstagram}
                     onChange={(e) => setFormInstagram(e.target.value)}
                     className={`w-full border rounded-xl px-2.5 py-1.5 text-xs ${
-                      isDark ? 'bg-[#121B2D] border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
+                      isDark ? 'bg-card border-slate-700 text-ink1' : 'bg-white border-slate-300 text-slate-900'
                     }`}
                   />
                 </div>
@@ -1141,7 +1141,7 @@ export default function ProfileScreen() {
                     value={formWhatsapp}
                     onChange={(e) => setFormWhatsapp(e.target.value)}
                     className={`w-full border rounded-xl px-2.5 py-1.5 text-xs ${
-                      isDark ? 'bg-[#121B2D] border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
+                      isDark ? 'bg-card border-slate-700 text-ink1' : 'bg-white border-slate-300 text-slate-900'
                     }`}
                   />
                 </div>
@@ -1154,7 +1154,7 @@ export default function ProfileScreen() {
                     value={formTwitter}
                     onChange={(e) => setFormTwitter(e.target.value)}
                     className={`w-full border rounded-xl px-2.5 py-1.5 text-xs ${
-                      isDark ? 'bg-[#121B2D] border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
+                      isDark ? 'bg-card border-slate-700 text-ink1' : 'bg-white border-slate-300 text-slate-900'
                     }`}
                   />
                 </div>
@@ -1167,7 +1167,7 @@ export default function ProfileScreen() {
                     value={formFacebook}
                     onChange={(e) => setFormFacebook(e.target.value)}
                     className={`w-full border rounded-xl px-2.5 py-1.5 text-xs ${
-                      isDark ? 'bg-[#121B2D] border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
+                      isDark ? 'bg-card border-slate-700 text-ink1' : 'bg-white border-slate-300 text-slate-900'
                     }`}
                   />
                 </div>
@@ -1192,12 +1192,12 @@ export default function ProfileScreen() {
         <div className="space-y-4">
           {/* 5. Tarjeta de Hitos P2P ("Mis Hitos P2P") */}
           <div className={`p-4 rounded-2xl border shadow-xl relative overflow-hidden ${
-            isDark ? 'bg-[#121B2D] border-[#1F2D48]' : 'bg-white border-slate-200'
+            isDark ? 'bg-card border-line' : 'bg-white border-slate-200'
           }`}>
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-2">
                 <Award className="w-5 h-5 text-[#F7931A]" />
-                <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-ink1' : 'text-slate-800'}`}>
                   Mis Hitos P2P • Alta Gracia
                 </h3>
               </div>
@@ -1209,7 +1209,7 @@ export default function ProfileScreen() {
             {/* Grid de 4 Hitos */}
             <div className="grid grid-cols-2 gap-2.5">
               <div className={`p-3 rounded-xl border ${
-                isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+                isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <span className="text-[10px] text-slate-400 block font-semibold">Envíos Semanales:</span>
                 <p className="text-xl font-black text-[#F7931A] font-mono mt-0.5">
@@ -1219,7 +1219,7 @@ export default function ProfileScreen() {
               </div>
 
               <div className={`p-3 rounded-xl border ${
-                isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+                isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <span className="text-[10px] text-slate-400 block font-semibold">Calificación Positiva:</span>
                 <p className="text-xl font-black text-emerald-400 font-mono mt-0.5">
@@ -1229,7 +1229,7 @@ export default function ProfileScreen() {
               </div>
 
               <div className={`p-3 rounded-xl border ${
-                isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+                isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <span className="text-[10px] text-slate-400 block font-semibold">Comisiones Ahorradas:</span>
                 <p className="text-xl font-black text-emerald-400 font-mono mt-0.5">
@@ -1239,10 +1239,10 @@ export default function ProfileScreen() {
               </div>
 
               <div className={`p-3 rounded-xl border ${
-                isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+                isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <span className="text-[10px] text-slate-400 block font-semibold">Total Histórico:</span>
-                <p className={`text-xl font-black font-mono mt-0.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                <p className={`text-xl font-black font-mono mt-0.5 ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                   {userProfile.milestones?.totalTripsAllTime || 42}
                 </p>
                 <span className="text-[9px] text-slate-400">Viajes sin intermediarios</span>
@@ -1263,7 +1263,7 @@ export default function ProfileScreen() {
                 href={`https://api.whatsapp.com/send?text=${milestonesWhatsappText}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition-all"
+                className="px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-ink1 font-bold text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition-all"
                 title="Compartir en WhatsApp"
               >
                 <Share2 size={14} />
@@ -1274,12 +1274,12 @@ export default function ProfileScreen() {
 
           {/* 6. Programa de Enlace de Referidos P2P ("Invita a un Amigo") */}
           <div className={`p-4 rounded-2xl border shadow-xl relative overflow-hidden ${
-            isDark ? 'bg-[#121B2D] border-[#1F2D48]' : 'bg-white border-slate-200'
+            isDark ? 'bg-card border-line' : 'bg-white border-slate-200'
           }`}>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center space-x-2">
                 <Sparkles className="w-5 h-5 text-[#F0B90B]" />
-                <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-ink1' : 'text-slate-800'}`}>
                   Programa de Referidos P2P
                 </h3>
               </div>
@@ -1294,7 +1294,7 @@ export default function ProfileScreen() {
 
             {/* Enlace Único */}
             <div className={`p-2.5 rounded-xl border flex items-center justify-between gap-2 ${
-              isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-100 border-slate-300'
+              isDark ? 'bg-app border-slate-800' : 'bg-slate-100 border-slate-300'
             }`}>
               <div className="min-w-0 flex-1 font-mono text-xs text-[#F7931A] truncate">
                 {referralUrl}
@@ -1314,7 +1314,7 @@ export default function ProfileScreen() {
                 href={`https://api.whatsapp.com/send?text=${referralWhatsappText}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md flex items-center justify-center gap-2 active:scale-95 transition-all"
+                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-ink1 font-bold text-xs shadow-md flex items-center justify-center gap-2 active:scale-95 transition-all"
               >
                 <Share2 size={15} />
                 <span>Invitar por WhatsApp Directo</span>
@@ -1326,16 +1326,16 @@ export default function ProfileScreen() {
               isDark ? 'border-slate-800' : 'border-slate-200'
             }`}>
               <div className={`p-2.5 rounded-xl border ${
-                isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+                isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <span className="text-[10px] text-slate-400 block font-semibold">Amigos Invitados:</span>
-                <span className={`text-lg font-black font-mono block ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                <span className={`text-lg font-black font-mono block ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                   {userProfile?.referralsCount || 4} activos
                 </span>
               </div>
 
               <div className={`p-2.5 rounded-xl border ${
-                isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+                isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <span className="text-[10px] text-slate-400 block font-semibold">Recompensas Ganadas:</span>
                 <span className="text-lg font-black font-mono text-[#F0B90B] block">
@@ -1352,14 +1352,14 @@ export default function ProfileScreen() {
         <div className="space-y-4">
           {/* Selector de Pestañas Internas del Historial */}
           <div className={`p-1 rounded-2xl border flex items-center justify-between ${
-            isDark ? 'bg-[#0B132B] border-[#1F2D48]' : 'bg-slate-100 border-slate-200'
+            isDark ? 'bg-card border-line' : 'bg-slate-100 border-slate-200'
           }`}>
             <button
               onClick={() => setDashboardTab('cliente')}
               className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 ${
                 dashboardTab === 'cliente'
                   ? 'bg-gradient-to-r from-[#F7931A] to-[#E07D09] text-black shadow-glow-orange'
-                  : isDark ? 'text-[#8C9BB4] hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                  : isDark ? 'text-ink3 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <span>👤 Mis Solicitudes (Cliente)</span>
@@ -1370,7 +1370,7 @@ export default function ProfileScreen() {
               className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 ${
                 dashboardTab === 'cadete'
                   ? 'bg-gradient-to-r from-[#F7931A] to-[#E07D09] text-black shadow-glow-orange'
-                  : isDark ? 'text-[#8C9BB4] hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                  : isDark ? 'text-ink3 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <span>🛵 Mis Entregas / Fletes (Cadete)</span>
@@ -1380,11 +1380,11 @@ export default function ProfileScreen() {
           {/* Tarjeta 1: Monto Total Operado Multimoneda */}
           <div className={`p-4 rounded-2xl border relative overflow-hidden shadow-lg ${
             isDark
-              ? 'bg-gradient-to-br from-[#121B2D] to-[#0A1128] border-[#1F2D48]'
+              ? 'bg-gradient-to-br from-[#121B2D] to-[#0A1128] border-line'
               : 'bg-white border-slate-200'
           }`}>
             <div className="flex items-center justify-between mb-2">
-              <span className={`text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+              <span className={`text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-ink3' : 'text-slate-500'}`}>
                 Monto Total Operado ({dashboardTab === 'cadete' ? 'Ganancias' : 'Envíos'})
               </span>
               <span className="p-1.5 rounded-lg bg-[#F7931A]/20 text-[#F7931A]">
@@ -1401,30 +1401,30 @@ export default function ProfileScreen() {
 
             {/* Conversiones Automáticas en Dólares ($ USD) y ValensCoin (VALENS) */}
             <div className={`mt-3 pt-3 border-t grid grid-cols-2 gap-2 text-xs ${
-              isDark ? 'border-[#1F2D48]' : 'border-slate-100'
+              isDark ? 'border-line' : 'border-slate-100'
             }`}>
               <div className={`p-2 rounded-xl border ${
-                isDark ? 'bg-[#070C1E]/80 border-[#1F2D48]' : 'bg-slate-50 border-slate-200'
+                isDark ? 'bg-app/80 border-line' : 'bg-slate-50 border-slate-200'
               }`}>
-                <span className={`text-[10px] block ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+                <span className={`text-[10px] block ${isDark ? 'text-ink3' : 'text-slate-500'}`}>
                   Equivalente Ref. (USD)
                 </span>
-                <span className={`font-mono font-bold text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                <span className={`font-mono font-bold text-sm ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                   ${totalUsd.toFixed(2)} USD
                 </span>
-                <span className="text-[9px] text-[#8C9BB4] block font-mono">1 USD = $1.250 ARS</span>
+                <span className="text-[9px] text-ink3 block font-mono">1 USD = $1.250 ARS</span>
               </div>
 
               <div className={`p-2 rounded-xl border ${
-                isDark ? 'bg-[#070C1E]/80 border-[#1F2D48]' : 'bg-slate-50 border-slate-200'
+                isDark ? 'bg-app/80 border-line' : 'bg-slate-50 border-slate-200'
               }`}>
-                <span className={`text-[10px] block ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+                <span className={`text-[10px] block ${isDark ? 'text-ink3' : 'text-slate-500'}`}>
                   {dashboardTab === 'cadete' ? 'Propinas Recibidas' : 'Propinas Enviadas'}
                 </span>
                 <span className="font-mono font-bold text-sm text-[#F0B90B]">
                   {totalValens.toFixed(1)} VALENS
                 </span>
-                <span className="text-[9px] text-[#8C9BB4] block font-mono">1 VAL = 2 USD</span>
+                <span className="text-[9px] text-ink3 block font-mono">1 VAL = 2 USD</span>
               </div>
             </div>
           </div>
@@ -1432,16 +1432,16 @@ export default function ProfileScreen() {
           {/* Tarjeta 2: Métrica de Impacto P2P (Comisiones Ahorradas) & Total de Viajes */}
           <div className="grid grid-cols-2 gap-3">
             <div className={`p-3.5 rounded-2xl border ${
-              isDark ? 'bg-[#121B2D] border-[#1F2D48]' : 'bg-white border-slate-200'
+              isDark ? 'bg-card border-line' : 'bg-white border-slate-200'
             }`}>
               <div className="flex items-center space-x-1.5 mb-1 text-slate-400">
                 <TrendingUp className="w-3.5 h-3.5 text-[#F7931A]" />
                 <span className="text-[10px] uppercase font-bold tracking-wider">Viajes Cerrados</span>
               </div>
-              <p className={`text-xl font-black font-mono ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <p className={`text-xl font-black font-mono ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                 {totalTrips} viajes
               </p>
-              <p className={`text-[10px] mt-0.5 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+              <p className={`text-[10px] mt-0.5 ${isDark ? 'text-ink3' : 'text-slate-500'}`}>
                 100% verificados con PIN
               </p>
             </div>
@@ -1464,18 +1464,18 @@ export default function ProfileScreen() {
 
           {/* Tabla de Historial Reciente de Servicios en Alta Gracia */}
           <div className={`rounded-2xl border overflow-hidden ${
-            isDark ? 'bg-[#121B2D] border-[#1F2D48]' : 'bg-white border-slate-200 shadow-sm'
+            isDark ? 'bg-card border-line' : 'bg-white border-slate-200 shadow-sm'
           }`}>
             <div className={`p-3 border-b flex items-center justify-between ${
-              isDark ? 'border-[#1F2D48] bg-[#0F1726]' : 'border-slate-100 bg-slate-50'
+              isDark ? 'border-line bg-[#0F1726]' : 'border-slate-100 bg-slate-50'
             }`}>
               <div className="flex items-center space-x-2">
                 <History className="w-4 h-4 text-[#F7931A]" />
-                <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-ink1' : 'text-slate-800'}`}>
                   Historial Reciente • Alta Gracia
                 </h3>
               </div>
-              <span className={`text-[10px] font-mono ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+              <span className={`text-[10px] font-mono ${isDark ? 'text-ink3' : 'text-slate-500'}`}>
                 {activeOrders.length} registros
               </span>
             </div>
@@ -1486,14 +1486,14 @@ export default function ProfileScreen() {
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-center space-x-2">
-                        <span className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                        <span className={`text-xs font-bold ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                           {order.counterpart}
                         </span>
                         <span className="text-[9px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/40 font-bold">
                           ✓ {order.status}
                         </span>
                       </div>
-                      <p className={`text-[11px] mt-0.5 flex items-center gap-1 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-600'}`}>
+                      <p className={`text-[11px] mt-0.5 flex items-center gap-1 ${isDark ? 'text-ink3' : 'text-slate-600'}`}>
                         <MapPin className="w-3 h-3 text-[#F7931A] inline" />
                         {order.route}
                       </p>
@@ -1521,14 +1521,14 @@ export default function ProfileScreen() {
 
           {/* Control de Usuarios Bloqueados */}
           <div className={`rounded-2xl border overflow-hidden ${
-            isDark ? 'bg-[#121B2D] border-[#1F2D48]' : 'bg-white border-slate-200 shadow-xs'
+            isDark ? 'bg-card border-line' : 'bg-white border-slate-200 shadow-xs'
           }`}>
             <div className={`p-3 border-b flex items-center justify-between ${
-              isDark ? 'border-[#1F2D48] bg-[#0F1726]' : 'border-slate-100 bg-slate-50'
+              isDark ? 'border-line bg-[#0F1726]' : 'border-slate-100 bg-slate-50'
             }`}>
               <div className="flex items-center space-x-2">
                 <ShieldAlert className="w-4 h-4 text-rose-500" />
-                <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-ink1' : 'text-slate-800'}`}>
                   Usuarios Bloqueados ({blockedUserIds.length})
                 </h3>
               </div>
@@ -1556,7 +1556,7 @@ export default function ProfileScreen() {
                       <div
                         key={blockedId}
                         className={`flex items-center justify-between p-2.5 rounded-xl border ${
-                          isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+                          isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
                         }`}
                       >
                         <div className="flex items-center space-x-2.5 min-w-0">
@@ -1566,7 +1566,7 @@ export default function ProfileScreen() {
                             className="w-8 h-8 rounded-full object-cover border border-rose-500/50 flex-shrink-0"
                           />
                           <div className="min-w-0">
-                            <p className={`text-xs font-bold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                            <p className={`text-xs font-bold truncate ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                               {blockedPeer.name}
                             </p>
                             <p className="text-[10px] text-rose-400">Oculto del mapa • Mensajes bloqueados</p>
@@ -1589,7 +1589,7 @@ export default function ProfileScreen() {
 
           {/* Autocustodia: Frase Semilla BIP-39 */}
           <div className={`p-4 rounded-2xl border ${
-            isDark ? 'bg-[#070C1E] border-[#1F2D48]' : 'bg-slate-50 border-slate-200'
+            isDark ? 'bg-app border-line' : 'bg-slate-50 border-slate-200'
           }`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2.5">
@@ -1597,10 +1597,10 @@ export default function ProfileScreen() {
                   <Key className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  <h4 className={`text-xs font-bold ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                     Frase Semilla de Respaldo (BIP-39)
                   </h4>
-                  <p className={`text-[10px] ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
+                  <p className={`text-[10px] ${isDark ? 'text-ink3' : 'text-slate-500'}`}>
                     12 palabras secretas de autocustodia
                   </p>
                 </div>
@@ -1620,11 +1620,11 @@ export default function ProfileScreen() {
       {showSeedModal && (
         <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-[#0B132B] border-[#1F2D48] text-white' : 'bg-white border-slate-300 text-slate-900'
+            isDark ? 'bg-card border-line text-ink1' : 'bg-white border-slate-300 text-slate-900'
           }`}>
             <button
               onClick={closeSeedModal}
-              className="absolute top-3 right-3 text-slate-400 hover:text-white"
+              className="absolute top-3 right-3 text-slate-400 hover:text-ink1"
             >
               <X className="w-4 h-4" />
             </button>
@@ -1636,7 +1636,7 @@ export default function ProfileScreen() {
 
             {!isSeedUnlocked ? (
               <form onSubmit={handleUnlockSeed} className="space-y-3">
-                <p className={`text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-600'}`}>
+                <p className={`text-xs ${isDark ? 'text-ink3' : 'text-slate-600'}`}>
                   Ingresa tu PIN de seguridad de 4 dígitos para desencriptar tu frase semilla en la memoria local:
                 </p>
                 <input
@@ -1646,7 +1646,7 @@ export default function ProfileScreen() {
                   onChange={(e) => setSeedPin(e.target.value)}
                   placeholder="PIN de seguridad (ej. 1234)"
                   className={`w-full border rounded-xl px-3 py-2 text-sm font-mono tracking-widest text-center focus:outline-none focus:border-[#F7931A] ${
-                    isDark ? 'bg-[#070C1E] border-[#1F2D48] text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                    isDark ? 'bg-app border-line text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                   }`}
                   autoFocus
                 />
@@ -1665,7 +1665,7 @@ export default function ProfileScreen() {
                 </div>
 
                 <div className={`p-3 rounded-xl border grid grid-cols-3 gap-2 font-mono text-xs ${
-                  isDark ? 'bg-[#070C1E] border-[#1F2D48]' : 'bg-slate-100 border-slate-300'
+                  isDark ? 'bg-app border-line' : 'bg-slate-100 border-slate-300'
                 }`}>
                   {seedWords.map((word, index) => (
                     <div key={index} className="p-1 text-center bg-black/20 rounded">
@@ -1685,7 +1685,7 @@ export default function ProfileScreen() {
                   </button>
                   <button
                     onClick={closeSeedModal}
-                    className="min-h-[44px] px-4 py-2 rounded-xl bg-slate-800 text-white text-xs font-semibold active:scale-95 transition-all"
+                    className="min-h-[44px] px-4 py-2 rounded-xl bg-slate-800 text-ink1 text-xs font-semibold active:scale-95 transition-all"
                   >
                     Cerrar
                   </button>
