@@ -346,10 +346,10 @@ export default function HomeScreen() {
                   key={cat.id}
                   type="button"
                   onClick={() => selectCategoryAndGoToMap(cat.id)}
-                  className="w-full text-left rounded-card border border-line bg-card p-3.5 shadow-elev1 transition-all duration-200 group active:scale-[0.98] hover:border-accent/40"
+                  className="w-full text-left rounded-2xl border border-line bg-card p-4 transition-colors duration-150 group active:scale-[0.99] hover:bg-elev"
                 >
                   <div className="flex items-start space-x-3.5">
-                    <div className="w-12 h-12 rounded-card flex items-center justify-center flex-shrink-0 bg-accent/12 border border-accent/25 text-accent transition-transform duration-200 group-hover:scale-105">
+                    <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 bg-accent/15 text-accent transition-transform duration-150 group-hover:scale-105">
                       <CategoryGlyph id={cat.id} />
                     </div>
 
