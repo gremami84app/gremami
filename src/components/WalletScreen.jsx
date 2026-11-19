@@ -413,9 +413,7 @@ export default function WalletScreen() {
               ? 'bg-gradient-to-br from-[#121B2D] via-[#101726] to-[#070C1E] border-[#1F2D48]'
               : 'bg-gradient-to-br from-white via-slate-50 to-amber-50/50 border-slate-200'
           }`}>
-            {/* Glow overlay neón */}
-            <div className="absolute top-0 right-0 w-44 h-44 bg-[#F7931A]/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[#E02424]/12 rounded-full blur-3xl pointer-events-none" />
+            {/* (S09.7) Orbes de glow eliminados: profundidad por borde, no por blur */}
 
             {/* Network Badge */}
             <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
@@ -442,15 +440,19 @@ export default function WalletScreen() {
               </p>
             </div>
 
-            <div className="my-1.5 flex items-baseline space-x-2">
-              <h2 className="text-3xl sm:text-4xl font-black text-[#F0B90B] font-mono tracking-tight drop-shadow-sm">
-                {Math.floor(balance)}
-              </h2>
-              <span className={`text-base font-bold font-mono ${isDark ? 'text-gray-300' : 'text-slate-700'}`}>VAL</span>
+            {/* (S09.7) Jerarquía fintech: pesos como ancla, VAL como token secundario */}
+            <div className="my-1.5">
+              <p className={`text-xs font-medium ${isDark ? 'text-ink3' : 'text-ink3'}`}>Equivalente en pesos</p>
+              <div className="flex items-baseline gap-2">
+                <h2 className="text-[32px] leading-none font-bold text-ink1 tracking-tight">
+                  ${(Math.floor(balance) * 2500).toLocaleString('es-AR')}
+                </h2>
+                <span className="text-sm font-semibold text-ink3">ARS</span>
+              </div>
+              <p className="text-xs text-ink3 mt-1">
+                {Math.floor(balance)} VAL · token de agradecimiento por cada servicio
+              </p>
             </div>
-            <p className={`text-xs font-mono font-medium ${isDark ? 'text-[#8C9BB4]' : 'text-slate-600'}`}>
-              ≈ ${(Math.floor(balance) * 2.0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} USD • ${(Math.floor(balance) * 2500).toLocaleString('es-AR')} ARS (Tasa P2P de Referencia)
-            </p>
 
             {/* (S09.5) La info técnica queda detrás de un desplegable */}
             <details className={`mt-3 rounded-xl border px-3 py-2 text-xs ${isDark ? 'bg-[#070C1E]/70 border-[#1F2D48] text-[#8C9BB4]' : 'bg-white/70 border-slate-200 text-slate-600'}`}>
