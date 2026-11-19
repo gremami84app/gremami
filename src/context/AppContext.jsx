@@ -1414,7 +1414,17 @@ export function AppProvider({ children }) {
         console.warn('[S09.6a] No se pudieron leer mis pedidos:', error.message);
         return [];
       }
-      setMyOrders(data || []);
+      // (S10c) Estabilidad referencial: si los datos son iguales, devolvemos el MISMO
+      // array. React hace bail-out y se corta el bucle de renders que disparaba
+      // ClientOrdersPanel al re-ejecutar su efecto en cada render del provider.
+      setMyOrders((prev) => {
+        const next = data || [];
+        try {
+          return JSON.stringify(prev) === JSON.stringify(next) ? prev : next;
+        } catch (e) {
+          return next;
+        }
+      });
       return data || [];
     } catch (e) {
       console.warn('[S09.6a] Error inesperado leyendo mis pedidos:', e?.message || e);
