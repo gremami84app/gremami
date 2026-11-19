@@ -1,44 +1,54 @@
 import { createClient } from '@supabase/supabase-js';
 
-// 1. Detección y Configuración Segura de Variables de Entorno
+// 1. Lectura ESTRICTA de variables de entorno (SIN fallbacks hardcodeados).
 const rawEnvUrl = import.meta.env.VITE_SUPABASE_URL;
 const rawEnvKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Validar que la URL sea un enlace HTTP/HTTPS válido
 const isValidHttpUrl = (str) => {
   if (!str || typeof str !== 'string') return false;
-  return (str.startsWith('https://') || str.startsWith('http://')) && !str.startsWith('sb_');
+  const s = str.trim();
+  return (s.startsWith('https://') || s.startsWith('http://')) && !s.startsWith('sb_');
 };
 
-export const envKey = (rawEnvKey && !rawEnvKey.startsWith('http')) 
-  ? rawEnvKey 
-  : 'sb_publishable_dmaLw22X8HXQ0ZIwIS-qag_2SVgWxlN';
+const isPlaceholderUrl = (str) =>
+  !str || typeof str !== 'string' || str.includes('your-project-id') || str.includes('<');
 
-// Asegurar que createClient use la URL de Supabase real
-export const envUrl = (isValidHttpUrl(rawEnvUrl) && !rawEnvUrl.includes('your-project-id')) 
-  ? rawEnvUrl 
-  : 'https://wbgaeniwnshlmppvmlcf.supabase.co';
+const isPublishableKey = (str) =>
+  typeof str === 'string' &&
+  !str.includes('your_key') &&
+  !str.includes('your-key') &&
+  !str.includes('<') &&
+  (str.startsWith('sb_publishable_') || str.startsWith('sb_') || str.startsWith('eyJ'));
 
-// isSupabaseConfigured: acepta claves JWT (eyJ...) y claves publishable modernas (sb_publishable_...)
-export const isSupabaseConfigured = Boolean(
-  isValidHttpUrl(envUrl) &&
-  !envUrl.includes('your-project-id') &&
-  envKey &&
-  (envKey.startsWith('sb_') || envKey.startsWith('eyJ') || envKey.startsWith('sb_publishable_'))
-);
+export const envUrl =
+  isValidHttpUrl(rawEnvUrl) && !isPlaceholderUrl(rawEnvUrl) ? rawEnvUrl.trim() : '';
 
-export const supabase = createClient(envUrl, envKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true
-  },
-  realtime: {
-    params: {
-      eventsPerSecond: 10
-    }
+export const envKey =
+  typeof rawEnvKey === 'string' &&
+  !rawEnvKey.trim().startsWith('http') &&
+  isPublishableKey(rawEnvKey.trim())
+    ? rawEnvKey.trim()
+    : '';
+
+export const isSupabaseConfigured = Boolean(envUrl && envKey);
+
+const NOT_CONFIGURED_URL = 'https://not-configured.invalid';
+const NOT_CONFIGURED_KEY = 'not-configured';
+
+if (!isSupabaseConfigured) {
+  console.error(
+    '[Gremami] Supabase no configurado. Definí VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en tu .env.'
+  );
+}
+
+export const supabase = createClient(
+  isSupabaseConfigured ? envUrl : NOT_CONFIGURED_URL,
+  isSupabaseConfigured ? envKey : NOT_CONFIGURED_KEY,
+  {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+    realtime: { params: { eventsPerSecond: 10 } }
   }
-});
+);
 
 // ====================================================================
 // FUNCIÓN CENTRAL: SINCRONIZACIÓN AUTOMÁTICA DE PERFIL Y BILLETERA DUAL

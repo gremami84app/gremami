@@ -115,6 +115,10 @@ CREATE TABLE IF NOT EXISTS public.orders (
 );
 
 -- Vista Segura: Perfiles Públicos con Enmascaramiento de WhatsApp Sensible
+-- NOTA DE SEGURIDAD (S05): esta vista es owner-privileged A PROPÓSITO (security_invoker = false).
+-- Necesita leer todas las filas de profiles (la RLS de profiles solo permite la fila propia) y su
+-- seguridad depende de la lista curada de columnas + el enmascarado de whatsapp por auth.uid().
+-- NO cambiar a security_invoker = true sin rediseñar el mapa de cadetes y la búsqueda de usuarios.
 CREATE OR REPLACE VIEW public.profiles_public AS
   SELECT 
     p.id,
@@ -909,7 +913,7 @@ UPDATE public.wallets SET balance_valens = FLOOR(COALESCE(balance_val, valens_ba
 -- ====================================================================
 -- 20. TABLA: TRANSACTIONS (Alias uniforme de valens_transactions)
 -- ====================================================================
-CREATE OR REPLACE VIEW public.transactions AS
+CREATE OR REPLACE VIEW public.transactions WITH (security_invoker = true) AS
   SELECT
     id,
     order_id,
