@@ -285,7 +285,7 @@ export default function HomeScreen() {
                         {cat.subtitle}
                       </p>
 
-                      <div className={`mt-2 flex items-center justify-between text-xs ${
+                      <div className={`mt-2 flex items-center justify-between text-sm ${
                         isDark ? 'text-[#8C9BB4]' : 'text-slate-500'
                       }`}>
                         <span className={`flex items-center ${isDark ? 'text-white' : 'text-slate-700'}`}>
@@ -361,7 +361,7 @@ export default function HomeScreen() {
                       {cat.subtitle}
                     </p>
 
-                    <div className={`mt-2 flex items-center justify-between text-xs ${
+                    <div className={`mt-2 flex items-center justify-between text-sm ${
                       isDark ? 'text-[#8C9BB4]' : 'text-slate-500'
                     }`}>
                       <span className={`flex items-center ${isDark ? 'text-white' : 'text-slate-700'}`}>
