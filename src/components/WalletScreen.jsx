@@ -257,7 +257,7 @@ export default function WalletScreen() {
             ? isDark ? 'text-[#F0B90B] bg-[#121B2D] border-[#1F2D48]' : 'text-amber-700 bg-amber-50 border-amber-200 font-bold'
             : isDark ? 'text-emerald-400 bg-[#064E3B]/40 border-emerald-500/40' : 'text-emerald-700 bg-emerald-50 border-emerald-300 font-bold'
         }`}>
-          {walletSectionTab === 'wallet' ? '💳 Billetera ValensCoin' : '🎓 Escuela Cripto P2P'}
+          {walletSectionTab === 'wallet' ? '💳 Mi billetera' : '🎓 Escuela Cripto'}
         </span>
       </div>
 
@@ -277,7 +277,7 @@ export default function WalletScreen() {
           }`}
         >
           <CreditCard className={`w-4 h-4 ${walletSectionTab === 'wallet' ? 'text-black' : 'text-[#F7931A]'}`} />
-          <span>💳 Billetera ValensCoin</span>
+          <span>💳 Mi billetera</span>
         </button>
 
         <button
@@ -423,16 +423,14 @@ export default function WalletScreen() {
                 isDark ? 'bg-[#070C1E]/90 border-[#1F2D48]' : 'bg-slate-100 border-slate-200'
               }`}>
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className={`text-xs font-mono ${isDark ? 'text-gray-200' : 'text-slate-700'}`}>Valens Testnet L1</span>
+                {/* (S09.5) Sin jerga técnica en primer plano */}
+                <span className={`text-xs font-semibold ${isDark ? 'text-gray-200' : 'text-slate-700'}`}>ValensCoin</span>
               </div>
               <div className="flex items-center space-x-1.5">
-                <span className={`text-xs font-black px-2 py-0.5 rounded-full border ${
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${
                   isDark ? 'text-[#F0B90B] bg-[#F7931A]/10 border-[#F7931A]/30' : 'text-amber-800 bg-amber-100 border-amber-300 font-bold'
                 }`}>
-                  1.000.000.000.000 VAL (1 Billón)
-                </span>
-                <span className={`text-xs font-mono ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
-                  Bloque #840,129
+                  Token de prueba
                 </span>
               </div>
             </div>
@@ -440,15 +438,8 @@ export default function WalletScreen() {
             {/* Balance Title & Amount */}
             <div className="flex flex-wrap items-center justify-between gap-1.5 mb-1">
               <p className={`text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
-                Saldo Disponible
+                Saldo de agradecimiento
               </p>
-              <span className={`text-xs font-black px-2.5 py-0.5 rounded-full border shadow-xs flex items-center gap-1 ${
-                isDark 
-                  ? 'bg-gradient-to-r from-[#F7931A]/20 to-[#E02424]/20 text-[#F0B90B] border-[#F7931A]/40' 
-                  : 'bg-amber-100 text-amber-900 border-amber-300 font-bold'
-              }`}>
-                <span>🪙 0 Decimales (Enteros)</span>
-              </span>
             </div>
 
             <div className="my-1.5 flex items-baseline space-x-2">
@@ -460,6 +451,16 @@ export default function WalletScreen() {
             <p className={`text-xs font-mono font-medium ${isDark ? 'text-[#8C9BB4]' : 'text-slate-600'}`}>
               ≈ ${(Math.floor(balance) * 2.0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} USD • ${(Math.floor(balance) * 2500).toLocaleString('es-AR')} ARS (Tasa P2P de Referencia)
             </p>
+
+            {/* (S09.5) La info técnica queda detrás de un desplegable */}
+            <details className={`mt-3 rounded-xl border px-3 py-2 text-xs ${isDark ? 'bg-[#070C1E]/70 border-[#1F2D48] text-[#8C9BB4]' : 'bg-white/70 border-slate-200 text-slate-600'}`}>
+              <summary className="cursor-pointer font-semibold select-none">¿Qué es ValensCoin?</summary>
+              <p className="mt-2 leading-relaxed">
+                Es un <strong>token de agradecimiento</strong>: se suma a tu billetera cada vez que completás un servicio
+                y sirve para propinas y canjes entre vecinos. Es un token de prueba (testnet), sin valor monetario real.
+              </p>
+              <p className="mt-1 opacity-80">Detalles técnicos: red Valens L1 · 1.000.000.000.000 VAL · sin decimales.</p>
+            </details>
 
             {/* Botones de Acción: Recibir (QR), Enviar VAL & Grifo (+5 VAL) */}
             <div className="mt-5 grid grid-cols-3 gap-2">
@@ -558,7 +559,7 @@ export default function WalletScreen() {
           }`}>
             <div className="flex items-center justify-between mb-3">
               <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                Historial de Movimientos On-Chain
+                Historial de Movimientos
               </h3>
               <span className={`text-xs font-mono ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                 {transactions.length} transacciones
@@ -956,7 +957,7 @@ export default function WalletScreen() {
               </div>
               <div className="text-left">
                 <h3 className="text-sm font-bold">Enviar ValensCoin</h3>
-                <p className={`text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>Transferencia directa L1 (0 decimales)</p>
+                <p className={`text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>Transferencia directa (enteros)</p>
               </div>
             </div>
 
@@ -1208,7 +1209,7 @@ export default function WalletScreen() {
                 <div className={`p-2.5 rounded-xl border text-left ${
                   isDark ? 'bg-[#070C1E] border-[#1F2D48]' : 'bg-slate-50 border-slate-200'
                 }`}>
-                  <span className="text-xs text-slate-400 block mb-0.5">Clave Pública (Dirección Testnet L1):</span>
+                  <span className="text-xs text-slate-400 block mb-0.5">Tu dirección para recibir:</span>
                   <span className="text-xs font-mono text-[#F0B90B] break-all select-all font-semibold block">
                     {userPublicKey}
                   </span>
