@@ -1,4 +1,4 @@
-import { supabase, isSupabaseConfigured } from './supabaseClient';
+import { supabase, isSupabaseConfigured, valensService as baseValensService } from './supabaseClient';
 
 // --------------------------------------------------------------------
 // Utilidades de identidad (S07): las tablas Postgres usan columnas UUID.
@@ -448,6 +448,336 @@ export const releaseRewardByPin = async ({ order_id, pin, cadet_id = 'current-ca
     amount_val: 1.0,
     message: 'Entrega verificada con PIN local (Modo Offline/Simulado)'
   };
+};
+
+// ====================================================================
+// S11 — BILLETERA REAL VALENSCOIN: dirección persistente, transferencias
+// anti-doble-gasto y recompensa de la Escuela Cripto (+5 VAL).
+// --------------------------------------------------------------------
+// Todo lo que toca saldos vive en RPC SECURITY DEFINER del servidor
+// (ensure_wallet_address, transfer_valens_tokens, claim_school_reward).
+// El cliente nunca modifica public.wallets directamente.
+// ====================================================================
+const VALENS_ADDRESS_RE = /^valens1q[a-z0-9]{6,64}$/i;
+
+export const isValensAddress = (value) =>
+  typeof value === 'string' && VALENS_ADDRESS_RE.test(value.trim());
+
+const TX_TITLES = {
+  direct_transfer: 'Transferencia P2P',
+  faucet: 'Grifo / Recompensa VAL',
+  recompensa_pin: 'Recompensa por entrega',
+  reward_release: 'Recompensa por entrega',
+  servicio: 'Servicio P2P',
+  dex: 'Mercado DEX',
+  tip: 'Propina P2P'
+};
+
+/**
+ * Normaliza una fila de public.valens_transactions al formato que consume
+ * la UI de WalletScreen ({ amount, title, date, hash, status, note }).
+ */
+export const mapValensTransaction = (tx, userId) => {
+  const magnitude = Math.abs(Math.floor(Number(tx?.amount_val) || 0));
+  const isIncoming = Boolean(
+    tx && userId && (tx.to_user === userId || tx.receiver_id === userId)
+  );
+  const createdAt = tx?.created_at ? new Date(tx.created_at) : null;
+  const validDate = createdAt && !Number.isNaN(createdAt.getTime());
+  const id = String(tx?.id || `tx-${Date.now()}`);
+
+  return {
+    id,
+    type: tx?.type || 'direct_transfer',
+    amount: isIncoming ? magnitude : -magnitude,
+    amount_val: isIncoming ? magnitude : -magnitude,
+    title: TX_TITLES[tx?.type] || 'Movimiento VAL',
+    date: validDate
+      ? createdAt.toLocaleString('es-AR', {
+          day: '2-digit',
+          month: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      : 'Recién',
+    hash: `0x${id.replace(/-/g, '').slice(0, 12)}`,
+    status: 'Confirmado',
+    note: tx?.description || ''
+  };
+};
+
+/**
+ * Lee saldo real e historial reciente de valens_transactions desde Supabase.
+ * Devuelve null si no hay sesión/UUID válido o si la red no respondió.
+ */
+export const getWalletSnapshot = async (userId) => {
+  if (!isSupabaseConfigured || !isUuid(userId)) return null;
+
+  let wallet = null;
+  let transactions = null;
+
+  try {
+    const { data, error } = await supabase
+      .from('wallets')
+      .select('user_id, balance_valens, balance_val, valens_balance, public_address')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (!error && data) wallet = data;
+  } catch (e) {
+    console.warn('Aviso al leer wallets en Supabase:', e);
+  }
+
+  try {
+    const ownershipFilter = ['from_user', 'to_user', 'sender_id', 'receiver_id']
+      .map((column) => `${column}.eq.${userId}`)
+      .join(',');
+
+    const { data, error } = await supabase
+      .from('valens_transactions')
+      .select('id, from_user, to_user, sender_id, receiver_id, amount_val, amount_ars, type, description, created_at')
+      .or(ownershipFilter)
+      .order('created_at', { ascending: false })
+      .limit(30);
+
+    if (!error && Array.isArray(data)) {
+      transactions = data.map((tx) => mapValensTransaction(tx, userId));
+    }
+  } catch (e) {
+    console.warn('Aviso al leer valens_transactions en Supabase:', e);
+  }
+
+  if (!wallet && transactions === null) return null;
+
+  const rawBalance = wallet
+    ? Number(wallet.balance_valens ?? wallet.balance_val ?? wallet.valens_balance ?? 0)
+    : null;
+
+  return {
+    balance:
+      rawBalance !== null && Number.isFinite(rawBalance)
+        ? Math.max(0, Math.floor(rawBalance))
+        : null,
+    publicAddress: wallet?.public_address || null,
+    wallet,
+    transactions
+  };
+};
+
+/**
+ * Traduce errores técnicos de PostgREST/PLpgSQL a mensajes claros de UI.
+ */
+const friendlyTransferError = (raw) => {
+  const message = String(raw || '');
+  if (/saldo|insufficient|not enough|balance/i.test(message)) {
+    return 'Saldo VAL insuficiente.';
+  }
+  if (/propia|mismo usuario|self/i.test(message)) {
+    return 'No podés transferirte a tu propia dirección.';
+  }
+  if (/direcci[oó]n|address|no encontrada|not found/i.test(message)) {
+    return 'Dirección no encontrada en la red Valens.';
+  }
+  if (/autorizado|unauthorized|jwt|sesi[oó]n|session/i.test(message)) {
+    return 'Sesión expirada: volvé a iniciar sesión para transferir.';
+  }
+  return message || 'No se pudo completar la transferencia.';
+};
+
+/**
+ * Invoca transfer_valens_tokens. Prueba la firma documentada (S11,
+ * p_receiver_address) y reintenta con la firma previa (p_receiver_addr)
+ * si la función desplegada todavía usa el nombre corto del parámetro.
+ */
+const callTransferValensRpc = async ({ senderId, receiverAddress, amount }) => {
+  const primary = await supabase.rpc('transfer_valens_tokens', {
+    p_sender_id: senderId,
+    p_receiver_address: receiverAddress,
+    p_amount: amount
+  });
+
+  if (!primary.error) return primary;
+
+  const message = primary.error.message || '';
+  if (/could not find the function|p_receiver_address|schema cache/i.test(message)) {
+    return supabase.rpc('transfer_valens_tokens', {
+      p_sender_id: senderId,
+      p_receiver_addr: receiverAddress,
+      p_amount: amount
+    });
+  }
+
+  return primary;
+};
+
+/**
+ * Devuelve (y crea si hace falta) la dirección Valens persistente del usuario
+ * autenticado vía public.ensure_wallet_address().
+ */
+const ensureWalletAddress = async () => {
+  if (!isSupabaseConfigured) return { success: false, offline: true, address: null };
+
+  try {
+    const { data, error } = await supabase.rpc('ensure_wallet_address');
+
+    if (error) {
+      console.warn('Aviso RPC ensure_wallet_address:', error.message);
+      // Respaldo: leer la dirección ya persistida sin crearla desde el cliente.
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const uid = session?.user?.id;
+        if (uid) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('wallet_address')
+            .eq('id', uid)
+            .maybeSingle();
+          if (profile?.wallet_address) {
+            return { success: true, address: profile.wallet_address, remote: false };
+          }
+        }
+      } catch (e) {}
+      return { success: false, address: null, error: error.message };
+    }
+
+    const address =
+      typeof data === 'string'
+        ? data
+        : data?.wallet_address || data?.address || null;
+
+    return { success: Boolean(address), address, remote: true };
+  } catch (e) {
+    console.warn('Excepción RPC ensure_wallet_address:', e);
+    return { success: false, address: null, error: 'No se pudo cargar la dirección Valens.' };
+  }
+};
+
+/**
+ * Reclama la recompensa única de 5 VAL de la Escuela Cripto (≥ 4/5).
+ */
+const claimSchoolReward = async (quizScore) => {
+  const intScore = Math.floor(Number(quizScore));
+
+  if (!Number.isFinite(intScore) || intScore < 0 || intScore > 5) {
+    return { success: false, error: 'Puntaje inválido: debe estar entre 0 y 5.' };
+  }
+  if (intScore < 4) {
+    return {
+      success: false,
+      passed: false,
+      error: 'Necesitás al menos 4/5 respuestas correctas para aprobar la Escuela Cripto.'
+    };
+  }
+  if (!isSupabaseConfigured) {
+    return { success: false, offline: true, error: 'Supabase no está configurado.' };
+  }
+
+  try {
+    const { data, error } = await supabase.rpc('claim_school_reward', {
+      p_quiz_score: intScore
+    });
+
+    if (error) {
+      console.warn('Aviso RPC claim_school_reward:', error.message);
+      if (/could not find the function|schema cache/i.test(error.message || '')) {
+        return {
+          success: false,
+          error: 'La recompensa de la Escuela Cripto todavía no está disponible en el servidor.'
+        };
+      }
+      return { success: false, error: error.message || 'No se pudo reclamar la recompensa.' };
+    }
+
+    return data || { success: false, error: 'Respuesta vacía del servidor.' };
+  } catch (e) {
+    console.warn('Excepción RPC claim_school_reward:', e);
+    return { success: false, error: 'No se pudo conectar con el servidor. Reintentá en unos segundos.' };
+  }
+};
+
+/**
+ * Estado del cuestionario/persistencia de la recompensa en Supabase.
+ */
+const getSchoolProgress = async (userId) => {
+  if (!isSupabaseConfigured || !isUuid(userId)) return null;
+
+  try {
+    const { data, error } = await supabase
+      .from('crypto_school_progress')
+      .select('user_id, quiz_score, passed, reward_claimed, reward_amount, completed_at')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error) return null;
+    return data || null;
+  } catch (e) {
+    return null;
+  }
+};
+
+/**
+ * (S11) valensService extendido: conserva claimFaucet/getTokenGenesis del
+ * cliente base y agrega la billetera real con manejo claro de errores.
+ */
+export const valensService = {
+  ...baseValensService,
+
+  ensureWalletAddress,
+  claimSchoolReward,
+  getSchoolProgress,
+  getWalletSnapshot,
+
+  /**
+   * Transfiere VAL enteros contra la RPC atómica del servidor.
+   * Ya NO simula éxito local: si falla el servidor, devuelve success=false.
+   */
+  transferTokens: async ({ senderId, receiverAddress, amount } = {}) => {
+    const intAmount = Math.floor(Number(amount));
+    const address = String(receiverAddress || '').trim();
+
+    if (!Number.isFinite(intAmount) || intAmount <= 0) {
+      return { success: false, error: 'El monto debe ser un número entero mayor a 0 VAL.' };
+    }
+    if (!isValensAddress(address)) {
+      return { success: false, error: 'Dirección de destino inválida. Debe ser una dirección valens1q...' };
+    }
+    if (!isSupabaseConfigured) {
+      return { success: false, offline: true, error: 'Supabase no está configurado.' };
+    }
+    if (!isUuid(senderId)) {
+      return { success: false, offline: true, error: 'No hay sesión Valens activa.' };
+    }
+
+    try {
+      const { data, error } = await callTransferValensRpc({
+        senderId,
+        receiverAddress: address,
+        amount: intAmount
+      });
+
+      if (error) {
+        console.warn('Error en RPC transfer_valens_tokens:', error.message);
+        return { success: false, error: friendlyTransferError(error.message) };
+      }
+      if (!data) {
+        return { success: false, error: 'Respuesta vacía del servidor.' };
+      }
+      if (data.success === false) {
+        return { ...data, success: false, error: friendlyTransferError(data.error) };
+      }
+
+      return {
+        ...data,
+        success: true,
+        remote: true,
+        amount: intAmount,
+        receiverAddress: address
+      };
+    } catch (e) {
+      console.warn('Excepción RPC transfer_valens_tokens:', e);
+      return { success: false, error: 'No se pudo conectar con la red Valens. Reintentá en unos segundos.' };
+    }
+  }
 };
 
 export { default as supabaseClient } from './supabaseClient';

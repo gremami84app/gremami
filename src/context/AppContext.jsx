@@ -14,16 +14,17 @@ import {
   MOCK_COMMUNITY_USERS
 } from '../data/mockData';
 import { playP2PAlertChime, playCelebrationSound } from '../utils/audioAlert';
-import { 
-  saveBidToSupabase, 
+import {
+  saveBidToSupabase,
   recordDeliveryTransactionInSupabase,
   saveFiatPaymentConfigToSupabase,
   saveOrderToSupabase,
   persistDeliveryWithOrder,
   newUuid,
-  isUuid
+  isUuid,
+  valensService
 } from '../lib/supabase';
-import { authService, profileService, isSupabaseConfigured, supabase, valensService, pinService, orderService, offerService } from '../lib/supabaseClient';
+import { authService, profileService, isSupabaseConfigured, supabase, pinService, orderService, offerService } from '../lib/supabaseClient';
 import { derivePublicAddress, generateSeedPhrase, generateValensQrUri, localTransferTokens, localClaimFaucet } from '../services/cryptoWalletService';
 
 
@@ -185,6 +186,20 @@ export function AppProvider({ children }) {
   // Dirección y semilla criptográfica BIP-39 (solo en memoria; nunca en localStorage)
   const [userSeedWords] = useState(() => generateSeedPhrase());
   const [userPublicKey] = useState(() => derivePublicAddress(userSeedWords));
+
+  // (S11) Dirección Valens REAL del usuario autenticado, persistida en
+  // public.profiles.wallet_address vía ensure_wallet_address(). Para invitados
+  // (sin sesión Supabase) se usa la dirección local efímera userPublicKey.
+  const [walletAddress, setWalletAddress] = useState('');
+
+  // (S11) La recompensa de 5 VAL de la Escuela Cripto se otorga una sola vez.
+  const [schoolRewardClaimed, setSchoolRewardClaimed] = useState(() => {
+    try {
+      return localStorage.getItem('gremami_crypto_school_reward') === '1';
+    } catch (e) {
+      return false;
+    }
+  });
   const [userName, setUserName] = useState(() => {
     const urlTokens = extractTokensFromUrl();
     if (urlTokens?.accessToken) {
@@ -397,6 +412,62 @@ export function AppProvider({ children }) {
     setToast({ message, type, id: Date.now() });
   };
 
+  // ------------------------------------------------------------------
+  // (S11) Identidad Valens real: dirección persistente, saldo e historial.
+  // ------------------------------------------------------------------
+  const persistSchoolRewardClaimed = (claimed) => {
+    setSchoolRewardClaimed(Boolean(claimed));
+    try {
+      localStorage.setItem('gremami_crypto_school_reward', claimed ? '1' : '0');
+    } catch (e) {}
+  };
+
+  const applyWalletSnapshot = async (userId) => {
+    if (!userId) return null;
+    const snapshot = await valensService.getWalletSnapshot(userId);
+    if (snapshot) {
+      if (typeof snapshot.balance === 'number') {
+        setBalance(snapshot.balance);
+      }
+      if (Array.isArray(snapshot.transactions)) {
+        setTransactions(snapshot.transactions);
+      }
+    }
+    return snapshot;
+  };
+
+  const loadWalletIdentity = async (userId) => {
+    if (!userId || !isUuid(userId)) return null;
+
+    try {
+      const [addressResult, snapshot, progress] = await Promise.all([
+        valensService.ensureWalletAddress(),
+        valensService.getWalletSnapshot(userId),
+        valensService.getSchoolProgress(userId)
+      ]);
+
+      if (addressResult?.address) {
+        setWalletAddress(addressResult.address);
+      }
+      if (snapshot) {
+        if (typeof snapshot.balance === 'number') {
+          setBalance(snapshot.balance);
+        }
+        if (Array.isArray(snapshot.transactions)) {
+          setTransactions(snapshot.transactions);
+        }
+      }
+      if (progress) {
+        persistSchoolRewardClaimed(Boolean(progress.reward_claimed));
+      }
+
+      return { address: addressResult?.address || null, snapshot, progress };
+    } catch (e) {
+      console.warn('Aviso al cargar la identidad Valens:', e);
+      return null;
+    }
+  };
+
   // Sincronización automática de Sesión de Supabase y Google OAuth
   useEffect(() => {
     // Helper centralizado para sincronizar inmediatamente la sesión de usuario
@@ -437,6 +508,9 @@ export function AppProvider({ children }) {
         if (wallet && typeof wallet.valens_balance === 'number') {
           setBalance(wallet.valens_balance);
         }
+
+        // (S11) Dirección Valens persistente + saldo e historial reales.
+        await loadWalletIdentity(user.id);
       } catch (err) {
         console.warn('Advertencia al sincronizar perfil en segundo plano:', err);
       }
@@ -894,25 +968,54 @@ export function AppProvider({ children }) {
     }
   };
 
-  // Transferir VAL a otra dirección (enteros estrictos, 0 decimales)
+  // Transferir VAL a otra dirección (enteros estrictos, 0 decimales).
+  // (S11) Con sesión Supabase la RPC es la fuente de verdad: primero se confirma
+  // en el servidor (débito atómico anti-doble-gasto) y recién después se
+  // refrescan saldo e historial. El fallback local queda solo para invitados.
   const transferTokens = async (receiverAddress, amount) => {
     const intAmount = Math.floor(Number(amount));
-    if (intAmount <= 0) {
+    const address = String(receiverAddress || '').trim();
+
+    if (!Number.isFinite(intAmount) || intAmount <= 0) {
       showToast('❌ El monto debe ser un número entero mayor a 0 VAL.', 'error');
       return { success: false, error: 'invalid_amount' };
     }
-    if (!receiverAddress || !receiverAddress.trim().startsWith('valens')) {
+    if (!address.startsWith('valens')) {
       showToast('❌ Dirección inválida. Debe iniciar con valens...', 'error');
       return { success: false, error: 'invalid_address' };
     }
+
+    const senderId = currentUser?.id;
+    const canUseRemote = Boolean(isSupabaseConfigured && senderId && isUuid(senderId));
+
+    if (canUseRemote) {
+      const result = await valensService.transferTokens({
+        senderId,
+        receiverAddress: address,
+        amount: intAmount
+      });
+
+      if (!result?.success) {
+        showToast(`❌ ${result?.error || 'La transferencia no pudo completarse.'}`, 'error');
+        return { success: false, error: result?.error || 'transfer_failed' };
+      }
+
+      // Refrescar saldo e historial reales desde Supabase.
+      await applyWalletSnapshot(senderId);
+
+      showToast(`⚡ ${intAmount} VAL enviados a ${address.slice(0, 14)}...`, 'success');
+      return { success: true, remote: true, txHash: result.tx_hash || null, amount: intAmount };
+    }
+
+    // Fallback local: solo sin sesión Supabase (modo demo/offline).
     if (Math.floor(balance) < intAmount) {
       showToast(`❌ Saldo insuficiente. Tienes ${Math.floor(balance)} VAL disponibles.`, 'error');
       return { success: false, error: 'insufficient_funds' };
     }
 
     const { success, txHash, error: localErr } = localTransferTokens({
-      fromAddress: userPublicKey,
-      toAddress: receiverAddress.trim(),
+      fromAddress: walletAddress || userPublicKey,
+      toAddress: address,
       amount: intAmount,
       senderWallet: { balance_valens: Math.floor(balance) }
     });
@@ -929,25 +1032,72 @@ export function AppProvider({ children }) {
       id: `tx-transfer-${Date.now()}`,
       type: 'transfer',
       amount: -intAmount,
-      title: `Envío a ${receiverAddress.trim().slice(0, 14)}...`,
+      title: `Envío a ${address.slice(0, 14)}...`,
       date: 'Recién',
       hash: txHash,
-      status: 'Confirmado',
+      status: 'Confirmado (local)',
       note: `Transferencia P2P de ${intAmount} VAL`
     };
     setTransactions((prev) => [newTx, ...prev]);
-    showToast(`⚡ ${intAmount} VAL enviados a ${receiverAddress.trim().slice(0, 14)}...`, 'success');
+    showToast(`⚡ ${intAmount} VAL enviados a ${address.slice(0, 14)}...`, 'success');
 
-    // Intentar RPC remota en segundo plano
-    if (currentUser?.id) {
-      valensService.transferTokens({
-        senderId: currentUser.id,
-        receiverAddress: receiverAddress.trim(),
-        amount: intAmount
-      }).catch(() => {});
+    return { success: true, local: true, txHash, amount: intAmount };
+  };
+
+  // (S11) Escuela Cripto: reclama la recompensa real de +5 VAL (una sola vez).
+  const claimSchoolReward = async (quizScore) => {
+    const intScore = Math.floor(Number(quizScore));
+
+    if (!Number.isFinite(intScore) || intScore < 4 || intScore > 5) {
+      showToast('❌ Necesitás al menos 4/5 respuestas correctas para reclamar la recompensa.', 'error');
+      return { success: false, error: 'quiz_not_passed' };
+    }
+    if (schoolRewardClaimed) {
+      showToast('🎓 La recompensa de 5 VAL ya fue reclamada.', 'info');
+      return { success: false, already_claimed: true };
     }
 
-    return { success: true, txHash, amount: intAmount };
+    const senderId = currentUser?.id;
+    const canUseRemote = Boolean(isSupabaseConfigured && senderId && isUuid(senderId));
+
+    if (!canUseRemote) {
+      // Invitado sin sesión Supabase: recompensa una única vez por dispositivo.
+      persistSchoolRewardClaimed(true);
+      setBalance((prev) => Math.floor(prev) + 5);
+      setTransactions((prev) => [
+        {
+          id: `tx-school-${Date.now()}`,
+          type: 'school_reward',
+          amount: 5,
+          title: 'Escuela Cripto P2P',
+          date: 'Recién',
+          hash: '0xschoolrewa',
+          status: 'Confirmado (local)',
+          note: 'Recompensa educativa +5 VAL (modo local sin sesión)'
+        },
+        ...prev
+      ]);
+      showToast('🎓 ¡Aprobaste la Escuela Cripto! +5 VAL acreditados (modo local).', 'success');
+      return { success: true, local: true, amount: 5 };
+    }
+
+    const result = await valensService.claimSchoolReward(intScore);
+
+    if (result?.success) {
+      persistSchoolRewardClaimed(true);
+      await applyWalletSnapshot(senderId);
+      showToast(`🎓 ¡Aprobaste con ${intScore}/5! +5 VAL acreditados en tu billetera Valens.`, 'success');
+      return { ...result, success: true };
+    }
+
+    if (result?.already_claimed) {
+      persistSchoolRewardClaimed(true);
+      showToast('🎓 La recompensa de 5 VAL ya fue reclamada.', 'info');
+      return { ...result, already_claimed: true };
+    }
+
+    showToast(`❌ ${result?.error || 'No se pudo reclamar la recompensa.'}`, 'error');
+    return { success: false, error: result?.error || 'school_reward_failed' };
   };
 
   // Función de Búsqueda de Usuarios Públicos (por correo, nick o nombre en tiempo real)
@@ -2284,6 +2434,9 @@ export function AppProvider({ children }) {
         balance,
         setBalance,
         userPublicKey,
+        // (S11) Dirección real persistida en Supabase; fallback local para invitados.
+        walletAddress: walletAddress || userPublicKey,
+        schoolRewardClaimed,
         userName,
         setUserName,
         currentUser,
@@ -2305,6 +2458,8 @@ export function AppProvider({ children }) {
         logout: async () => {
           await authService.signOut();
           setCurrentUser(null);
+          setWalletAddress('');
+          setSchoolRewardClaimed(false);
           showToast('Sesión cerrada correctamente', 'info');
         },
         isGpsActive,
@@ -2320,7 +2475,9 @@ export function AppProvider({ children }) {
         transactions,
         seedWords: userSeedWords,
         transferTokens,
-        valensQrUri: generateValensQrUri(userPublicKey),
+        // (S11) Recompensa única de la Escuela Cripto (5 VAL reales).
+        claimSchoolReward,
+        valensQrUri: generateValensQrUri(walletAddress || userPublicKey),
         tokenGenesis: {
           symbol: 'VAL',
           name: 'ValensCoin',

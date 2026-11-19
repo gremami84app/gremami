@@ -33,7 +33,10 @@ DROP TABLE IF EXISTS public.profiles CASCADE;
 DROP FUNCTION IF EXISTS public.search_community_users(text) CASCADE;
 DROP FUNCTION IF EXISTS public.set_order_pin(uuid, text) CASCADE;
 DROP FUNCTION IF EXISTS public.claim_faucet_tokens(uuid) CASCADE;
+DROP FUNCTION IF EXISTS public.ensure_wallet_address() CASCADE;
+DROP FUNCTION IF EXISTS public.claim_school_reward(integer) CASCADE;
 DROP FUNCTION IF EXISTS public.transfer_valens_tokens(uuid, text, integer) CASCADE;
+DROP FUNCTION IF EXISTS public.transfer_valens_tokens(uuid, text, bigint) CASCADE;
 DROP FUNCTION IF EXISTS public.release_reward_by_pin(uuid, text, uuid) CASCADE;
 DROP FUNCTION IF EXISTS public.is_blocked_between(uuid, uuid) CASCADE;
 DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
@@ -59,6 +62,8 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   last_location_update TIMESTAMPTZ DEFAULT NOW(),
   referral_code TEXT,
   referred_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  -- (S11) Dirección pública ValensCoin persistente y única por usuario.
+  wallet_address TEXT,
   
   -- Campos auxiliares de cobro y reputación
   fiat_provider TEXT DEFAULT 'Mercado Pago',
@@ -79,6 +84,16 @@ ALTER TABLE public.profiles
 -- Añadir email y username a profiles para búsqueda pública sin acceder a auth.users
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS email TEXT;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS username TEXT;
+
+-- (S11) Billetera real: dirección pública ValensCoin persistente por perfil.
+-- ensure_wallet_address() la genera de forma determinista a partir del UUID.
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS wallet_address TEXT;
+
+-- Índice único parcial: varias filas pueden estar en NULL (usuarios aún sin
+-- dirección), pero una dirección ya asignada no puede repetirse.
+CREATE UNIQUE INDEX IF NOT EXISTS idx_profiles_wallet_address
+  ON public.profiles(wallet_address)
+  WHERE wallet_address IS NOT NULL;
 
 -- Índices para búsqueda rápida por email y username
 CREATE INDEX IF NOT EXISTS idx_profiles_email    ON public.profiles(email);
@@ -257,6 +272,26 @@ CREATE TABLE IF NOT EXISTS public.wallets (
   -- (S12.0) Se declara acá y no en la sección 19: la política wallets_insert_own_initial
   -- (sección 15) la referencia antes, y con check_function_bodies daba 42703.
   balance_valens BIGINT DEFAULT 10,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ====================================================================
+-- 9b. TABLA: CRYPTO_SCHOOL_PROGRESS (Escuela Cripto — recompensa única)
+-- --------------------------------------------------------------------
+-- (S11) Estado del cuestionario de la Escuela Cripto. La recompensa de
+-- 5 VAL se acredita UNA sola vez al aprobar con ≥ 4/5 respuestas
+-- correctas. La escritura ocurre únicamente dentro de
+-- public.claim_school_reward() (SECURITY DEFINER): no hay políticas de
+-- INSERT/UPDATE para clientes anon/authenticated.
+-- ====================================================================
+CREATE TABLE IF NOT EXISTS public.crypto_school_progress (
+  user_id UUID PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
+  quiz_score INT NOT NULL DEFAULT 0 CHECK (quiz_score BETWEEN 0 AND 5),
+  passed BOOLEAN NOT NULL DEFAULT false,
+  reward_claimed BOOLEAN NOT NULL DEFAULT false,
+  reward_amount INT NOT NULL DEFAULT 5,
+  completed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -848,6 +883,18 @@ CREATE POLICY "wallets_insert_own_initial" ON public.wallets
 --     se vuelve a ejecutar sobre una base que ya la tenía.
 DROP POLICY IF EXISTS "wallets_update_own" ON public.wallets;
 
+-- 9b. Políticas Crypto School Progress (solo lectura propia; escritura por RPC)
+ALTER TABLE public.crypto_school_progress ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "crypto_school_progress_select_own" ON public.crypto_school_progress;
+CREATE POLICY "crypto_school_progress_select_own" ON public.crypto_school_progress
+  FOR SELECT USING (auth.uid() = user_id);
+
+-- IMPORTANTE: NO existe política de INSERT/UPDATE sobre crypto_school_progress.
+-- El progreso y la recompensa de 5 VAL solo se escriben dentro de
+-- public.claim_school_reward(), que corre como owner (SECURITY DEFINER) y
+-- valida el puntaje y el doble reclamo de forma atómica.
+
 -- 10. Políticas Transactions
 DROP POLICY IF EXISTS "tx_select" ON public.valens_transactions;
 CREATE POLICY "tx_select" ON public.valens_transactions
@@ -1031,24 +1078,33 @@ CREATE OR REPLACE VIEW public.transactions WITH (security_invoker = true) AS
 
 -- ====================================================================
 -- 21. FUNCIÓN RPC: TRANSFERENCIA ATÓMICA DE VALENSCOIN (Integers Only)
+-- --------------------------------------------------------------------
+-- (S11) Versión blindada:
+--   * Resuelve el receptor por public.profiles.wallet_address y, por
+--     compatibilidad, por public.wallets.public_address.
+--   * Rechaza direcciones inexistentes y auto-transferencias ANTES de
+--     debitar: una dirección inválida nunca quema tokens del emisor.
+--   * El débito es atómico: UPDATE ... WHERE balance_valens >= p_amount.
+--     Si no afecta ninguna fila => saldo insuficiente (nunca saldo negativo).
+--   * Acredita al receptor con UPSERT: crea la billetera si aún no existe.
 -- ====================================================================
 CREATE OR REPLACE FUNCTION public.transfer_valens_tokens(
-  p_sender_id      UUID,
-  p_receiver_addr  TEXT,
-  p_amount         INTEGER
+  p_sender_id        UUID,
+  p_receiver_address TEXT,
+  p_amount           INTEGER
 )
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
+SET search_path = public
 AS $$
 DECLARE
-  v_sender_wallet   RECORD;
-  v_receiver_wallet RECORD;
-  v_tx_hash         TEXT;
-  v_receiver_id     UUID;
+  v_receiver_id    UUID;
+  v_tx_hash        TEXT;
+  v_sender_updated INTEGER := 0;
 BEGIN
   -- Validaciones
-  IF p_amount <= 0 THEN
+  IF p_amount IS NULL OR p_amount <= 0 THEN
     RETURN jsonb_build_object('success', false, 'error', 'El monto debe ser mayor a 0 VAL entero.');
   END IF;
 
@@ -1056,43 +1112,59 @@ BEGIN
     RETURN jsonb_build_object('success', false, 'error', 'No autorizado: solo puedes transferir desde tu propia billetera.');
   END IF;
 
-  -- Bloquear billetera del emisor
-  SELECT * INTO v_sender_wallet
-  FROM public.wallets WHERE user_id = p_sender_id FOR UPDATE;
-
-  IF NOT FOUND THEN
-    RETURN jsonb_build_object('success', false, 'error', 'Billetera emisora no encontrada.');
+  IF p_receiver_address IS NULL OR btrim(p_receiver_address) = '' THEN
+    RETURN jsonb_build_object('success', false, 'error', 'Dirección no encontrada: la dirección de destino está vacía.');
   END IF;
 
-  IF COALESCE(v_sender_wallet.balance_valens, FLOOR(v_sender_wallet.balance_val)) < p_amount THEN
-    RETURN jsonb_build_object('success', false, 'error', 'Saldo insuficiente de ValensCoin.');
-  END IF;
-
-  -- Buscar receptor por dirección pública o user_id
-  SELECT user_id INTO v_receiver_id
-  FROM public.wallets WHERE public_address = p_receiver_addr
+  -- Receptor por la dirección persistente del perfil (S11)
+  SELECT id INTO v_receiver_id
+  FROM public.profiles
+  WHERE wallet_address = btrim(p_receiver_address)
   LIMIT 1;
+
+  -- Compatibilidad con billeteras que solo tienen public_address
+  IF v_receiver_id IS NULL THEN
+    SELECT user_id INTO v_receiver_id
+    FROM public.wallets
+    WHERE public_address = btrim(p_receiver_address)
+    LIMIT 1;
+  END IF;
+
+  IF v_receiver_id IS NULL THEN
+    RETURN jsonb_build_object('success', false, 'error', 'Dirección no encontrada en la red Valens.');
+  END IF;
+
+  IF v_receiver_id = p_sender_id THEN
+    RETURN jsonb_build_object('success', false, 'error', 'No puedes transferirte a tu propia dirección.');
+  END IF;
 
   -- Generar hash de transacción único
   v_tx_hash := '0x' || encode(gen_random_bytes(16), 'hex');
 
-  -- Debitar emisor
+  -- Débito atómico: la condición WHERE evita el doble gasto y los saldos
+  -- negativos incluso con dos transferencias concurrentes.
   UPDATE public.wallets
   SET balance_valens = COALESCE(balance_valens, FLOOR(balance_val)) - p_amount,
       balance_val    = GREATEST(0, COALESCE(balance_val, 0) - p_amount),
       valens_balance = GREATEST(0, COALESCE(valens_balance, 0) - p_amount),
       updated_at     = NOW()
-  WHERE user_id = p_sender_id;
+  WHERE user_id = p_sender_id
+    AND COALESCE(balance_valens, FLOOR(balance_val)) >= p_amount;
 
-  -- Acreditar receptor si existe en la plataforma
-  IF v_receiver_id IS NOT NULL THEN
-    UPDATE public.wallets
-    SET balance_valens = COALESCE(balance_valens, 0) + p_amount,
-        balance_val    = COALESCE(balance_val, 0) + p_amount,
-        valens_balance = COALESCE(valens_balance, 0) + p_amount,
-        updated_at     = NOW()
-    WHERE user_id = v_receiver_id;
+  GET DIAGNOSTICS v_sender_updated = ROW_COUNT;
+
+  IF v_sender_updated = 0 THEN
+    RETURN jsonb_build_object('success', false, 'error', 'Saldo VAL insuficiente.');
   END IF;
+
+  -- Crédito al receptor (crea la billetera si todavía no existe)
+  INSERT INTO public.wallets (user_id, balance_valens, balance_val, valens_balance, updated_at)
+  VALUES (v_receiver_id, p_amount, p_amount, p_amount, NOW())
+  ON CONFLICT (user_id) DO UPDATE
+  SET balance_valens = COALESCE(wallets.balance_valens, 0) + p_amount,
+      balance_val    = COALESCE(wallets.balance_val, 0) + p_amount,
+      valens_balance = COALESCE(wallets.valens_balance, 0) + p_amount,
+      updated_at     = NOW();
 
   -- Registrar transacción
   INSERT INTO public.valens_transactions (
@@ -1101,7 +1173,7 @@ BEGIN
   ) VALUES (
     p_sender_id, v_receiver_id, p_sender_id, v_receiver_id,
     p_amount, 0, 'direct_transfer',
-    'Transferencia P2P ValensCoin: ' || p_amount || ' VAL → ' || p_receiver_addr
+    'Transferencia P2P ValensCoin: ' || p_amount || ' VAL → ' || btrim(p_receiver_address)
   );
 
   -- Reducir reserva del token_genesis
@@ -1113,9 +1185,65 @@ BEGIN
     'success', true,
     'tx_hash', v_tx_hash,
     'amount', p_amount,
-    'receiver_address', p_receiver_addr,
+    'receiver_address', btrim(p_receiver_address),
+    'receiver_id', v_receiver_id,
     'message', 'Transferencia de ' || p_amount || ' VAL confirmada.'
   );
+END;
+$$;
+
+-- ====================================================================
+-- 21b. FUNCIÓN RPC: DIRECCIÓN VALENS PERSISTENTE (S11)
+-- --------------------------------------------------------------------
+-- Devuelve la dirección del usuario autenticado, creándola de forma
+-- determinista a partir de su UUID si todavía no existe. Replica el valor
+-- en public.wallets.public_address para que transfer_valens_tokens()
+-- pueda resolver al receptor desde cualquiera de las dos tablas.
+-- Si el perfil todavía no tenía dirección, esta función es la única que
+-- la crea (el cliente nunca inventa direcciones ajenas).
+-- ====================================================================
+CREATE OR REPLACE FUNCTION public.ensure_wallet_address()
+RETURNS TEXT
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_uid     UUID := auth.uid();
+  v_address TEXT;
+BEGIN
+  IF v_uid IS NULL THEN
+    RAISE EXCEPTION 'No autenticado: se requiere sesión para obtener la dirección Valens.';
+  END IF;
+
+  SELECT wallet_address INTO v_address
+  FROM public.profiles
+  WHERE id = v_uid;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Perfil no encontrado para el usuario autenticado.';
+  END IF;
+
+  IF v_address IS NULL OR btrim(v_address) = '' THEN
+    v_address := 'valens1q' || replace(v_uid::text, '-', '');
+    UPDATE public.profiles
+    SET wallet_address = v_address,
+        updated_at     = NOW()
+    WHERE id = v_uid
+      AND (wallet_address IS NULL OR btrim(wallet_address) = '');
+  END IF;
+
+  SELECT wallet_address INTO v_address
+  FROM public.profiles
+  WHERE id = v_uid;
+
+  UPDATE public.wallets
+  SET public_address = v_address,
+      updated_at     = NOW()
+  WHERE user_id = v_uid
+    AND (public_address IS NULL OR public_address <> v_address);
+
+  RETURN v_address;
 END;
 $$;
 
@@ -1166,6 +1294,110 @@ BEGIN
     'tx_hash', v_tx_hash,
     'amount', v_drip,
     'message', '+' || v_drip || ' VAL acreditados desde el Grifo Testnet.'
+  );
+END;
+$$;
+
+-- ====================================================================
+-- 22b. FUNCIÓN RPC: RECOMPENSA ESCUELA CRIPTO — +5 VAL (S11)
+-- --------------------------------------------------------------------
+-- Acredita 5 VAL una única vez cuando el usuario autenticado aprueba el
+-- cuestionario con ≥ 4/5 respuestas correctas.
+--   * El control de doble reclamo es atómico:
+--     INSERT ... ON CONFLICT (user_id) DO UPDATE ... WHERE reward_claimed = false.
+--     Si no se reserva la fila, la recompensa ya había sido reclamada.
+--   * El crédito de la billetera y el registro en valens_transactions
+--     ocurren en la misma transacción que la reserva.
+--   * type = 'faucet' se reutiliza a propósito para no alterar el CHECK
+--     existente de valens_transactions; la descripción identifica la Escuela.
+-- ====================================================================
+CREATE OR REPLACE FUNCTION public.claim_school_reward(p_quiz_score INT)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_uid     UUID := auth.uid();
+  v_reward  INT := 5;
+  v_rows    INT := 0;
+  v_tx_hash TEXT;
+  v_already BOOLEAN := false;
+BEGIN
+  IF v_uid IS NULL THEN
+    RETURN jsonb_build_object('success', false, 'error', 'No autorizado: se requiere sesión para reclamar la recompensa.');
+  END IF;
+
+  IF p_quiz_score IS NULL OR p_quiz_score < 0 OR p_quiz_score > 5 THEN
+    RETURN jsonb_build_object('success', false, 'error', 'Puntaje inválido: debe estar entre 0 y 5.');
+  END IF;
+
+  IF p_quiz_score < 4 THEN
+    RETURN jsonb_build_object(
+      'success', false,
+      'passed', false,
+      'error', 'Necesitás al menos 4/5 respuestas correctas para aprobar la Escuela Cripto.'
+    );
+  END IF;
+
+  -- Reserva idempotente de la recompensa (una sola vez por usuario).
+  INSERT INTO public.crypto_school_progress AS csp (
+    user_id, quiz_score, passed, reward_claimed, reward_amount, completed_at, updated_at
+  )
+  VALUES (
+    v_uid, p_quiz_score, true, true, v_reward, NOW(), NOW()
+  )
+  ON CONFLICT (user_id) DO UPDATE
+  SET quiz_score     = GREATEST(csp.quiz_score, EXCLUDED.quiz_score),
+      passed         = true,
+      reward_claimed = true,
+      completed_at   = COALESCE(csp.completed_at, NOW()),
+      updated_at     = NOW()
+  WHERE csp.reward_claimed = false;
+
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+
+  IF v_rows = 0 THEN
+    SELECT reward_claimed INTO v_already
+    FROM public.crypto_school_progress
+    WHERE user_id = v_uid;
+
+    RETURN jsonb_build_object(
+      'success', false,
+      'already_claimed', COALESCE(v_already, true),
+      'reward_amount', v_reward,
+      'error', 'La recompensa de 5 VAL ya fue reclamada.'
+    );
+  END IF;
+
+  v_tx_hash := '0xsc' || encode(gen_random_bytes(12), 'hex');
+
+  -- Crédito de la recompensa (crea la billetera si aún no existe).
+  INSERT INTO public.wallets (user_id, balance_valens, balance_val, valens_balance, updated_at)
+  VALUES (v_uid, v_reward, v_reward, v_reward, NOW())
+  ON CONFLICT (user_id) DO UPDATE
+  SET balance_valens = COALESCE(wallets.balance_valens, 0) + v_reward,
+      balance_val    = COALESCE(wallets.balance_val, 0) + v_reward,
+      valens_balance = COALESCE(wallets.valens_balance, 0) + v_reward,
+      updated_at     = NOW();
+
+  INSERT INTO public.valens_transactions (
+    from_user, to_user, receiver_id, amount_val, amount_ars, type, description
+  ) VALUES (
+    NULL, v_uid, v_uid, v_reward, 0, 'faucet',
+    'Recompensa Escuela Cripto P2P: +' || v_reward || ' VAL (quiz ' || p_quiz_score || '/5)'
+  );
+
+  UPDATE public.token_genesis
+  SET reserve_balance = GREATEST(0, reserve_balance - v_reward)
+  WHERE token_symbol = 'VAL';
+
+  RETURN jsonb_build_object(
+    'success', true,
+    'tx_hash', v_tx_hash,
+    'amount', v_reward,
+    'quiz_score', p_quiz_score,
+    'message', 'Recompensa de ' || v_reward || ' VAL acreditada (quiz ' || p_quiz_score || '/5).'
   );
 END;
 $$;
@@ -1225,7 +1457,7 @@ GRANT SELECT ON
   public.offers, public.bids, public.messages, public.reviews,
   public.user_blocks, public.user_reports, public.dex_orders,
   public.wallets, public.valens_transactions, public.transactions,
-  public.deliveries, public.token_genesis
+  public.deliveries, public.token_genesis, public.crypto_school_progress
 TO authenticated;
 
 -- ---------- ESCRITURA (authenticated) — la RLS decide qué filas ----------

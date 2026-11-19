@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
 import { useApp } from '../context/AppContext';
 import { CRYPTO_SCHOOL_MODULES, ARGENTINE_FIAT_PROVIDERS } from '../data/mockData';
 import {
@@ -69,6 +70,30 @@ const SECURITY_TRIVIA_QUESTIONS = [
     ],
     correctIndex: 1,
     explanation: '¡Excelente! En Gremami P2P el 100% del valor pactado queda para el prestador, combinando efectivo en mano con propinas soberanas en ValensCoin.'
+  },
+  {
+    id: 4,
+    title: 'Pregunta 4: Verificar la Dirección Destino',
+    question: 'Antes de confirmar un envío de VAL a la dirección valens1q... de otra persona, ¿qué control es imprescindible?',
+    options: [
+      'Comparar la dirección completa o escanear el QR del destinatario y confirmar que coincide',
+      'Enviar primero y preguntar después si llegó',
+      'Confiar en cualquier enlace de pago que llegue por mensaje privado sin revisar la dirección'
+    ],
+    correctIndex: 0,
+    explanation: '¡Correcto! Las transferencias son irreversibles: verificá la dirección completa o el QR antes de firmar. Un enlace de pago alterado puede desviar tus VAL a otra billetera.'
+  },
+  {
+    id: 5,
+    title: 'Pregunta 5: Doble Gasto y Saldo Atómico',
+    question: '¿Qué garantiza que nadie pueda gastar dos veces los mismos VAL aunque envíe dos transferencias al mismo tiempo?',
+    options: [
+      'El saldo se descuenta en una sola operación atómica en el servidor, que rechaza el débito si no alcanza',
+      'La aplicación del celular guarda el saldo en la memoria y nunca se equivoca',
+      'Cada usuario puede editar su saldo desde la pantalla de billetera'
+    ],
+    correctIndex: 0,
+    explanation: '¡Exacto! El débito atómico condicionado al saldo disponible (WHERE balance_valens >= monto) hace imposible el doble gasto. El cliente nunca modifica saldos por su cuenta.'
   }
 ];
 
@@ -76,6 +101,10 @@ export default function WalletScreen() {
   const {
     balance,
     userPublicKey,
+    walletAddress,
+    userName,
+    schoolRewardClaimed,
+    claimSchoolReward,
     transactions,
     requestFaucet,
     transferTokens,
@@ -114,6 +143,44 @@ export default function WalletScreen() {
   const [currentTriviaIndex, setCurrentTriviaIndex] = useState(0);
   const [triviaAnswers, setTriviaAnswers] = useState({});
   const [triviaClaimed, setTriviaClaimed] = useState({});
+  const [isClaimingReward, setIsClaimingReward] = useState(false);
+
+  // (S11) Dirección real de la billetera Valens del usuario autenticado.
+  // El contexto ya resuelve el fallback local (userPublicKey) para invitados.
+  const activeWalletAddress = walletAddress || userPublicKey;
+
+  // URI de cobro opcional (dirección + monto entero solicitado).
+  const receiveUri =
+    receiveCustomAmount && parseInt(receiveCustomAmount) > 0
+      ? `valens:${activeWalletAddress}?amount=${parseInt(receiveCustomAmount)}`
+      : `valens:${activeWalletAddress}`;
+
+  // (S11) Puntaje del cuestionario: 5 preguntas, umbral de aprobación 4/5.
+  const triviaAnsweredCount = SECURITY_TRIVIA_QUESTIONS.filter(
+    (q) => triviaAnswers[q.id] !== undefined
+  ).length;
+  const triviaScore = SECURITY_TRIVIA_QUESTIONS.reduce(
+    (acc, q) => acc + (triviaAnswers[q.id] === q.correctIndex ? 1 : 0),
+    0
+  );
+  const isQuizCompleted = triviaAnsweredCount === SECURITY_TRIVIA_QUESTIONS.length;
+  const canClaimSchoolReward = isQuizCompleted && triviaScore >= 4 && !schoolRewardClaimed;
+
+  const handleClaimSchoolReward = async () => {
+    if (isClaimingReward || !canClaimSchoolReward) return;
+    setIsClaimingReward(true);
+    try {
+      await claimSchoolReward(triviaScore);
+    } finally {
+      setIsClaimingReward(false);
+    }
+  };
+
+  const handleRetryQuiz = () => {
+    setTriviaAnswers({});
+    setTriviaClaimed({});
+    setCurrentTriviaIndex(0);
+  };
 
   // Estados dinámicos para Billeteras Virtuales Argentinas (Fiat)
   const activeFiatProvider = userProfile?.fiatProvider || 'Mercado Pago';
@@ -206,9 +273,9 @@ export default function WalletScreen() {
   };
 
   const handleCopyPublicKey = () => {
-    navigator.clipboard.writeText(userPublicKey);
+    navigator.clipboard.writeText(activeWalletAddress);
     setCopiedKey(true);
-    showToast('🔑 Clave pública copiada al portapapeles', 'success');
+    showToast('🔑 Dirección Valens copiada al portapapeles', 'success');
     setTimeout(() => setCopiedKey(false), 2000);
   };
 
@@ -228,12 +295,17 @@ export default function WalletScreen() {
   };
 
   const handleTriviaAnswer = (questionId, optionIndex) => {
+    if (triviaClaimed[questionId]) return;
     setTriviaAnswers((prev) => ({ ...prev, [questionId]: optionIndex }));
-    const currentQ = SECURITY_TRIVIA_QUESTIONS[currentTriviaIndex];
-    if (optionIndex === currentQ.correctIndex && !triviaClaimed[questionId]) {
+
+    const currentQ = SECURITY_TRIVIA_QUESTIONS.find((q) => q.id === questionId);
+    if (!currentQ) return;
+
+    if (optionIndex === currentQ.correctIndex) {
       setTriviaClaimed((prev) => ({ ...prev, [questionId]: true }));
-      requestFaucet();
-      showToast('🎉 ¡Respuesta correcta! Has recibido un bonus educativo en ValensCoin (+5 VAL)', 'success');
+      showToast('✅ ¡Respuesta correcta! Completá las 5 y reclamá tu recompensa de 5 VAL.', 'success');
+    } else {
+      showToast('❌ Respuesta incorrecta. Repasá la explicación e intentá de nuevo.', 'error');
     }
   };
 
@@ -291,7 +363,7 @@ export default function WalletScreen() {
               : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
           }`}
         >
-          <GraduationCap className={`w-4 h-4 ${walletSectionTab === 'school' ? 'text-black' : 'text-[#F0B90B]'}`} />
+          <GraduationCap className={`w-4 h-4 ${walletSectionTab === 'school' ? 'text-black' : 'text-[#F0B90B]'}`} strokeWidth={1.75} />
           <span>Escuela Cripto</span>
         </button>
       </div>
@@ -301,6 +373,21 @@ export default function WalletScreen() {
       {/* ══════════════════════════════════════════════════════════════════ */}
       {walletSectionTab === 'wallet' && (
         <div className="space-y-4 animate-fadeIn">
+          {/* Encabezado vectorial de sección (S11) */}
+          <div className="flex items-center justify-between px-1">
+            <div className="flex items-center gap-2">
+              <Wallet className="w-4 h-4 text-[#F7931A]" strokeWidth={1.75} />
+              <h3 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                Billetera ValensCoin
+              </h3>
+            </div>
+            <span className={`text-xs font-mono font-semibold px-2 py-0.5 rounded-lg border ${
+              isDark ? 'text-[#8C9BB4] border-[#1F2D48] bg-[#121B2D]' : 'text-slate-600 border-slate-300 bg-white'
+            }`}>
+              Valens L1 · 0 decimales
+            </span>
+          </div>
+
           {/* 1.1 Bloque Fiat Existente (Cobros Fiduciarios P2P - Mantenido Intacto) */}
           <div className={`relative rounded-2xl border p-5 shadow-xl overflow-hidden transition-colors ${
             isDark
@@ -528,7 +615,7 @@ export default function WalletScreen() {
               isDark ? 'bg-[#070C1E] border-[#1F2D48]' : 'bg-slate-50 border-slate-200'
             }`}>
               <span className="text-xs font-mono text-[#F0B90B] truncate mr-2 select-all font-semibold">
-                {userPublicKey}
+                {activeWalletAddress}
               </span>
               <button
                 onClick={handleCopyPublicKey}
@@ -629,7 +716,7 @@ export default function WalletScreen() {
               <div className="flex items-center space-x-2.5">
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#F7931A] to-[#F0B90B] p-0.5 shadow-glow-orange flex items-center justify-center">
                   <div className={`w-full h-full rounded-[10px] flex items-center justify-center ${isDark ? 'bg-[#0A1128]' : 'bg-white'}`}>
-                    <GraduationCap className="w-4 h-4 text-[#F7931A]" />
+                    <GraduationCap className="w-4 h-4 text-[#F7931A]" strokeWidth={1.75} />
                   </div>
                 </div>
                 <div>
@@ -934,6 +1021,78 @@ export default function WalletScreen() {
               );
             })()}
           </div>
+
+          {/* 2.4 Recompensa real de 5 VAL de la Escuela Cripto (S11) */}
+          <div className={`p-4 rounded-2xl border shadow-xl transition-colors ${
+            schoolRewardClaimed
+              ? isDark ? 'bg-[#0A1A22] border-emerald-500/40' : 'bg-emerald-50 border-emerald-300'
+              : isDark ? 'bg-[#121B2D] border-[#F7931A]/30' : 'bg-gradient-to-br from-white to-amber-50 border-amber-200'
+          }`}>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Award className="w-4 h-4 text-[#F7931A]" strokeWidth={1.75} />
+                <h4 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  Recompensa de la Escuela Cripto
+                </h4>
+              </div>
+              <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-lg border ${
+                triviaScore >= 4
+                  ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
+                  : isDark ? 'bg-[#070C1E] text-[#8C9BB4] border-[#1F2D48]' : 'bg-white text-slate-600 border-slate-200'
+              }`}>
+                {triviaScore}/5
+              </span>
+            </div>
+
+            <p className={`text-xs leading-relaxed ${isDark ? 'text-[#8C9BB4]' : 'text-slate-600'}`}>
+              Aprobá el cuestionario con al menos <strong>4 de 5</strong> respuestas correctas y recibí{' '}
+              <strong className="text-[#F0B90B]">5 VAL</strong> reales en tu billetera. La recompensa se otorga una sola vez.
+            </p>
+
+            {schoolRewardClaimed ? (
+              <div className="mt-3 flex items-center gap-2 p-2.5 rounded-xl border bg-emerald-500/10 border-emerald-500/40">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <span className="text-xs font-bold text-emerald-400">
+                  Recompensa de 5 VAL ya reclamada
+                </span>
+              </div>
+            ) : canClaimSchoolReward ? (
+              <button
+                type="button"
+                onClick={handleClaimSchoolReward}
+                disabled={isClaimingReward}
+                className="mt-3 w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#F7931A] to-[#E07D09] text-black text-xs font-black shadow-glow-orange hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>{isClaimingReward ? 'Acreditando 5 VAL...' : 'Reclamar recompensa de 5 VAL'}</span>
+              </button>
+            ) : isQuizCompleted && triviaScore < 4 ? (
+              <div className="mt-3 space-y-2">
+                <div className="p-2.5 rounded-xl border bg-rose-500/10 border-rose-500/40">
+                  <p className="text-xs font-semibold text-rose-400 flex items-center gap-1.5">
+                    <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                    <span>Obtuviste {triviaScore}/5. Necesitás 4/5 para aprobar.</span>
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRetryQuiz}
+                  className={`w-full min-h-[44px] py-2.5 px-3 rounded-xl border text-xs font-bold transition-all active:scale-[0.98] ${
+                    isDark ? 'bg-[#1A253D] text-white border-[#2D3E61]' : 'bg-white text-slate-800 border-slate-300'
+                  }`}
+                >
+                  Reintentar cuestionario
+                </button>
+              </div>
+            ) : (
+              <div className={`mt-3 p-2.5 rounded-xl border text-xs ${
+                isDark ? 'bg-[#070C1E] border-[#1F2D48] text-[#8C9BB4]' : 'bg-white border-slate-200 text-slate-600'
+              }`}>
+                Progreso: {triviaAnsweredCount}/{SECURITY_TRIVIA_QUESTIONS.length} preguntas respondidas.
+                Completá las 5 para habilitar el reclamo.
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -1163,31 +1322,17 @@ export default function WalletScreen() {
             {receiveTab === 'crypto' && (
               <div className="space-y-3 animate-fadeIn">
                 <div className="p-4 bg-white rounded-2xl shadow-xl inline-block border-4 border-[#F7931A] my-1">
-                  <svg width="150" height="150" viewBox="0 0 100 100" className="w-36 h-36">
-                    <rect x="5" y="5" width="26" height="26" fill="#0A1128" rx="4" />
-                    <rect x="9" y="9" width="18" height="18" fill="white" rx="2" />
-                    <rect x="13" y="13" width="10" height="10" fill="#0A1128" rx="1" />
-
-                    <rect x="69" y="5" width="26" height="26" fill="#0A1128" rx="4" />
-                    <rect x="73" y="9" width="18" height="18" fill="white" rx="2" />
-                    <rect x="77" y="13" width="10" height="10" fill="#0A1128" rx="1" />
-
-                    <rect x="5" y="69" width="26" height="26" fill="#0A1128" rx="4" />
-                    <rect x="9" y="73" width="18" height="18" fill="white" rx="2" />
-                    <rect x="13" y="77" width="10" height="10" fill="#0A1128" rx="1" />
-
-                    <rect x="36" y="10" width="10" height="10" fill="#0A1128" />
-                    <rect x="52" y="10" width="8" height="8" fill="#0A1128" />
-                    <rect x="36" y="24" width="24" height="6" fill="#0A1128" />
-                    <rect x="8" y="38" width="14" height="8" fill="#0A1128" />
-                    <rect x="28" y="42" width="12" height="12" fill="#0A1128" />
-                    <rect x="60" y="36" width="18" height="8" fill="#0A1128" />
-                    <rect x="76" y="50" width="14" height="14" fill="#0A1128" />
-                    <circle cx="50" cy="50" r="14" fill="#F7931A" stroke="#FFFFFF" strokeWidth="2" />
-                    <text x="50" y="55" fill="white" fontSize="13" fontWeight="bold" fontFamily="monospace" textAnchor="middle">
-                      VAL
-                    </text>
-                  </svg>
+                  {/* (S11) QR vectorial real y escaneable de la dirección Valens persistida */}
+                  <QRCodeSVG
+                    value={activeWalletAddress}
+                    size={168}
+                    level="M"
+                    marginSize={2}
+                    bgColor="#FFFFFF"
+                    fgColor="#0A1128"
+                    title={`Dirección ValensCoin de ${userName || 'tu billetera'}`}
+                    className="w-40 h-40"
+                  />
                 </div>
 
                 {/* Monto opcional a solicitar */}
@@ -1213,10 +1358,10 @@ export default function WalletScreen() {
                 }`}>
                   <span className="text-xs text-slate-400 block mb-0.5">Tu dirección para recibir:</span>
                   <span className="text-xs font-mono text-[#F0B90B] break-all select-all font-semibold block">
-                    {userPublicKey}
+                    {activeWalletAddress}
                   </span>
                   <span className="text-[9.5px] font-mono text-slate-400 break-all select-all block mt-1.5 border-t border-slate-800/40 pt-1">
-                    URI: {receiveCustomAmount && parseInt(receiveCustomAmount) > 0 ? `valens:${userPublicKey}?amount=${parseInt(receiveCustomAmount)}` : `valens:${userPublicKey}`}
+                    URI: {receiveUri}
                   </span>
                 </div>
 
@@ -1233,10 +1378,7 @@ export default function WalletScreen() {
                   <button
                     type="button"
                     onClick={() => {
-                      const fullUri = receiveCustomAmount && parseInt(receiveCustomAmount) > 0 
-                        ? `valens:${userPublicKey}?amount=${parseInt(receiveCustomAmount)}` 
-                        : `valens:${userPublicKey}`;
-                      navigator.clipboard.writeText(fullUri);
+                      navigator.clipboard.writeText(receiveUri);
                       setCopiedQrUri(true);
                       showToast('🔗 Enlace QR de cobro copiado', 'success');
                       setTimeout(() => setCopiedQrUri(false), 2000);
