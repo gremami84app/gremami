@@ -197,7 +197,9 @@ export const saveOrderToSupabase = async ({
   price_ars = 2500,
   reward_val = 1.0,
   delivery_pin,
-  whatsapp_shared = false
+  whatsapp_shared = false,
+  scheduled_for = null,
+  is_urgent = true
 } = {}) => {
   const orderId = isUuid(id) ? id.trim() : newUuid();
   const priceArs = Number(price_ars) || 2500;
@@ -224,6 +226,9 @@ export const saveOrderToSupabase = async ({
     delivery_pin: delivery_pin == null ? null : String(delivery_pin),
     pin_attempts: 0,
     whatsapp_shared: Boolean(whatsapp_shared),
+    // (S09.6a) Urgente vs programado
+    scheduled_for: scheduled_for || null,
+    is_urgent: Boolean(is_urgent),
     created_at: new Date().toISOString()
   };
 

@@ -112,6 +112,9 @@ CREATE TABLE IF NOT EXISTS public.orders (
   pin_hash TEXT,             -- hash bcrypt (pgcrypto) del PIN de entrega
   pin_attempts INT NOT NULL DEFAULT 0,
   whatsapp_shared BOOLEAN NOT NULL DEFAULT false,
+  -- (S09.6a) Pedidos urgentes vs. subastas programadas
+  scheduled_for TIMESTAMPTZ,                    -- NULL = urgente / ahora
+  is_urgent BOOLEAN NOT NULL DEFAULT true,      -- false cuando es programado
   created_at TIMESTAMPTZ DEFAULT NOW(),
   completed_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ DEFAULT NOW()

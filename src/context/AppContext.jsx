@@ -23,7 +23,7 @@ import {
   newUuid,
   isUuid
 } from '../lib/supabase';
-import { authService, profileService, isSupabaseConfigured, supabase, valensService, pinService } from '../lib/supabaseClient';
+import { authService, profileService, isSupabaseConfigured, supabase, valensService, pinService, orderService, offerService } from '../lib/supabaseClient';
 import { derivePublicAddress, generateSeedPhrase, generateValensQrUri, localTransferTokens, localClaimFaucet } from '../services/cryptoWalletService';
 
 
@@ -1364,7 +1364,73 @@ export function AppProvider({ children }) {
   };
 
   // 2. Sistema de Alertas y Notificaciones de Solicitudes en Vivo
-  const createServiceRequest = ({ category, description, origin, destination, priceArs }) => {
+  // ==================================================================
+  // (S09.6a) Datos reales: pedidos del usuario y ofertas
+  // ==================================================================
+  const [myOrders, setMyOrders] = useState([]);
+
+  const refreshMyOrders = async () => {
+    const uid = isUuid(currentUser?.id) ? currentUser.id : null;
+    if (!uid || !isSupabaseConfigured) {
+      setMyOrders([]);
+      return [];
+    }
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .or(`client_id.eq.${uid},cadete_id.eq.${uid}`)
+        .order('created_at', { ascending: false })
+        .limit(50);
+      if (error) {
+        console.warn('[S09.6a] No se pudieron leer mis pedidos:', error.message);
+        return [];
+      }
+      setMyOrders(data || []);
+      return data || [];
+    } catch (e) {
+      console.warn('[S09.6a] Error inesperado leyendo mis pedidos:', e?.message || e);
+      return [];
+    }
+  };
+
+  const submitOfferReal = async ({ orderId, amountArs, note }) => {
+    const uid = isUuid(currentUser?.id) ? currentUser.id : null;
+    if (!uid) return { success: false, reason: 'no-session' };
+    if (!orderId) return { success: false, reason: 'invalid-order' };
+    try {
+      return await offerService.submitOffer({
+        order_id: orderId,
+        cadete_id: uid,
+        proposed_price_ars: Number(amountArs) || 2500,
+        note
+      });
+    } catch (e) {
+      return { success: false, error: e };
+    }
+  };
+
+  const acceptOfferReal = async (offerId, orderId, cadeteId, priceArs) => {
+    if (!offerId || !orderId) return { success: false, reason: 'invalid-params' };
+    try {
+      const res = await offerService.acceptOffer(offerId, orderId, cadeteId, Number(priceArs) || 2500);
+      await refreshMyOrders();
+      return res;
+    } catch (e) {
+      return { success: false, error: e };
+    }
+  };
+
+  const getOrderOffersReal = async (orderId) => {
+    if (!orderId) return [];
+    try {
+      return await offerService.getOffers(orderId);
+    } catch (e) {
+      return [];
+    }
+  };
+
+  const createServiceRequest = ({ category, description, origin, destination, priceArs, scheduledFor = null, isUrgent = true }) => {
     const categoryInfo = PEER_CATEGORIES.find((c) => c.id === category);
     // (S07) Con sesión se usa un UUID real: el pedido persiste y las ofertas pueden
     // referenciarlo por FK (bids.order_id -> orders.id). Sin sesión, id local de siempre.
@@ -1404,7 +1470,10 @@ export function AppProvider({ children }) {
         origin_address: newReq.origin,
         destination_address: newReq.destination,
         price_ars: finalPriceArs,
-        reward_val: 1.0
+        reward_val: 1.0,
+        // (S09.6a) Pedido urgente (scheduled_for = null)
+        scheduled_for: scheduledFor || null,
+        is_urgent: Boolean(isUrgent)
       })
         .then((res) => {
           const warning = persistenceWarning(res);
@@ -1581,7 +1650,7 @@ export function AppProvider({ children }) {
   };
 
   // 4.5. Sistema de Subasta P2P y Envíos Programados
-  const createAuctionRequest = ({ origin, destination, description, scheduledTime, estimatedFeeArs, category = 'bicicleta' }) => {
+  const createAuctionRequest = ({ origin, destination, description, scheduledTime, estimatedFeeArs, category = 'bicicleta', scheduledFor = null }) => {
     const categoryInfo = PEER_CATEGORIES.find((c) => c.id === category);
     // (S07) UUID real con sesión para que la subasta persista y las ofertas la referencien.
     const authUid = isUuid(currentUser?.id) ? currentUser.id : null;
@@ -1657,7 +1726,10 @@ export function AppProvider({ children }) {
         origin_lat: lat,
         origin_lng: lng,
         price_ars: feeArs,
-        reward_val: feeValens
+        reward_val: feeValens,
+        // (S09.6a) Subasta programada: fecha objetivo + no urgente
+        scheduled_for: scheduledFor || null,
+        is_urgent: false
       })
         .then((res) => {
           const warning = persistenceWarning(res);
@@ -2227,6 +2299,12 @@ export function AppProvider({ children }) {
         setLiveRequests,
         createServiceRequest,
         createAuctionRequest,
+        // (S09.6a) Datos reales
+        myOrders,
+        refreshMyOrders,
+        submitOfferReal,
+        acceptOfferReal,
+        getOrderOffersReal,
         submitCadeteQuote,
         awardAuctionOffer,
         sendFeeProposal,
