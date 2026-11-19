@@ -13,15 +13,15 @@ import React from 'react';
  */
 
 const BASE =
-  'inline-flex items-center justify-center gap-2 font-bold transition-all active:scale-95 ' +
-  'disabled:opacity-50 disabled:pointer-events-none ' +
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-ring focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1128]';
+  'inline-flex items-center justify-center gap-2 font-semibold transition-all duration-[120ms] active:scale-[0.98] ' +
+  'disabled:opacity-45 disabled:pointer-events-none ' +
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-ring focus-visible:ring-offset-2 focus-visible:ring-offset-app';
 
 const VARIANTS = {
-  primary: 'min-h-touch min-w-touch px-4 rounded-xl bg-accent text-slate-950 hover:bg-accent-strong shadow-md',
-  secondary: 'min-h-touch min-w-touch px-4 rounded-xl bg-[#1A253D] text-white border border-[#2D3E61] hover:border-accent hover:bg-[#22304E]',
-  ghost: 'min-h-touch min-w-touch px-3 rounded-xl text-slate-200 hover:bg-[#1A253D]',
-  icon: 'min-h-touch min-w-touch p-0 rounded-xl border'
+  primary: 'min-h-touch min-w-touch px-4 rounded-control bg-accent text-slate-950 hover:brightness-105 shadow-elev1',
+  secondary: 'min-h-touch min-w-touch px-4 rounded-control bg-card text-ink1 border border-line hover:border-accent/60',
+  ghost: 'min-h-touch min-w-touch px-3 rounded-control text-ink2 hover:text-ink1 hover:bg-elev',
+  icon: 'min-h-touch min-w-touch p-0 rounded-control border border-line bg-card text-ink2 hover:text-ink1'
 };
 
 export function Button({

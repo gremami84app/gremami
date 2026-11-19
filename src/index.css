@@ -10,9 +10,40 @@
   --accent-soft: rgba(247, 147, 26, 0.15);
   --accent-ring: rgba(247, 147, 26, 0.45);
 
-  /* Superficies base del documento */
-  --page-bg: #0A1128;
-  --page-fg: #FFFFFF;
+  /* (S09.7) Ritmo único 4/8/12/16/24/32/48 */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* (S09.7) Radios: control / tarjeta / superficie */
+  --radius-control: 8px;
+  --radius-card: 14px;
+  --radius-sheet: 24px;
+
+  /* (S09.7) Elevaciones sutiles */
+  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --elev-2: 0 4px 16px rgba(0, 0, 0, 0.10);
+
+  /* (S09.7) Movimiento */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-fast: 120ms;
+  --dur-base: 180ms;
+
+  /* Superficies base (Modo Noche por defecto) */
+  --bg-app: #0B0F14;
+  --bg-card: #12171F;
+  --bg-elev: #182029;
+  --border: #232C38;
+  --text-1: #F2F5F8;
+  --text-2: #A9B6C6;
+  --text-3: #6F7F91;
+
+  --page-bg: var(--bg-app);
+  --page-fg: var(--text-1);
 
   color-scheme: dark;
 }
@@ -38,11 +69,22 @@ html[data-accent="grafito"] {
   --accent-ring: rgba(148, 163, 184, 0.45);
 }
 
-/* Modo Día: el fondo base no debe heredar el navy del modo noche */
+/* (S09.7) Modo Día: papel cálido, no hereda el navy */
 html[data-mode="day"] {
-  --page-bg: #F1F5F9;
-  --page-fg: #0F172A;
+  --bg-app: #F7F6F3;
+  --bg-card: #FFFFFF;
+  --bg-elev: #FCFBF9;
+  --border: #E6E2DA;
+  --text-1: #12171F;
+  --text-2: #4A5563;
+  --text-3: #6B7686;
+
   color-scheme: light;
+}
+
+html[data-mode="day"] body {
+  --page-bg: var(--bg-app);
+  --page-fg: var(--text-1);
 }
 
 body {
@@ -51,6 +93,19 @@ body {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
+  font-variant-numeric: tabular-nums;
+}
+
+/* (S09.7) Movimiento accesible */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Custom sleek scrollbar for Ravencoin + Bitcoin dark theme */
