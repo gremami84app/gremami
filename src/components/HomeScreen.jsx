@@ -87,7 +87,8 @@ export default function HomeScreen() {
                   ? 'bg-gradient-to-r from-[#F7931A]/20 to-[#E02424]/20 text-[#F0B90B] border-accent/30'
                   : 'bg-accent/15 text-amber-800 border-accent/40'
               }`}>
-                📍 Alta Gracia, Córdoba
+                <MapPin className="w-3.5 h-3.5 text-accent" aria-hidden="true" />
+              Alta Gracia, Córdoba
               </span>
             </div>
             <span className={`text-xs font-mono flex items-center ${isDark ? 'text-[#8C9BB4]' : 'text-slate-600'}`}>
@@ -223,7 +224,8 @@ export default function HomeScreen() {
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
               <h4 className={`text-xs font-black tracking-tight truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                🌟 TODAS las Categorías y Locales
+                <Sparkles className="w-4 h-4 text-accent" aria-hidden="true" />
+              TODAS las Categorías y Locales
               </h4>
               <span className="text-xs font-mono font-bold bg-accent/20 text-accent px-1.5 py-0.2 rounded border border-accent/40 flex-shrink-0">
                 {visiblePeers.length} Nodos

@@ -87,7 +87,7 @@ export default function ClientOrdersPanel() {
     <section className="space-y-2">
       <div className="flex items-center justify-between px-1">
         <h3 className={`text-xs font-black uppercase tracking-wider ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-          📦 Mis pedidos y subastas
+          Mis pedidos y subastas
         </h3>
         <button
           type="button"
