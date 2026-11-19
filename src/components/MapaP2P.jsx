@@ -998,7 +998,7 @@ export default function MapaP2P(props) {
                 onClick={triggerAlertTest}
                 title="Probar Alarma P2P en Vivo"
                 className={`px-2.5 py-1 rounded-xl border flex items-center gap-1 text-[11px] font-bold transition-all ${
-                  isDark ? 'bg-card border-slate-700 text-accent hover:bg-slate-800' : 'bg-slate-100 border-slate-300 text-amber-700 hover:bg-slate-200'
+                  isDark ? 'bg-card border-slate-700 text-accent hover:bg-slate-800' : 'bg-slate-100 border-slate-300 text-accent hover:bg-slate-200'
                 }`}
               >
                 <Volume2 size={13} />
@@ -1067,7 +1067,7 @@ export default function MapaP2P(props) {
                 className={`px-2.5 py-1 rounded-xl border font-bold text-[11px] flex items-center gap-1 active:scale-95 transition-all ${
                   isDark
                     ? 'bg-card border-accent/50 text-accent hover:bg-[#1A253D]'
-                    : 'bg-amber-50 border-amber-400 text-amber-800 hover:bg-amber-100'
+                    : 'bg-amber-50 border-accent/60 text-amber-800 hover:bg-accent/15'
                 }`}
                 title="Pedir un envío ahora mismo (alerta a los cadetes cercanos)"
               >
@@ -1099,7 +1099,7 @@ export default function MapaP2P(props) {
                 onClick={triggerAlertTest}
                 title="Probar Alarma P2P en Vivo"
                 className={`p-1 rounded-xl border flex items-center justify-center transition-all ${
-                  isDark ? 'bg-card border-slate-700 text-accent hover:bg-slate-800' : 'bg-slate-100 border-slate-300 text-amber-700 hover:bg-slate-200'
+                  isDark ? 'bg-card border-slate-700 text-accent hover:bg-slate-800' : 'bg-slate-100 border-slate-300 text-accent hover:bg-slate-200'
                 }`}
               >
                 <Volume2 size={14} />
@@ -1143,7 +1143,7 @@ export default function MapaP2P(props) {
           <div className={`absolute top-14 left-1/2 -translate-x-1/2 z-[1001] flex items-center gap-2 px-4 py-2.5 rounded-full border shadow-lg text-[12px] font-bold whitespace-nowrap pointer-events-none ${
             isDark
               ? 'bg-card/95 text-amber-400 border-amber-500/40 backdrop-blur-sm'
-              : 'bg-white/95 text-amber-700 border-amber-300 backdrop-blur-sm'
+              : 'bg-white/95 text-accent border-accent/40 backdrop-blur-sm'
           }`}>
             <AlertTriangle size={14} className="flex-shrink-0" />
             <span>Sin prestadores en esta categoria</span>
@@ -1313,7 +1313,7 @@ export default function MapaP2P(props) {
                   isUserBlocked(selectedNode.id)
                     ? 'border-rose-500 ring-2 ring-rose-500/40'
                     : getPeerReputation(selectedNode.id) === 'reported'
-                    ? 'border-amber-400 ring-2 ring-amber-400/40'
+                    ? 'border-accent/60 ring-2 ring-amber-400/40'
                     : 'border-emerald-500 ring-2 ring-emerald-500/40'
                 }`}
               />
@@ -1540,7 +1540,7 @@ export default function MapaP2P(props) {
                 ) : (
                   /* No autenticado: bloqueo con CTA de login */
                   <div className={`rounded-xl border p-4 flex flex-col items-center gap-3 text-center ${
-                    isDark ? 'bg-card/80 border-amber-500/30' : 'bg-amber-50/80 border-amber-300'
+                    isDark ? 'bg-card/80 border-amber-500/30' : 'bg-amber-50/80 border-accent/40'
                   }`}>
                     <div className="flex items-center gap-3 opacity-40 pointer-events-none">
                       <div className="w-9 h-9 rounded-xl bg-pink-500/20 flex items-center justify-center text-pink-400">
@@ -1682,7 +1682,7 @@ export default function MapaP2P(props) {
           <div className={`mt-2.5 px-3 py-2 rounded-2xl border flex items-center justify-between shadow-xs ${
             isDark
               ? 'bg-gradient-to-r from-[#1A1305] via-[#121B2D] to-[#1A1305] border-accent/50 text-[#F0B90B]'
-              : 'bg-amber-50 border-amber-300 text-amber-900'
+              : 'bg-amber-50 border-accent/40 text-amber-900'
           }`}>
             <div className="flex items-center space-x-2.5">
               <span className="text-lg">🪙</span>
@@ -1726,7 +1726,7 @@ export default function MapaP2P(props) {
             ) : !isChatUnlocked(selectedNode.id) ? (
               <div className="space-y-2">
                 <div className={`p-2 rounded-xl border text-[11px] text-center ${
-                  isDark ? 'bg-amber-500/10 border-amber-500/30 text-amber-300' : 'bg-amber-50 border-amber-300 text-amber-900'
+                  isDark ? 'bg-amber-500/10 border-amber-500/30 text-amber-300' : 'bg-amber-50 border-accent/40 text-amber-900'
                 }`}>
                   🔒 <strong>Chat P2P Protegido:</strong> Revisa el perfil y calificaciones antes de conectar. Al presionar el botón habilitarás la sala privada.
                 </div>
@@ -1990,7 +1990,7 @@ export default function MapaP2P(props) {
       {showReportModal && selectedNode && (
         <div className="fixed inset-0 z-[2000] bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-amber-300 text-slate-900'
+            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-accent/40 text-slate-900'
           }`}>
             <button
               onClick={() => setShowReportModal(false)}
@@ -2209,7 +2209,7 @@ export default function MapaP2P(props) {
       {showQuoteSubmitModal && quoteTargetAuction && (
         <div className="fixed inset-0 z-[2000] bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-amber-300 text-slate-900'
+            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-accent/40 text-slate-900'
           }`}>
             <button
               onClick={() => setShowQuoteSubmitModal(false)}
@@ -2325,7 +2325,7 @@ export default function MapaP2P(props) {
       {showNewAuctionModal && (
         <div className="fixed inset-0 z-[2000] bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-md w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-amber-300 text-slate-900'
+            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-accent/40 text-slate-900'
           }`}>
             <button
               onClick={() => setShowNewAuctionModal(false)}
@@ -2467,7 +2467,7 @@ export default function MapaP2P(props) {
       {showAuctionQuotesModal && (
         <div className="fixed inset-0 z-[2000] bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-lg w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-amber-300 text-slate-900'
+            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-accent/40 text-slate-900'
           }`}>
             <button
               onClick={() => setShowAuctionQuotesModal(false)}

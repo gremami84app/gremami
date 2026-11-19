@@ -384,7 +384,7 @@ export default function ProfileScreen() {
         <div className="flex items-start justify-between gap-3">
           {/* Avatar con cargador de imagen */}
           <div className="relative group">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#E02424] via-[#F7931A] to-[#F0B90B] p-0.5 shadow-glow-orange overflow-hidden">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#E02424] via-[#F7931A] to-[#F0B90B] p-0.5 shadow-elev1 overflow-hidden">
               <img
                 src={userProfile.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"}
                 alt="Avatar"
@@ -631,7 +631,7 @@ export default function ProfileScreen() {
           onClick={() => setActiveSection('profile')}
           className={`py-2 px-1 text-xs font-bold rounded-xl transition-all text-center ${
             activeSection === 'profile'
-              ? 'bg-gradient-to-r from-accent to-accent-strong text-black shadow-glow-orange'
+              ? 'bg-gradient-to-r from-accent to-accent-strong text-black shadow-elev1'
               : isDark ? 'text-slate-400 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -642,7 +642,7 @@ export default function ProfileScreen() {
           onClick={() => setActiveSection('milestones')}
           className={`py-2 px-1 text-xs font-bold rounded-xl transition-all text-center ${
             activeSection === 'milestones'
-              ? 'bg-gradient-to-r from-accent to-accent-strong text-black shadow-glow-orange'
+              ? 'bg-gradient-to-r from-accent to-accent-strong text-black shadow-elev1'
               : isDark ? 'text-slate-400 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -653,7 +653,7 @@ export default function ProfileScreen() {
           onClick={() => setActiveSection('metrics')}
           className={`py-2 px-1 text-xs font-bold rounded-xl transition-all text-center ${
             activeSection === 'metrics'
-              ? 'bg-gradient-to-r from-accent to-accent-strong text-black shadow-glow-orange'
+              ? 'bg-gradient-to-r from-accent to-accent-strong text-black shadow-elev1'
               : isDark ? 'text-slate-400 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -1178,7 +1178,7 @@ export default function ProfileScreen() {
             {isEditingProfile && (
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-strong text-slate-950 font-bold text-xs shadow-glow-orange active:scale-95 transition-all"
+                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-strong text-slate-950 font-bold text-xs shadow-elev1 active:scale-95 transition-all"
               >
                 💾 Guardar Cambios de Perfil
               </button>
@@ -1253,7 +1253,7 @@ export default function ProfileScreen() {
             <div className="mt-3.5 flex gap-2">
               <button
                 onClick={shareMilestones}
-                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-strong hover:from-[#F0B90B] hover:to-[#F7931A] text-slate-950 font-bold text-xs shadow-glow-orange flex items-center justify-center gap-1.5 active:scale-95 transition-all"
+                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-strong hover:from-[#F0B90B] hover:to-[#F7931A] text-slate-950 font-bold text-xs shadow-elev1 flex items-center justify-center gap-1.5 active:scale-95 transition-all"
               >
                 <Copy size={14} />
                 <span>Copiar Tarjeta de Hitos</span>
@@ -1358,7 +1358,7 @@ export default function ProfileScreen() {
               onClick={() => setDashboardTab('cliente')}
               className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 ${
                 dashboardTab === 'cliente'
-                  ? 'bg-gradient-to-r from-accent to-accent-strong text-black shadow-glow-orange'
+                  ? 'bg-gradient-to-r from-accent to-accent-strong text-black shadow-elev1'
                   : isDark ? 'text-ink3 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -1369,7 +1369,7 @@ export default function ProfileScreen() {
               onClick={() => setDashboardTab('cadete')}
               className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 ${
                 dashboardTab === 'cadete'
-                  ? 'bg-gradient-to-r from-accent to-accent-strong text-black shadow-glow-orange'
+                  ? 'bg-gradient-to-r from-accent to-accent-strong text-black shadow-elev1'
                   : isDark ? 'text-ink3 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -1607,7 +1607,7 @@ export default function ProfileScreen() {
               </div>
               <button
                 onClick={() => setShowSeedModal(true)}
-                className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-accent to-accent-strong text-black font-bold text-xs shadow-glow-orange active:scale-95"
+                className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-accent to-accent-strong text-black font-bold text-xs shadow-elev1 active:scale-95"
               >
                 Ver Frase
               </button>
@@ -1653,7 +1653,7 @@ export default function ProfileScreen() {
                 {pinError && <p className="text-rose-400 text-[10px]">{pinError}</p>}
                 <button
                   type="submit"
-                  className="w-full min-h-[44px] py-2.5 rounded-xl bg-accent text-black font-bold text-xs shadow-glow-orange active:scale-95"
+                  className="w-full min-h-[44px] py-2.5 rounded-xl bg-accent text-black font-bold text-xs shadow-elev1 active:scale-95"
                 >
                   Desbloquear 12 Palabras
                 </button>

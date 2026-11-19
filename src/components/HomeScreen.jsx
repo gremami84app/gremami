@@ -85,7 +85,7 @@ export default function HomeScreen() {
               <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border ${
                 isDark
                   ? 'bg-gradient-to-r from-[#F7931A]/20 to-[#E02424]/20 text-[#F0B90B] border-accent/30'
-                  : 'bg-amber-100 text-amber-800 border-amber-300'
+                  : 'bg-accent/15 text-amber-800 border-accent/40'
               }`}>
                 📍 Alta Gracia, Córdoba
               </span>
@@ -180,7 +180,7 @@ export default function HomeScreen() {
               type="button"
               onClick={() => { setRequestMode('urgent'); setIsRequestOpen(true); }}
               aria-label="Pedir un envío ahora"
-              className="min-h-touch rounded-2xl bg-accent hover:bg-accent-strong text-slate-950 font-black text-xs shadow-glow-orange flex flex-col items-center justify-center gap-1 py-2.5 active:scale-[0.99] transition-all"
+              className="min-h-touch rounded-2xl bg-accent hover:bg-accent-strong text-slate-950 font-black text-xs shadow-elev1 flex flex-col items-center justify-center gap-1 py-2.5 active:scale-[0.99] transition-all"
             >
               <Zap className="w-5 h-5" aria-hidden="true" />
               Pedir Ahora
@@ -192,7 +192,7 @@ export default function HomeScreen() {
               className={`min-h-touch rounded-2xl border font-black text-xs flex flex-col items-center justify-center gap-1 py-2.5 active:scale-[0.99] transition-all ${
                 isDark
                   ? 'bg-[#121B2D] border-accent/60 text-accent hover:bg-[#1A253D]'
-                  : 'bg-white border-amber-400 text-amber-700 hover:bg-amber-50 shadow-sm'
+                  : 'bg-white border-accent/60 text-accent hover:bg-amber-50 shadow-sm'
               }`}
             >
               <Clock className="w-5 h-5" aria-hidden="true" />
@@ -214,7 +214,7 @@ export default function HomeScreen() {
       <div className={`p-4 rounded-2xl border flex items-center justify-between shadow-xl transition-all ${
         isDark
           ? 'bg-gradient-to-r from-[#121B2D] via-[#1A253D] to-[#121B2D] border-accent/40'
-          : 'bg-white border-amber-300 shadow-sm'
+          : 'bg-white border-accent/40 shadow-sm'
       }`}>
         <div className="flex items-center space-x-3 min-w-0">
           <div className="w-11 h-11 rounded-2xl bg-accent/20 border border-accent/40 flex items-center justify-center text-accent flex-shrink-0">
@@ -270,7 +270,7 @@ export default function HomeScreen() {
                   className={`w-full text-left rounded-2xl border p-3.5 shadow-md transition-all duration-200 group active:scale-[0.98] relative overflow-hidden ${
                     isDark
                       ? 'bg-[#121B2D] hover:bg-[#18243C] border-[#1F2D48] hover:border-[#2D3E61]'
-                      : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-amber-300 shadow-sm'
+                      : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-accent/40 shadow-sm'
                   }`}
                 >
                   <div
@@ -295,7 +295,7 @@ export default function HomeScreen() {
                           : cat.id === 'bicicleta'
                           ? isDark ? 'bg-accent/15 border border-accent/40' : 'bg-orange-100 border border-orange-300'
                           : cat.id === 'motocicleta'
-                          ? isDark ? 'bg-[#F0B90B]/15 border border-[#F0B90B]/40' : 'bg-amber-100 border border-amber-300'
+                          ? isDark ? 'bg-[#F0B90B]/15 border border-[#F0B90B]/40' : 'bg-accent/15 border border-accent/40'
                           : cat.id === 'automovil'
                           ? isDark ? 'bg-[#E02424]/15 border border-[#E02424]/40' : 'bg-rose-100 border border-rose-300'
                           : isDark ? 'bg-blue-600/15 border border-blue-500/40' : 'bg-blue-100 border border-blue-300'
@@ -318,7 +318,7 @@ export default function HomeScreen() {
                               : cat.id === 'bicicleta'
                               ? isDark ? 'bg-accent/15 text-[#F0B90B] border-accent/40' : 'bg-orange-100 text-orange-800 border-orange-300'
                               : cat.id === 'motocicleta'
-                              ? isDark ? 'bg-[#F0B90B]/15 text-[#F0B90B] border-[#F0B90B]/40' : 'bg-amber-100 text-amber-800 border-amber-300'
+                              ? isDark ? 'bg-[#F0B90B]/15 text-[#F0B90B] border-[#F0B90B]/40' : 'bg-accent/15 text-amber-800 border-accent/40'
                               : cat.id === 'automovil'
                               ? isDark ? 'bg-[#E02424]/15 text-rose-400 border-[#E02424]/40' : 'bg-rose-100 text-rose-800 border-rose-300'
                               : isDark ? 'bg-blue-950/60 text-blue-400 border-blue-700/50' : 'bg-blue-100 text-blue-800 border-blue-300'
@@ -377,15 +377,15 @@ export default function HomeScreen() {
                 onClick={() => selectCategoryAndGoToMap(cat.id)}
                 className={`w-full text-left rounded-2xl border p-3.5 shadow-md transition-all duration-200 group active:scale-[0.98] relative overflow-hidden ${
                   isDark
-                    ? 'bg-[#121B2D] hover:bg-[#18243C] border-[#1F2D48] hover:border-amber-400/40'
-                    : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-amber-300 shadow-sm'
+                    ? 'bg-[#121B2D] hover:bg-[#18243C] border-[#1F2D48] hover:border-accent/60/40'
+                    : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-accent/40 shadow-sm'
                 }`}
               >
                 <div className="absolute top-0 left-0 bottom-0 w-1 bg-amber-400 group-hover:w-1.5 shadow-glow-gold transition-all" />
 
                 <div className="flex items-start space-x-3.5 pl-1.5">
                   <div className={`w-13 h-13 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-105 ${
-                    isDark ? 'bg-amber-500/15 border border-amber-500/40' : 'bg-amber-100 border border-amber-300'
+                    isDark ? 'bg-amber-500/15 border border-amber-500/40' : 'bg-accent/15 border border-accent/40'
                   }`}>
                     {getCategoryIcon(cat.iconName)}
                   </div>
@@ -398,7 +398,7 @@ export default function HomeScreen() {
                         {cat.title}
                       </h4>
                       <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
-                        isDark ? 'bg-amber-950/60 text-amber-300 border-amber-700/50' : 'bg-amber-100 text-amber-800 border-amber-300'
+                        isDark ? 'bg-amber-950/60 text-amber-300 border-amber-700/50' : 'bg-accent/15 text-amber-800 border-accent/40'
                       }`}>
                         {count} locales activos
                       </span>
