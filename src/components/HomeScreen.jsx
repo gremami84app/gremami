@@ -51,9 +51,9 @@ export default function HomeScreen() {
       case 'Footprints':
         return <Footprints className="w-7 h-7 text-emerald-400" />;
       case 'Bike':
-        return <Bike className="w-7 h-7 text-[#F7931A]" />;
+        return <Bike className="w-7 h-7 text-accent" />;
       case 'Motorcycle':
-        return <MotorcycleIcon size={28} className="w-7 h-7 text-[#F7931A]" />;
+        return <MotorcycleIcon size={28} className="w-7 h-7 text-accent" />;
       case 'Car':
         return <Car className="w-7 h-7 text-[#E02424]" />;
       case 'Truck':
@@ -61,7 +61,7 @@ export default function HomeScreen() {
       case 'Store':
         return <Store className="w-7 h-7 text-[#F0B90B]" />;
       default:
-        return <Navigation className="w-7 h-7 text-[#F7931A]" />;
+        return <Navigation className="w-7 h-7 text-accent" />;
     }
   };
 
@@ -119,7 +119,7 @@ export default function HomeScreen() {
             <div className={`p-2 rounded-xl border ${
               isDark ? 'bg-[#070C1E]/70 border-[#1F2D48]/80' : 'bg-white border-slate-200 shadow-xs'
             }`}>
-              <span className="text-xs font-black text-[#F7931A] font-mono block">
+              <span className="text-xs font-black text-accent font-mono block">
                 $1.500 ARS
               </span>
               <span className={`text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>Tarifa base sugerida</span>
@@ -217,7 +217,7 @@ export default function HomeScreen() {
           : 'bg-white border-amber-300 shadow-sm'
       }`}>
         <div className="flex items-center space-x-3 min-w-0">
-          <div className="w-11 h-11 rounded-2xl bg-[#F7931A]/20 border border-[#F7931A]/40 flex items-center justify-center text-[#F7931A] flex-shrink-0">
+          <div className="w-11 h-11 rounded-2xl bg-[#F7931A]/20 border border-[#F7931A]/40 flex items-center justify-center text-accent flex-shrink-0">
             <Sparkles className="w-5 h-5" />
           </div>
           <div className="min-w-0">
@@ -225,7 +225,7 @@ export default function HomeScreen() {
               <h4 className={`text-xs font-black tracking-tight truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 🌟 TODAS las Categorías y Locales
               </h4>
-              <span className="text-xs font-mono font-bold bg-[#F7931A]/20 text-[#F7931A] px-1.5 py-0.2 rounded border border-[#F7931A]/40 flex-shrink-0">
+              <span className="text-xs font-mono font-bold bg-[#F7931A]/20 text-accent px-1.5 py-0.2 rounded border border-[#F7931A]/40 flex-shrink-0">
                 {visiblePeers.length} Nodos
               </span>
             </div>
@@ -236,7 +236,7 @@ export default function HomeScreen() {
         </div>
         <button
           onClick={() => selectCategoryAndGoToMap('all')}
-          className="ml-2 px-3 py-2 rounded-xl bg-gradient-to-r from-[#F7931A] to-[#E07D09] hover:from-[#F0B90B] hover:to-[#F7931A] text-black font-black text-xs shadow-glow-orange flex items-center space-x-1 flex-shrink-0 active:scale-95 transition-all"
+          className="ml-2 px-3 py-2 rounded-control bg-accent hover:brightness-105 text-slate-950 font-bold text-xs shadow-elev1 flex items-center space-x-1 flex-shrink-0 active:scale-[0.98] transition-all duration-[120ms]"
         >
           <span>Ver Mapa</span>
           <ArrowRight className="w-3.5 h-3.5" />
@@ -247,7 +247,7 @@ export default function HomeScreen() {
       <div className="space-y-2.5">
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center space-x-2">
-            <Navigation className="w-4 h-4 text-[#F7931A]" />
+            <Navigation className="w-4 h-4 text-accent" />
             <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-white' : 'text-slate-800'}`}>
               Servicios de Transporte y Envíos
             </h3>
@@ -278,7 +278,7 @@ export default function HomeScreen() {
                       cat.id === 'caminando'
                         ? 'bg-emerald-400 group-hover:w-1.5'
                         : cat.id === 'bicicleta'
-                        ? 'bg-[#F7931A] group-hover:w-1.5 shadow-glow-orange'
+                        ? 'bg-accent group-hover:w-1.5'
                         : cat.id === 'motocicleta'
                         ? 'bg-[#F0B90B] group-hover:w-1.5 shadow-glow-gold'
                         : cat.id === 'automovil'
@@ -306,7 +306,7 @@ export default function HomeScreen() {
 
                     <div className="flex-1 min-w-0 pr-2">
                       <div className="flex items-center justify-between">
-                        <h4 className={`text-sm font-bold group-hover:text-[#F7931A] transition-colors truncate ${
+                        <h4 className={`text-sm font-bold group-hover:text-accent transition-colors truncate ${
                           isDark ? 'text-white' : 'text-slate-900'
                         }`}>
                           {cat.title}
@@ -332,14 +332,14 @@ export default function HomeScreen() {
                         {cat.subtitle}
                       </p>
 
-                      <div className={`mt-2 flex items-center justify-between text-sm font-sans antialiased ${
+                      <div className={`mt-2 flex items-center justify-between text-sm leading-5 font-sans antialiased no-underline ${
                         isDark ? 'text-[#8C9BB4]' : 'text-slate-500'
                       }`}>
                         <span className={`flex items-center ${isDark ? 'text-white' : 'text-slate-700'}`}>
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5" />
                           <strong>{count}</strong> en Alta Gracia
                         </span>
-                        <span className="text-[#F7931A] font-bold flex items-center group-hover:translate-x-0.5 transition-transform">
+                        <span className="text-accent font-bold flex items-center group-hover:translate-x-0.5 transition-transform">
                           <span>Ver en mapa</span>
                           <ArrowRight className="w-3 h-3 ml-1" />
                         </span>
@@ -392,7 +392,7 @@ export default function HomeScreen() {
 
                   <div className="flex-1 min-w-0 pr-2">
                     <div className="flex items-center justify-between">
-                      <h4 className={`text-sm font-bold group-hover:text-[#F7931A] transition-colors truncate ${
+                      <h4 className={`text-sm font-bold group-hover:text-accent transition-colors truncate ${
                         isDark ? 'text-white' : 'text-slate-900'
                       }`}>
                         {cat.title}
@@ -408,14 +408,14 @@ export default function HomeScreen() {
                       {cat.subtitle}
                     </p>
 
-                    <div className={`mt-2 flex items-center justify-between text-sm font-sans antialiased ${
+                    <div className={`mt-2 flex items-center justify-between text-sm leading-5 font-sans antialiased no-underline ${
                       isDark ? 'text-[#8C9BB4]' : 'text-slate-500'
                     }`}>
                       <span className={`flex items-center ${isDark ? 'text-white' : 'text-slate-700'}`}>
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5" />
                         <strong>{count}</strong> comercios en Alta Gracia
                       </span>
-                      <span className="text-[#F7931A] font-bold flex items-center group-hover:translate-x-0.5 transition-transform">
+                      <span className="text-accent font-bold flex items-center group-hover:translate-x-0.5 transition-transform">
                         <span>Ver en mapa</span>
                         <ArrowRight className="w-3 h-3 ml-1" />
                       </span>
