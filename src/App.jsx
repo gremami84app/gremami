@@ -141,11 +141,16 @@ function OnboardingGate() {
 
   if (!seen) {
     return (
-      <OnboardingScreen
-        onSkip={markSeen}
-        onComplete={markSeen}
-        onExplore={() => { markSeen(); setActiveTab('map'); }}
-      />
+      <>
+        <OnboardingScreen
+          onSkip={markSeen}
+          onComplete={markSeen}
+          onExplore={() => { markSeen(); setActiveTab('map'); }}
+        />
+        {/* (S13c) El modal legal debe existir también durante el onboarding:
+            el enlace del pie del Paso 3 lo dispara desde ahí. */}
+        <LegalDonationModal open={legalOpen} onClose={() => setLegalOpen(false)} />
+      </>
     );
   }
 
