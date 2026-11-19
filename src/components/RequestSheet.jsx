@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import Sheet from '../ui/Sheet';
 import { Button } from '../ui/Button';
-import { ArrowLeft, ArrowRight, Check, MapPin, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Clock, MapPin, Sparkles, Zap } from 'lucide-react';
 
 /**
  * (S09.4) Flujo guiado "Pedir un envío" en 3 pasos.
- * No emite toast propio: createServiceRequest ya notifica el resultado real.
+ * (S09.6b) Dos modalidades: ⚡ Pedir Ahora (urgente) y 🗓 Programar (subasta abierta).
+ * No emite toast propio: el contexto ya notifica el resultado real.
  */
 
 const VEHICLES = [
@@ -31,23 +32,63 @@ const PRESET_PRICES = [1500, 2000, 2500, 3000];
 
 const STEPS = ['Qué enviás', 'Origen y destino', 'Precio'];
 
-export default function RequestSheet({ open, onClose }) {
-  const { createServiceRequest } = useApp();
+function todayISO() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
 
+function buildScheduledISO(dateStr, timeStr) {
+  if (!dateStr || !timeStr) return null;
+  const iso = new Date(`${dateStr}T${timeStr}:00`);
+  return Number.isNaN(iso.getTime()) ? null : iso.toISOString();
+}
+
+function formatScheduled(dateStr, timeStr) {
+  if (!dateStr || !timeStr) return '';
+  try {
+    return new Date(`${dateStr}T${timeStr}:00`).toLocaleString('es-AR', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  } catch (e) {
+    return `${dateStr} ${timeStr}`;
+  }
+}
+
+export default function RequestSheet({ open, onClose, initialMode = 'urgent' }) {
+  const { createServiceRequest, createAuctionRequest } = useApp();
+
+  const [mode, setMode] = useState(initialMode); // 'urgent' | 'scheduled'
   const [step, setStep] = useState(1);
   const [category, setCategory] = useState('bicicleta');
   const [description, setDescription] = useState('');
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
   const [priceArs, setPriceArs] = useState(2000);
+  const [scheduledDate, setScheduledDate] = useState(todayISO());
+  const [scheduledTime, setScheduledTime] = useState('18:00');
+
+  const isScheduled = mode === 'scheduled';
+
+  // (S09.6b) Si el sheet se abre desde "Programar" o "Pedir Ahora", respeta la modalidad elegida.
+  useEffect(() => {
+    if (open) setMode(initialMode);
+  }, [open, initialMode]);
 
   const reset = () => {
     setStep(1);
+    setMode(initialMode);
     setCategory('bicicleta');
     setDescription('');
     setOrigin('');
     setDestination('');
     setPriceArs(2000);
+    setScheduledDate(todayISO());
+    setScheduledTime('18:00');
   };
 
   const close = () => {
@@ -55,19 +96,34 @@ export default function RequestSheet({ open, onClose }) {
     onClose?.();
   };
 
+  const scheduledISO = isScheduled ? buildScheduledISO(scheduledDate, scheduledTime) : null;
+  const scheduleValid = !isScheduled || Boolean(scheduledISO);
+
   const canContinue =
     (step === 1 && description.trim().length >= 3) ||
     (step === 2 && origin.trim().length >= 2 && destination.trim().length >= 2) ||
-    (step === 3 && Number(priceArs) > 0);
+    (step === 3 && Number(priceArs) > 0 && scheduleValid);
 
   const confirm = () => {
-    createServiceRequest({
+    const payload = {
       category,
       description: description.trim(),
       origin: origin.trim(),
       destination: destination.trim(),
       priceArs: Number(priceArs) || 2500
-    });
+    };
+
+    if (isScheduled) {
+      createAuctionRequest({
+        ...payload,
+        scheduledTime: formatScheduled(scheduledDate, scheduledTime),
+        scheduledFor: scheduledISO,
+        estimatedFeeArs: Number(priceArs) || 2500
+      });
+    } else {
+      createServiceRequest({ ...payload, isUrgent: true, scheduledFor: null });
+    }
+
     close();
   };
 
@@ -92,7 +148,7 @@ export default function RequestSheet({ open, onClose }) {
       ) : (
         <Button variant="primary" className="flex-1" disabled={!canContinue} onClick={confirm}>
           <Check className="w-4 h-4" />
-          Confirmar pedido
+          {isScheduled ? 'Publicar subasta' : 'Confirmar pedido'}
         </Button>
       )}
     </div>
@@ -102,17 +158,51 @@ export default function RequestSheet({ open, onClose }) {
     <Sheet
       open={open}
       onClose={close}
-      title="Pedir un envío"
+      title={isScheduled ? 'Programar un envío' : 'Pedir un envío'}
       subtitle={`Paso ${step} de 3 · ${STEPS[step - 1]}`}
       footer={footer}
     >
+      {/* (S09.6b) Modalidad: urgente vs programado */}
+      {step === 1 && (
+        <div className="grid grid-cols-2 gap-1.5 mb-3" role="tablist" aria-label="Modalidad del envío">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={!isScheduled}
+            onClick={() => setMode('urgent')}
+            className={`min-h-touch rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 ${
+              !isScheduled
+                ? 'bg-accent text-slate-950 border-transparent'
+                : 'bg-[#121B2D] border-[#1F2D48] text-slate-300 hover:border-accent/60'
+            }`}
+          >
+            <Zap className="w-4 h-4" aria-hidden="true" />
+            Pedir Ahora
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={isScheduled}
+            onClick={() => setMode('scheduled')}
+            className={`min-h-touch rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 ${
+              isScheduled
+                ? 'bg-accent text-slate-950 border-transparent'
+                : 'bg-[#121B2D] border-[#1F2D48] text-slate-300 hover:border-accent/60'
+            }`}
+          >
+            <Clock className="w-4 h-4" aria-hidden="true" />
+            Programar
+          </button>
+        </div>
+      )}
+
       {/* Progreso */}
       <div className="flex items-center gap-1.5 mb-3" aria-hidden="true">
         {STEPS.map((label, i) => (
           <span
             key={label}
             className={`h-1 flex-1 rounded-full transition-colors ${
-              i + 1 <= step ? 'bg-[#F7931A]' : 'bg-[#1F2D48]'
+              i + 1 <= step ? 'bg-accent' : 'bg-[#1F2D48]'
             }`}
           />
         ))}
@@ -131,8 +221,8 @@ export default function RequestSheet({ open, onClose }) {
                   aria-pressed={category === v.id}
                   className={`min-h-touch rounded-xl text-xs font-semibold border transition-all active:scale-95 ${
                     category === v.id
-                      ? 'bg-[#F7931A] text-slate-950 border-amber-400 font-bold'
-                      : 'bg-[#121B2D] border-[#1F2D48] text-slate-300 hover:border-[#F7931A]/60'
+                      ? 'bg-accent text-slate-950 border-transparent font-bold'
+                      : 'bg-[#121B2D] border-[#1F2D48] text-slate-300 hover:border-accent/60'
                   }`}
                 >
                   <span aria-hidden="true">{v.emoji}</span> {v.label}
@@ -151,7 +241,7 @@ export default function RequestSheet({ open, onClose }) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Ej. Retirar recetas en la farmacia de Av. Belgrano"
-              className="w-full min-h-touch rounded-xl px-3 bg-[#070C1E] border border-[#1F2D48] text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-[#F7931A]"
+              className="w-full min-h-touch rounded-xl px-3 bg-[#070C1E] border border-[#1F2D48] text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-accent"
             />
           </div>
         </div>
@@ -169,7 +259,7 @@ export default function RequestSheet({ open, onClose }) {
               value={origin}
               onChange={(e) => setOrigin(e.target.value)}
               placeholder="Plaza Solares, Alta Gracia"
-              className="w-full min-h-touch rounded-xl px-3 bg-[#070C1E] border border-[#1F2D48] text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-[#F7931A]"
+              className="w-full min-h-touch rounded-xl px-3 bg-[#070C1E] border border-[#1F2D48] text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-accent"
             />
           </div>
           <div>
@@ -182,7 +272,7 @@ export default function RequestSheet({ open, onClose }) {
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
               placeholder="B° Cámara, Alta Gracia"
-              className="w-full min-h-touch rounded-xl px-3 bg-[#070C1E] border border-[#1F2D48] text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-[#F7931A]"
+              className="w-full min-h-touch rounded-xl px-3 bg-[#070C1E] border border-[#1F2D48] text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-accent"
             />
           </div>
 
@@ -194,9 +284,9 @@ export default function RequestSheet({ open, onClose }) {
                   key={place}
                   type="button"
                   onClick={() => (origin.trim() ? setDestination(place) : setOrigin(place))}
-                  className="min-h-touch px-3 rounded-xl text-xs font-semibold bg-[#121B2D] border border-[#1F2D48] text-slate-300 hover:border-[#F7931A]/60 active:scale-95 transition-all flex items-center gap-1"
+                  className="min-h-touch px-3 rounded-xl text-xs font-semibold bg-[#121B2D] border border-[#1F2D48] text-slate-300 hover:border-accent/60 active:scale-95 transition-all flex items-center gap-1"
                 >
-                  <MapPin className="w-3.5 h-3.5 text-[#F7931A]" />
+                  <MapPin className="w-3.5 h-3.5 text-accent" />
                   {place}
                 </button>
               ))}
@@ -207,9 +297,39 @@ export default function RequestSheet({ open, onClose }) {
 
       {step === 3 && (
         <div className="space-y-3">
+          {isScheduled && (
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label htmlFor="req-date" className="block text-xs font-bold text-[#8C9BB4] mb-1.5">
+                  Fecha
+                </label>
+                <input
+                  id="req-date"
+                  type="date"
+                  min={todayISO()}
+                  value={scheduledDate}
+                  onChange={(e) => setScheduledDate(e.target.value)}
+                  className="w-full min-h-touch rounded-xl px-3 bg-[#070C1E] border border-[#1F2D48] text-sm text-white focus:outline-none focus:border-accent"
+                />
+              </div>
+              <div>
+                <label htmlFor="req-time" className="block text-xs font-bold text-[#8C9BB4] mb-1.5">
+                  Hora
+                </label>
+                <input
+                  id="req-time"
+                  type="time"
+                  value={scheduledTime}
+                  onChange={(e) => setScheduledTime(e.target.value)}
+                  className="w-full min-h-touch rounded-xl px-3 bg-[#070C1E] border border-[#1F2D48] text-sm text-white focus:outline-none focus:border-accent"
+                />
+              </div>
+            </div>
+          )}
+
           <div>
             <label htmlFor="req-price" className="block text-xs font-bold text-[#8C9BB4] mb-1.5">
-              Precio sugerido en ARS
+              {isScheduled ? 'Precio base sugerido para subasta (ARS)' : 'Precio sugerido en ARS'}
             </label>
             <input
               id="req-price"
@@ -219,7 +339,7 @@ export default function RequestSheet({ open, onClose }) {
               step={100}
               value={priceArs}
               onChange={(e) => setPriceArs(e.target.value)}
-              className="w-full min-h-touch rounded-xl px-3 bg-[#070C1E] border border-[#1F2D48] text-lg font-black text-white focus:outline-none focus:border-[#F7931A]"
+              className="w-full min-h-touch rounded-xl px-3 bg-[#070C1E] border border-[#1F2D48] text-lg font-black text-white focus:outline-none focus:border-accent"
             />
             <div className="flex flex-wrap gap-1.5 mt-2">
               {PRESET_PRICES.map((preset) => (
@@ -229,8 +349,8 @@ export default function RequestSheet({ open, onClose }) {
                   onClick={() => setPriceArs(preset)}
                   className={`min-h-touch px-3 rounded-xl text-xs font-bold border transition-all active:scale-95 ${
                     Number(priceArs) === preset
-                      ? 'bg-[#F7931A] text-slate-950 border-amber-400'
-                      : 'bg-[#121B2D] border-[#1F2D48] text-slate-300 hover:border-[#F7931A]/60'
+                      ? 'bg-accent text-slate-950 border-transparent'
+                      : 'bg-[#121B2D] border-[#1F2D48] text-slate-300 hover:border-accent/60'
                   }`}
                 >
                   ${preset.toLocaleString('es-AR')}
@@ -240,7 +360,16 @@ export default function RequestSheet({ open, onClose }) {
           </div>
 
           <div className="rounded-xl bg-[#121B2D] border border-[#1F2D48] p-3 space-y-1.5">
-            <p className="text-[11px] font-bold uppercase tracking-wide text-[#8C9BB4]">Resumen</p>
+            <p className="text-xs font-bold uppercase tracking-wide text-[#8C9BB4]">Resumen</p>
+            <p className="text-xs text-white">
+              <span className="text-[#8C9BB4]">Modalidad:</span>{' '}
+              {isScheduled ? '🗓 Programado (subasta abierta)' : '⚡ Ahora (urgente)'}
+            </p>
+            {isScheduled && (
+              <p className="text-xs text-white">
+                <span className="text-[#8C9BB4]">Cuándo:</span> {formatScheduled(scheduledDate, scheduledTime) || '—'}
+              </p>
+            )}
             <p className="text-xs text-white">
               <span className="text-[#8C9BB4]">Vehículo:</span>{' '}
               {VEHICLES.find((v) => v.id === category)?.label || category}
@@ -252,14 +381,17 @@ export default function RequestSheet({ open, onClose }) {
               <span className="text-[#8C9BB4]">Ruta:</span> {origin || '—'} → {destination || '—'}
             </p>
             <p className="text-xs text-white">
-              <span className="text-[#8C9BB4]">Precio:</span> ${Number(priceArs || 0).toLocaleString('es-AR')} ARS
+              <span className="text-[#8C9BB4]">{isScheduled ? 'Base:' : 'Precio:'}</span> $
+              {Number(priceArs || 0).toLocaleString('es-AR')} ARS
             </p>
           </div>
 
           <div className="flex items-start gap-2 rounded-xl bg-[#0A2218] border border-emerald-500/30 p-3">
             <Sparkles className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
             <p className="text-xs text-emerald-300">
-              Se suma <strong>1 VAL de agradecimiento</strong> al cadete cuando confirmes la entrega con el PIN.
+              {isScheduled
+                ? 'Los cadetes de Alta Gracia verán tu subasta y te enviarán ofertas. Elegís la que más te convenga.'
+                : 'Se suma 1 VAL de agradecimiento al cadete cuando confirmes la entrega con el PIN.'}
             </p>
           </div>
         </div>

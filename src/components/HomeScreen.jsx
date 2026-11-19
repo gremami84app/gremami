@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import MotorcycleIcon from './MotorcycleIcon';
 import RequestSheet from './RequestSheet';
+import ClientOrdersPanel from './ClientOrdersPanel';
+import CadetePanel from './CadetePanel';
 import {
   Footprints,
   Bike,
@@ -25,6 +27,8 @@ import {
 export default function HomeScreen() {
   // (S09.4) Estado del flujo "Pedir un envío"
   const [isRequestOpen, setIsRequestOpen] = useState(false);
+  // (S09.6b) Modalidad con la que se abre el sheet
+  const [requestMode, setRequestMode] = useState('urgent');
   const {
     role,
     categories,
@@ -166,19 +170,45 @@ export default function HomeScreen() {
         </div>
       )}
 
-      {/* (S09.4) CTA principal: pedir un envío en 3 pasos */}
-      <button
-        type="button"
-        onClick={() => setIsRequestOpen(true)}
-        aria-label="Pedir un envío"
-        className="w-full min-h-touch rounded-2xl bg-accent hover:bg-accent-strong text-slate-950 font-black text-sm shadow-glow-orange flex items-center justify-center gap-2 active:scale-[0.99] transition-all"
-      >
-        <Sparkles className="w-5 h-5" aria-hidden="true" />
-        Pedir un envío
-        <ArrowRight className="w-4 h-4" aria-hidden="true" />
-      </button>
+      {/* (S09.6b) Experiencia diferenciada por rol */}
+      {isCadete ? (
+        <CadetePanel />
+      ) : (
+        <>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => { setRequestMode('urgent'); setIsRequestOpen(true); }}
+              aria-label="Pedir un envío ahora"
+              className="min-h-touch rounded-2xl bg-accent hover:bg-accent-strong text-slate-950 font-black text-xs shadow-glow-orange flex flex-col items-center justify-center gap-1 py-2.5 active:scale-[0.99] transition-all"
+            >
+              <Zap className="w-5 h-5" aria-hidden="true" />
+              Pedir Ahora
+            </button>
+            <button
+              type="button"
+              onClick={() => { setRequestMode('scheduled'); setIsRequestOpen(true); }}
+              aria-label="Programar un envío para más tarde"
+              className={`min-h-touch rounded-2xl border font-black text-xs flex flex-col items-center justify-center gap-1 py-2.5 active:scale-[0.99] transition-all ${
+                isDark
+                  ? 'bg-[#121B2D] border-accent/60 text-accent hover:bg-[#1A253D]'
+                  : 'bg-white border-amber-400 text-amber-700 hover:bg-amber-50 shadow-sm'
+              }`}
+            >
+              <Clock className="w-5 h-5" aria-hidden="true" />
+              Programar
+            </button>
+          </div>
 
-      <RequestSheet open={isRequestOpen} onClose={() => setIsRequestOpen(false)} />
+          <ClientOrdersPanel />
+        </>
+      )}
+
+      <RequestSheet
+        open={isRequestOpen}
+        onClose={() => setIsRequestOpen(false)}
+        initialMode={requestMode}
+      />
 
       {/* Acceso Global Destacado: 🌟 TODAS las Categorías y Comercios de Alta Gracia */}
       <div className={`p-4 rounded-2xl border flex items-center justify-between shadow-xl transition-all ${
