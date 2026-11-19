@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   Send,
@@ -53,6 +53,9 @@ export default function ChatScreen() {
     showToast,
     role,
     orderPin,
+    // (S09.8) PIN individual por orden
+    myOrders,
+    getOrderPin,
     pinStatus,
     generateNewPin,
     verifyPin,
@@ -100,6 +103,21 @@ export default function ChatScreen() {
   // Filter peers that are not blocked for the switcher
   const availablePeers = peers.filter((p) => !isUserBlocked(p.id));
   const currentPeer = peers.find((p) => p.id === activeChatPeerId) || availablePeers[0] || peers[0];
+
+  // (S09.8) Resolver la orden en curso vinculada a este chat para usar SU PIN.
+  // Fallback: el PIN global de siempre si no hay una orden resoluble.
+  const activeOrder = useMemo(() => {
+    const list = myOrders || [];
+    return (
+      list.find(
+        (o) =>
+          o.status === 'en_curso' &&
+          (o.cadete_id === currentPeer?.id || o.client_id === currentPeer?.id)
+      ) || null
+    );
+  }, [myOrders, currentPeer]);
+
+  const activePin = activeOrder ? getOrderPin(activeOrder.id) : orderPin;
   const chatMessages = messages[currentPeer?.id] || [];
 
   const isBlocked = currentPeer ? isUserBlocked(currentPeer.id) : false;
@@ -168,7 +186,7 @@ export default function ChatScreen() {
   if (!currentPeer) {
     return (
       <div className={`relative w-full h-[calc(100vh-135px)] flex flex-col items-center justify-center p-6 text-center animate-fadeIn ${
-        isDark ? 'bg-[#0A1128] text-white' : 'bg-[#F8FAFC] text-slate-900'
+        isDark ? 'bg-[#0A1128] text-ink1' : 'bg-[#F8FAFC] text-slate-900'
       }`}>
         <p className="text-sm font-bold text-slate-400">No hay contactos disponibles en este momento.</p>
         <p className="text-xs text-slate-500 mt-1">Explora el Mapa P2P para encontrar prestadores activos en Alta Gracia.</p>
@@ -189,11 +207,11 @@ export default function ChatScreen() {
 
   return (
     <div className={`relative w-full h-[calc(100vh-135px)] flex flex-col overflow-hidden animate-fadeIn transition-colors duration-200 ${
-      isDark ? 'bg-[#0A1128] text-white' : 'bg-[#F8FAFC] text-slate-900'
+      isDark ? 'bg-[#0A1128] text-ink1' : 'bg-[#F8FAFC] text-slate-900'
     }`}>
       {/* 1. Chat Header */}
       <div className={`border-b px-3.5 py-2.5 flex items-center justify-between shadow-xs z-10 flex-shrink-0 ${
-        isDark ? 'bg-[#121B2D] border-[#1F2D48]' : 'bg-white border-slate-200'
+        isDark ? 'bg-card border-line' : 'bg-white border-slate-200'
       }`}>
         <div className="flex items-center space-x-2.5 min-w-0">
           {/* Peer Selector Button */}
@@ -221,7 +239,7 @@ export default function ChatScreen() {
 
             <div className="min-w-0">
               <div className="flex items-center space-x-1.5">
-                <h2 className={`text-xs font-bold leading-tight truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                <h2 className={`text-xs font-bold leading-tight truncate ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                   {currentPeer.name}
                 </h2>
                 <span className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>▼</span>
@@ -245,7 +263,7 @@ export default function ChatScreen() {
         {/* Right Header Actions: Rating, Recommend, Report & Block */}
         <div className="flex items-center space-x-1.5 flex-shrink-0">
           <div className={`flex items-center text-amber-500 font-mono text-[11px] px-2 py-1 rounded-xl border ${
-            isDark ? 'bg-[#070C1E] border-[#1F2D48]' : 'bg-amber-50 border-amber-200'
+            isDark ? 'bg-app border-line' : 'bg-amber-50 border-amber-200'
           }`}>
             <Star className="w-3.5 h-3.5 fill-amber-400 mr-1" />
             <span className="font-bold">{currentPeer.rating}</span>
@@ -283,13 +301,13 @@ export default function ChatScreen() {
       {/* Peer Switcher Dropdown Drawer (100% Sólido sin transparencias) */}
       {showPeerList && (
         <div className={`absolute top-14 left-2 right-2 z-40 border rounded-2xl shadow-2xl p-2.5 animate-fadeIn max-h-72 overflow-y-auto ring-1 ring-black/20 ${
-          isDark ? 'bg-[#0B132B] border-[#1F2D48] text-white' : 'bg-white border-slate-300 text-slate-900'
+          isDark ? 'bg-card border-line text-ink1' : 'bg-white border-slate-300 text-slate-900'
         }`}>
           <div className="px-2 py-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center justify-between">
             <span>Prestadores en Alta Gracia</span>
             <button
               onClick={() => setShowPeerList(false)}
-              className="text-slate-400 hover:text-white"
+              className="text-slate-400 hover:text-ink1"
             >
               <X className="w-4 h-4" />
             </button>
@@ -319,7 +337,7 @@ export default function ChatScreen() {
                   />
                   <div className="flex-1 text-left min-w-0">
                     <div className="flex items-center justify-between">
-                      <span className={`text-xs font-semibold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                      <span className={`text-xs font-semibold truncate ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                         {peer.name}
                       </span>
                       <span className="text-[10px] text-[#F7931A] font-mono font-bold">
@@ -363,7 +381,7 @@ export default function ChatScreen() {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {/* Card de Aviso de Seguridad */}
           <div className={`p-3.5 rounded-2xl border text-center ${
-            isDark ? 'bg-[#0B132B] border-amber-500/40 text-amber-300' : 'bg-amber-50 border-amber-300 text-amber-950'
+            isDark ? 'bg-card border-amber-500/40 text-amber-300' : 'bg-amber-50 border-amber-300 text-amber-950'
           }`}>
             <div className="flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider mb-1">
               <Lock size={14} className="text-[#F7931A]" />
@@ -376,7 +394,7 @@ export default function ChatScreen() {
 
           {/* Tarjeta del Perfil Público Transparente */}
           <div className={`p-4 rounded-2xl border shadow-lg ${
-            isDark ? 'bg-[#121B2D] border-[#1F2D48]' : 'bg-white border-slate-200'
+            isDark ? 'bg-card border-line' : 'bg-white border-slate-200'
           }`}>
             <div className="flex items-start gap-3.5">
               <img
@@ -412,11 +430,11 @@ export default function ChatScreen() {
             </div>
 
             <div className="mt-3 pt-3 border-t border-slate-700/60 grid grid-cols-2 gap-2 text-xs">
-              <div className={`p-2 rounded-xl border ${isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+              <div className={`p-2 rounded-xl border ${isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
                 <span className="text-[10px] text-slate-400 block">Vehículo / Logística:</span>
                 <span className="font-semibold block truncate">{currentPeer.vehicle || 'Bicicleta Urbana'}</span>
               </div>
-              <div className={`p-2 rounded-xl border ${isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+              <div className={`p-2 rounded-xl border ${isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
                 <span className="text-[10px] text-slate-400 block">Tarifa Sugerida:</span>
                 <span className="font-semibold text-emerald-400 font-mono block truncate">{currentPeer.baseFee || '$1.500 ARS'}</span>
               </div>
@@ -438,7 +456,7 @@ export default function ChatScreen() {
                   <div
                     key={idx}
                     className={`p-2 rounded-xl border text-[11px] ${
-                      isDark ? 'bg-[#070C1E] border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
+                      isDark ? 'bg-app border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
                     }`}
                   >
                     <div className="flex items-center justify-between font-bold mb-0.5">
@@ -469,14 +487,14 @@ export default function ChatScreen() {
         <>
           {/* 2. Barra de Acciones Rápidas (Pago Local, Calculadora y QR Tip) */}
           <div className={`border-b px-2.5 py-1.5 flex items-center justify-between gap-1.5 flex-shrink-0 ${
-            isDark ? 'bg-[#0F1726] border-[#1F2D48]' : 'bg-slate-100 border-slate-200'
+            isDark ? 'bg-[#0F1726] border-line' : 'bg-slate-100 border-slate-200'
           }`}>
             <button
               onClick={() => setShowCashModal(true)}
               type="button"
               className={`flex-1 flex items-center justify-center space-x-1 py-1.5 px-2 rounded-xl border text-xs font-bold transition-all shadow-xs active:scale-[0.98] ${
                 isDark
-                  ? 'bg-[#070C1E] border-emerald-500/40 text-emerald-300 hover:bg-emerald-950/20'
+                  ? 'bg-app border-emerald-500/40 text-emerald-300 hover:bg-emerald-950/20'
                   : 'bg-white border-emerald-400 text-emerald-700 hover:bg-emerald-50'
               }`}
             >
@@ -489,7 +507,7 @@ export default function ChatScreen() {
               type="button"
               className={`flex items-center justify-center space-x-1 py-1.5 px-2.5 rounded-xl border text-xs font-bold transition-all shadow-xs active:scale-[0.98] ${
                 isDark
-                  ? 'bg-[#121B2D] border-amber-500/40 text-[#F7931A] hover:bg-amber-500/10'
+                  ? 'bg-card border-amber-500/40 text-[#F7931A] hover:bg-amber-500/10'
                   : 'bg-white border-amber-400 text-amber-700 hover:bg-amber-50'
               }`}
               title="Ver comparativa de ahorro vs apps tradicionales"
@@ -534,7 +552,7 @@ export default function ChatScreen() {
 
           {/* 3. SISTEMA DE CONFIRMACIÓN ANTIFRAUDE Y PAGO FÍSICO CON PIN P2P */}
           <div className={`p-3 border-b transition-colors flex-shrink-0 ${
-            isDark ? 'bg-[#080E24] border-[#1F2D48]' : 'bg-amber-50/90 border-amber-200'
+            isDark ? 'bg-[#080E24] border-line' : 'bg-amber-50/90 border-amber-200'
           }`}>
             <div className="max-w-md mx-auto">
               {!isCadete ? (
@@ -547,11 +565,11 @@ export default function ChatScreen() {
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center space-x-2">
-                          <span className={`text-[11px] font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                          <span className={`text-[11px] font-bold ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                             Tu PIN Antifraude:
                           </span>
                           <span className="font-mono text-base font-black text-[#F7931A] tracking-widest px-2.5 py-0.5 rounded-lg bg-black/40 border border-amber-500/50 shadow-inner">
-                            {orderPin}
+                            {activePin}
                           </span>
                         </div>
                         <p className={`text-[10px] mt-0.5 leading-tight ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
@@ -583,11 +601,11 @@ export default function ChatScreen() {
                   <div className="flex items-center gap-1.5 pt-1 border-t border-slate-700/40 text-[10px]">
                     <button
                       onClick={() => {
-                        navigator.clipboard.writeText(orderPin);
+                        navigator.clipboard.writeText(activePin);
                         showToast('🔐 PIN copiado al portapapeles', 'success');
                       }}
                       className={`px-2 py-1 rounded-lg border flex items-center gap-1 transition-all ${
-                        isDark ? 'bg-[#121B2D] border-slate-700 text-slate-300 hover:text-white' : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
+                        isDark ? 'bg-card border-slate-700 text-slate-300 hover:text-ink1' : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
                       }`}
                     >
                       <Copy size={11} />
@@ -597,7 +615,7 @@ export default function ChatScreen() {
                     <button
                       onClick={() => resendPinViaChat(currentPeer.id)}
                       className={`px-2 py-1 rounded-lg border flex items-center gap-1 transition-all ${
-                        isDark ? 'bg-[#121B2D] border-slate-700 text-[#F7931A] hover:bg-slate-800' : 'bg-white border-amber-300 text-amber-700 hover:bg-amber-50'
+                        isDark ? 'bg-card border-slate-700 text-[#F7931A] hover:bg-slate-800' : 'bg-white border-amber-300 text-amber-700 hover:bg-amber-50'
                       }`}
                       title="Enviar código al chat"
                     >
@@ -606,7 +624,7 @@ export default function ChatScreen() {
                     </button>
 
                     <button
-                      onClick={() => { completeDeliveryWithPin(orderPin, currentPeer.id, 1.0).catch(() => {}); }}
+                      onClick={() => { completeDeliveryWithPin(activePin, currentPeer.id, 1.0).catch(() => {}); }}
                       className="ml-auto px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/50 text-emerald-400 font-bold flex items-center gap-1 active:scale-95 transition-all"
                       title="Simular validación del cadete para ver la recompensa"
                     >
@@ -624,7 +642,7 @@ export default function ChatScreen() {
                         <ShieldCheck className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
-                        <span className={`text-[11px] font-bold block leading-none ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                        <span className={`text-[11px] font-bold block leading-none ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                           Validar Pago Físico & Entrega en Mano
                         </span>
                         <span className={`text-[10px] truncate block mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
@@ -702,7 +720,7 @@ export default function ChatScreen() {
                               className={`w-28 px-2.5 py-1.5 rounded-xl text-xs font-mono font-black tracking-widest text-center border focus:outline-none focus:border-[#F7931A] ${
                                 pinFailedAttempts > 0
                                   ? 'border-rose-500 bg-rose-950/20 text-rose-300'
-                                  : isDark ? 'bg-[#070C1E] border-[#1F2D48] text-white' : 'bg-white border-slate-300 text-slate-900'
+                                  : isDark ? 'bg-app border-line text-ink1' : 'bg-white border-slate-300 text-slate-900'
                               }`}
                             />
                             <button
@@ -730,7 +748,7 @@ export default function ChatScreen() {
           {/* Messages Scroll Area */}
           <div className="flex-1 overflow-y-auto p-3.5 space-y-3">
             <div className={`border rounded-xl p-2.5 text-center text-[11px] max-w-sm mx-auto ${
-              isDark ? 'bg-[#121B2D] border-[#1F2D48] text-slate-400' : 'bg-slate-100 border-slate-200 text-slate-600'
+              isDark ? 'bg-card border-line text-slate-400' : 'bg-slate-100 border-slate-200 text-slate-600'
             }`}>
               <div className="flex items-center justify-center space-x-1 text-[#F7931A] font-medium mb-0.5">
                 <Lock className="w-3 h-3 inline" />
@@ -756,7 +774,7 @@ export default function ChatScreen() {
                           Acuerdo P2P en Efectivo
                         </span>
                       </div>
-                      <div className={`text-base font-black font-mono ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                      <div className={`text-base font-black font-mono ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                         {msg.amount || '$1.500 ARS'}
                       </div>
                       <p className={`text-[11px] mt-1 leading-snug ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
@@ -862,7 +880,7 @@ export default function ChatScreen() {
                         </span>
                       </div>
                       
-                      <div className={`text-xs font-bold mb-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                      <div className={`text-xs font-bold mb-1 ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                         {msg.senderName}
                       </div>
 
@@ -908,7 +926,7 @@ export default function ChatScreen() {
                       isUser
                         ? 'bg-gradient-to-r from-[#F7931A] to-[#E07D09] text-black font-medium rounded-br-xs'
                         : isDark
-                        ? 'bg-[#121B2D] text-white border border-[#1F2D48] rounded-bl-xs'
+                        ? 'bg-card text-ink1 border border-line rounded-bl-xs'
                         : 'bg-white text-slate-900 border border-slate-200 rounded-bl-xs'
                     }`}
                   >
@@ -937,7 +955,7 @@ export default function ChatScreen() {
           <form
             onSubmit={handleSend}
             className={`border-t p-2.5 flex items-center space-x-2 flex-shrink-0 ${
-              isDark ? 'bg-[#121B2D] border-[#1F2D48]' : 'bg-white border-slate-200'
+              isDark ? 'bg-card border-line' : 'bg-white border-slate-200'
             }`}
           >
             <input
@@ -947,7 +965,7 @@ export default function ChatScreen() {
               placeholder={`Escribe a ${currentPeer.name} en Alta Gracia...`}
               className={`flex-1 border rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-[#F7931A] transition-all ${
                 isDark
-                  ? 'bg-[#070C1E] border-[#1F2D48] text-white placeholder-slate-500'
+                  ? 'bg-app border-line text-ink1 placeholder-slate-500'
                   : 'bg-slate-100 border-slate-300 text-slate-900 placeholder-slate-400'
               }`}
             />
@@ -972,7 +990,7 @@ export default function ChatScreen() {
       {showBlockModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-xs w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-[#121B2D] border-rose-500/50 text-white' : 'bg-white border-rose-300 text-slate-900'
+            isDark ? 'bg-card border-rose-500/50 text-ink1' : 'bg-white border-rose-300 text-slate-900'
           }`}>
             <div className="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-500 flex items-center justify-center mx-auto mb-2">
               <ShieldAlert size={22} />
@@ -996,7 +1014,7 @@ export default function ChatScreen() {
               <button
                 type="button"
                 onClick={handleConfirmBlock}
-                className="flex-1 min-h-[44px] py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-sm active:scale-95"
+                className="flex-1 min-h-[44px] py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-ink1 font-bold text-xs shadow-sm active:scale-95"
               >
                 Bloquear
               </button>
@@ -1009,11 +1027,11 @@ export default function ChatScreen() {
       {showCalculatorModal && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
           <div className={`border rounded-2xl max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-[#121B2D] border-[#1F2D48] text-white' : 'bg-white border-slate-300 text-slate-900'
+            isDark ? 'bg-card border-line text-ink1' : 'bg-white border-slate-300 text-slate-900'
           }`}>
             <button
               onClick={() => setShowCalculatorModal(false)}
-              className="absolute top-3 right-3 text-slate-400 hover:text-white"
+              className="absolute top-3 right-3 text-slate-400 hover:text-ink1"
               title="Cerrar"
             >
               <X className="w-4 h-4" />
@@ -1021,7 +1039,7 @@ export default function ChatScreen() {
             <button
               onClick={() => setShowCalculatorModal(false)}
               className={`flex items-center gap-1.5 text-xs font-semibold mb-3 transition-colors ${
-                isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                isDark ? 'text-slate-400 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <ChevronLeft className="w-4 h-4" />
@@ -1051,7 +1069,7 @@ export default function ChatScreen() {
                       calculatorFee === val
                         ? 'bg-[#F7931A] text-black shadow-glow-orange'
                         : isDark
-                        ? 'bg-[#070C1E] border border-[#1F2D48] text-slate-300'
+                        ? 'bg-app border border-line text-slate-300'
                         : 'bg-slate-100 border border-slate-200 text-slate-700'
                     }`}
                   >
@@ -1111,11 +1129,11 @@ export default function ChatScreen() {
       {showCashModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
           <div className={`border rounded-2xl max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-[#121B2D] border-[#1F2D48] text-white' : 'bg-white border-slate-300 text-slate-900'
+            isDark ? 'bg-card border-line text-ink1' : 'bg-white border-slate-300 text-slate-900'
           }`}>
             <button
               onClick={() => setShowCashModal(false)}
-              className="absolute top-3 right-3 text-slate-400 hover:text-white"
+              className="absolute top-3 right-3 text-slate-400 hover:text-ink1"
               title="Cerrar"
             >
               <X className="w-4 h-4" />
@@ -1123,7 +1141,7 @@ export default function ChatScreen() {
             <button
               onClick={() => setShowCashModal(false)}
               className={`flex items-center gap-1.5 text-xs font-semibold mb-3 transition-colors ${
-                isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                isDark ? 'text-slate-400 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <ChevronLeft className="w-4 h-4" />
@@ -1142,7 +1160,7 @@ export default function ChatScreen() {
 
             <div className="space-y-3.5 my-4">
               <div className={`p-3 rounded-xl border ${
-                isDark ? 'bg-[#070C1E] border-[#1F2D48]' : 'bg-slate-50 border-slate-200'
+                isDark ? 'bg-app border-line' : 'bg-slate-50 border-slate-200'
               }`}>
                 <div className="flex justify-between items-center text-xs">
                   <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>Tarifa fija acordada:</span>
@@ -1156,7 +1174,7 @@ export default function ChatScreen() {
                 </div>
                 <div className="flex justify-between items-center text-[11px] mt-1">
                   <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>Seguridad:</span>
-                  <span className="text-amber-500 font-bold font-mono">PIN {orderPin} en mano</span>
+                  <span className="text-amber-500 font-bold font-mono">PIN {activePin} en mano</span>
                 </div>
               </div>
 
@@ -1170,7 +1188,7 @@ export default function ChatScreen() {
                   onChange={(e) => setCashNote(e.target.value)}
                   placeholder="Ej. Sobre urgente, compras, comida..."
                   className={`w-full border rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500 ${
-                    isDark ? 'bg-[#070C1E] border-[#1F2D48] text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                    isDark ? 'bg-app border-line text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                   }`}
                 />
               </div>
@@ -1200,11 +1218,11 @@ export default function ChatScreen() {
       {showQrTipModal && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
           <div className={`border rounded-2xl max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-[#121B2D] border-[#1F2D48] text-white' : 'bg-white border-slate-300 text-slate-900'
+            isDark ? 'bg-card border-line text-ink1' : 'bg-white border-slate-300 text-slate-900'
           }`}>
             <button
               onClick={() => setShowQrTipModal(false)}
-              className="absolute top-3 right-3 text-slate-400 hover:text-white"
+              className="absolute top-3 right-3 text-slate-400 hover:text-ink1"
               title="Cerrar"
             >
               <X className="w-4 h-4" />
@@ -1212,7 +1230,7 @@ export default function ChatScreen() {
             <button
               onClick={() => setShowQrTipModal(false)}
               className={`flex items-center gap-1.5 text-xs font-semibold mb-3 transition-colors ${
-                isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                isDark ? 'text-slate-400 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <ChevronLeft className="w-4 h-4" />
@@ -1262,7 +1280,7 @@ export default function ChatScreen() {
             </div>
 
             <div className={`p-3 rounded-xl border my-3 ${
-              isDark ? 'bg-[#070C1E] border-[#1F2D48]' : 'bg-slate-50 border-slate-200'
+              isDark ? 'bg-app border-line' : 'bg-slate-50 border-slate-200'
             }`}>
               <div className="flex justify-between items-center text-xs">
                 <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>Monto de propina:</span>
@@ -1304,11 +1322,11 @@ export default function ChatScreen() {
       {showReportChatModal && (
         <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-[#0B132B] border-amber-500/50 text-white' : 'bg-white border-amber-300 text-slate-900'
+            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-amber-300 text-slate-900'
           }`}>
             <button
               onClick={() => setShowReportChatModal(false)}
-              className="absolute top-3 right-3 text-slate-400 hover:text-white"
+              className="absolute top-3 right-3 text-slate-400 hover:text-ink1"
               title="Cerrar"
             >
               <X size={18} />
@@ -1316,7 +1334,7 @@ export default function ChatScreen() {
             <button
               onClick={() => setShowReportChatModal(false)}
               className={`flex items-center gap-1.5 text-xs font-semibold mb-3 transition-colors ${
-                isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                isDark ? 'text-slate-400 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <ChevronLeft className="w-4 h-4" />
@@ -1345,7 +1363,7 @@ export default function ChatScreen() {
                   value={reportChatReason}
                   onChange={(e) => setReportChatReason(e.target.value)}
                   className={`w-full border rounded-xl px-3 py-2 text-xs font-medium ${
-                    isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                    isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                   }`}
                 >
                   <option value="Cobro engañoso / Sobreprecio indebido">Cobro engañoso / Sobreprecio indebido</option>
