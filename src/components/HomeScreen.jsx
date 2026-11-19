@@ -24,6 +24,81 @@ import {
   Truck
 } from 'lucide-react';
 
+// (S07d) Set de glifos propio: grid 24×24, trazo 1.5, sin relleno, currentColor.
+// Sistema cohesivo de 6 iconos (nada de librería genérica).
+const CATEGORY_GLYPHS = {
+  caminando: (
+    <>
+      <circle cx="12" cy="4.6" r="2" />
+      <path d="M12 6.8v3.6" />
+      <path d="M12 8.4l-2.6 2" />
+      <path d="M12 8.4l2.6 1.6" />
+      <path d="M12 10.4l-2.2 4.4" />
+      <path d="M12 10.4l2 4.4" />
+    </>
+  ),
+  bicicleta: (
+    <>
+      <circle cx="6.5" cy="16.5" r="3.5" />
+      <circle cx="17.5" cy="16.5" r="3.5" />
+      <path d="M6.5 16.5L10.5 10.5h3.5l3.5 6" />
+      <path d="M10.5 10.5h2.6" />
+      <path d="M13.6 10.5l1.4 2.6" />
+    </>
+  ),
+  motocicleta: (
+    <>
+      <circle cx="6" cy="16.5" r="3.2" />
+      <circle cx="18" cy="16.5" r="3.2" />
+      <path d="M6 16.5l3-4h4.6l1.6 4" />
+      <path d="M13.6 12.5l1.2-3h2.2" />
+    </>
+  ),
+  automovil: (
+    <>
+      <path d="M4.5 15.5h15" />
+      <path d="M6 15.5c0-2.5 1.2-4 2.9-4.6l1.5-1.7h4.6l1.6 1.9c1.7.5 2.8 2 2.9 4.4" />
+      <circle cx="8" cy="16.6" r="1.7" />
+      <circle cx="16" cy="16.6" r="1.7" />
+    </>
+  ),
+  fletes: (
+    <>
+      <path d="M3.5 16.5V8.5h8.5v8" />
+      <path d="M12 11h3.4l3.1 3v2.5" />
+      <circle cx="7" cy="17.3" r="1.7" />
+      <circle cx="16.4" cy="17.3" r="1.7" />
+    </>
+  ),
+  comercio: (
+    <>
+      <path d="M4 9.5h16" />
+      <path d="M5 9.5l.6 2.6a2.4 2.4 0 004.6 0 2.4 2.4 0 004.6 0 2.4 2.4 0 004.6 0L19 9.5" />
+      <path d="M6 14.6V19.5h12v-4.9" />
+      <path d="M10.2 19.5v-3.2h3.6v3.2" />
+    </>
+  )
+};
+
+function CategoryGlyph({ id }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {CATEGORY_GLYPHS[id] || CATEGORY_GLYPHS.bicicleta}
+    </svg>
+  );
+}
+
 export default function HomeScreen() {
   // (S09.4) Estado del flujo "Pedir un envío"
   const [isRequestOpen, setIsRequestOpen] = useState(false);
@@ -273,7 +348,7 @@ export default function HomeScreen() {
                 >
                   <div className="flex items-start space-x-3.5">
                     <div className="w-12 h-12 rounded-card flex items-center justify-center flex-shrink-0 bg-accent/12 border border-accent/25 text-accent transition-transform duration-200 group-hover:scale-105">
-                      {getCategoryIcon(cat.iconName)}
+                      <CategoryGlyph id={cat.id} />
                     </div>
 
                     <div className="flex-1 min-w-0 pr-2">
@@ -345,7 +420,7 @@ export default function HomeScreen() {
                   <div className={`w-13 h-13 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-105 ${
                     isDark ? 'bg-amber-500/15 border border-amber-500/40' : 'bg-accent/15 border border-accent/40'
                   }`}>
-                    {getCategoryIcon(cat.iconName)}
+                    <CategoryGlyph id={cat.id} />
                   </div>
 
                   <div className="flex-1 min-w-0 pr-2">
