@@ -100,6 +100,20 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* (S09c) Mapa oscuro sin API keys: se invierte SOLO la capa de tiles.
+   Pines, clusters, popups y controles quedan fuera del filtro y conservan su color. */
+html[data-mode="night"] .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.90) contrast(0.92) saturate(0.85);
+}
+html[data-mode="night"] .leaflet-container {
+  background-color: #09090B;
+}
+html[data-mode="night"] .leaflet-marker-pane,
+html[data-mode="night"] .leaflet-popup-pane,
+html[data-mode="night"] .leaflet-control-container {
+  filter: none;
+}
+
 /* (S06) Foco visible único para todos los controles (incluye Header) */
 :focus-visible {
   outline: 2px solid var(--accent);
