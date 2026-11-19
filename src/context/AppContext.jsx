@@ -181,7 +181,9 @@ export function AppProvider({ children }) {
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('all');
 
   // ValensCoin balance (requirement: initial balance 10 VAL, 0 decimals - integers only)
-  const [balance, setBalance] = useState(10);
+  // (S14a) Invitado arranca en 0 VAL. El bono de 10 VAL lo otorga Supabase
+  // (trigger handle_new_user) únicamente a usuarios registrados.
+  const [balance, setBalance] = useState(0);
 
   // Dirección y semilla criptográfica BIP-39 (solo en memoria; nunca en localStorage)
   const [userSeedWords] = useState(() => generateSeedPhrase());
@@ -216,7 +218,7 @@ export function AppProvider({ children }) {
         if (name) return name;
       }
     } catch (e) {}
-    return 'SatoshiDev';
+    return 'Invitado';
   });
   const [currentUser, setCurrentUser] = useState(() => {
     const urlTokens = extractTokensFromUrl();
@@ -278,7 +280,7 @@ export function AppProvider({ children }) {
       }
     } catch (e) {}
     return {
-      name: tokenName || 'SatoshiDev',
+      name: tokenName || 'Invitado',
       role: 'cadete',
       aliasCbu: 'cadete.gremami.mp',
       fiatProvider: 'Mercado Pago',
@@ -389,10 +391,11 @@ export function AppProvider({ children }) {
   const [celebrationData, setCelebrationData] = useState(null); // { open, rewardAmount, peerName, isCadete, txHash }
 
   // Messages dictionary: { [peerId]: Message[] }
-  const [messages, setMessages] = useState(INITIAL_MESSAGES);
+  // (S14a) Sin sesión no hay historial ni chats ficticios precargados.
+  const [messages, setMessages] = useState([]);
 
   // Transactions list
-  const [transactions, setTransactions] = useState(INITIAL_TRANSACTIONS);
+  const [transactions, setTransactions] = useState([]);
 
   // Mercado P2P DEX: Libro de órdenes abierto descentralizado
   const [dexOrders, setDexOrders] = useState(INITIAL_DEX_ORDERS);
