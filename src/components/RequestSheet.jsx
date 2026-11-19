@@ -443,7 +443,7 @@ export default function RequestSheet({ open, onClose, initialMode = 'urgent' }) 
               min={500}
               step={100}
               value={priceArs}
-              onChange={(e) => setPriceArs(e.target.value)}
+              onChange={(e) => setPriceArs(e.target.value.replace(/^0+(?=\d)/, ''))}
               className="w-full min-h-touch rounded-xl px-3 bg-[#070C1E] border border-[#1F2D48] text-lg font-black text-white focus:outline-none focus:border-accent"
             />
             <div className="flex flex-wrap gap-1.5 mt-2">
