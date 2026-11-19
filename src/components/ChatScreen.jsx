@@ -105,7 +105,8 @@ export default function ChatScreen() {
 
   // Filter peers that are not blocked for the switcher
   const availablePeers = peers.filter((p) => !isUserBlocked(p.id));
-  const currentPeer = peers.find((p) => p.id === activeChatPeerId) || availablePeers[0] || peers[0];
+  // (S14a-4) Sin peer explícitamente elegido no se inventa una conversación.
+  const currentPeer = peers.find((p) => p.id === activeChatPeerId) || null;
 
   // (S09.8) Resolver la orden en curso vinculada a este chat para usar SU PIN.
   // Fallback: el PIN global de siempre si no hay una orden resoluble.
@@ -210,6 +211,30 @@ export default function ChatScreen() {
           <ChevronLeft className="w-4 h-4" />
           Ir al Mapa P2P
         </button>
+      </div>
+    );
+  }
+
+  // (S14a-4) Estado vacío: sin conversación elegida no se muestra un chat ficticio.
+  if (!currentPeer) {
+    return (
+      <div className="w-full min-h-[calc(100vh-135px)] flex items-center justify-center p-4 bg-app">
+        <div className="w-full max-w-sm rounded-2xl border border-line bg-card p-6 text-center">
+          <div className="mx-auto w-11 h-11 rounded-full bg-accent/15 flex items-center justify-center">
+            <MessageSquare className="w-5 h-5 text-accent" strokeWidth={1.75} aria-hidden="true" />
+          </div>
+          <h3 className="mt-3 text-[15px] font-semibold text-ink1">No tenés conversaciones activas</h3>
+          <p className="mt-1 text-[13px] leading-relaxed text-ink2">
+            Cuando acuerdes un envío o servicio con un vecino, el chat aparece acá.
+          </p>
+          <button
+            type="button"
+            onClick={() => (currentUser?.id ? setActiveTab('map') : openAuthModal?.())}
+            className="mt-4 w-full min-h-touch rounded-2xl bg-accent text-slate-950 font-semibold text-[15px]"
+          >
+            {currentUser?.id ? 'Explorar el mapa' : 'Iniciar sesión'}
+          </button>
+        </div>
       </div>
     );
   }
