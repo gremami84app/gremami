@@ -111,6 +111,9 @@ export default function WalletScreen() {
     valensQrUri,
     tokenGenesis,
     showToast,
+    // (S14a-3) gate de auth para acciones de escritura
+    openAuthModal,
+    currentUser,
     theme,
     ordersHistory,
     userProfile,
@@ -167,6 +170,12 @@ export default function WalletScreen() {
   const canClaimSchoolReward = isQuizCompleted && triviaScore >= 4 && !schoolRewardClaimed;
 
   const handleClaimSchoolReward = async () => {
+    // (S14a-3) Sin sesión no se acredita nada: abre login.
+    if (!currentUser?.id) {
+      showToast('Iniciá sesión para acreditar tus VAL', 'warning');
+      openAuthModal?.();
+      return;
+    }
     if (isClaimingReward || !canClaimSchoolReward) return;
     setIsClaimingReward(true);
     try {

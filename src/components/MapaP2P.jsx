@@ -511,6 +511,7 @@ export default function MapaP2P(props) {
     role,
     peers,
     currentUser,
+    openAuthModal,
     theme,
     formatDistanceKm,
     activeAlert,
@@ -855,6 +856,12 @@ export default function MapaP2P(props) {
 
   const handleSendProposalSubmit = (e) => {
     e.preventDefault();
+    // (S14a-3) Cotizar requiere sesión: el cadete_id debe ser real (RLS).
+    if (!currentUser?.id) {
+      showToast('Iniciá sesión para cotizar envíos', 'warning');
+      openAuthModal?.();
+      return;
+    }
     if (activeAlert?.request) {
       sendFeeProposal(activeAlert.request.id, proposalFeeArs, proposalFeeValens);
       setShowProposalModal(false);

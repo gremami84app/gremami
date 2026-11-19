@@ -33,6 +33,9 @@ export default function DexScreen() {
     balance,
     requestFaucet,
     showToast,
+    // (S14a-3) gate de auth
+    openAuthModal,
+    currentUser,
     theme,
     role,
     userName,
@@ -83,6 +86,11 @@ export default function DexScreen() {
   };
 
   const handleConfirmDonation = () => {
+    if (!currentUser?.id) {
+      showToast('Iniciá sesión para donar o intercambiar VAL', 'warning');
+      openAuthModal?.();
+      return;
+    }
     if (showDonateModal) {
       donateValens(showDonateModal.id, showDonateModal.amountValens || 1.0);
       setShowDonateModal(null);
@@ -90,6 +98,11 @@ export default function DexScreen() {
   };
 
   const handleConfirmTrade = () => {
+    if (!currentUser?.id) {
+      showToast('Iniciá sesión para donar o intercambiar VAL', 'warning');
+      openAuthModal?.();
+      return;
+    }
     if (showTradeModal) {
       fulfillDexTrade(showTradeModal.id);
       setShowTradeModal(null);
