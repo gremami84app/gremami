@@ -80,6 +80,9 @@ export default {
       },
       boxShadow: {
         elev1: 'var(--elev-1)',
+        elev2: '0 8px 24px -8px rgba(0,0,0,.35), 0 2px 6px rgba(0,0,0,.12)',
+        elev3: '0 16px 40px -12px rgba(0,0,0,.45)',
+        'inset-hi': 'inset 0 1px 0 rgba(255,255,255,.07)',
         elev2: 'var(--elev-2)',
         'glow-orange': '0 0 18px -2px rgba(247, 147, 26, 0.45)',
         'glow-raven': '0 0 18px -2px rgba(224, 36, 36, 0.45)',

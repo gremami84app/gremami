@@ -88,12 +88,14 @@ function CategoryGlyph({ id }) {
       height="24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.5"
+      strokeWidth="1.75"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
       focusable="false"
     >
+      {/* (S08) Duotone: disco translúcido detrás + trazo nítido encima */}
+      <circle cx="12" cy="12" r="9" fill="currentColor" fillOpacity="0.12" stroke="none" />
       {CATEGORY_GLYPHS[id] || CATEGORY_GLYPHS.bicicleta}
     </svg>
   );
