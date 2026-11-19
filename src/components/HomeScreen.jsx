@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import MotorcycleIcon from './MotorcycleIcon';
+import RequestSheet from './RequestSheet';
 import {
   Footprints,
   Bike,
@@ -22,6 +23,8 @@ import {
 } from 'lucide-react';
 
 export default function HomeScreen() {
+  // (S09.4) Estado del flujo "Pedir un envío"
+  const [isRequestOpen, setIsRequestOpen] = useState(false);
   const {
     role,
     categories,
@@ -163,6 +166,20 @@ export default function HomeScreen() {
         </div>
       )}
 
+      {/* (S09.4) CTA principal: pedir un envío en 3 pasos */}
+      <button
+        type="button"
+        onClick={() => setIsRequestOpen(true)}
+        aria-label="Pedir un envío"
+        className="w-full min-h-touch rounded-2xl bg-gradient-to-r from-[#F7931A] to-[#E07D09] hover:from-[#F0B90B] hover:to-[#F7931A] text-slate-950 font-black text-sm shadow-glow-orange flex items-center justify-center gap-2 active:scale-[0.99] transition-all"
+      >
+        <Sparkles className="w-5 h-5" aria-hidden="true" />
+        Pedir un envío
+        <ArrowRight className="w-4 h-4" aria-hidden="true" />
+      </button>
+
+      <RequestSheet open={isRequestOpen} onClose={() => setIsRequestOpen(false)} />
+
       {/* Acceso Global Destacado: 🌟 TODAS las Categorías y Comercios de Alta Gracia */}
       <div className={`p-4 rounded-2xl border flex items-center justify-between shadow-xl transition-all ${
         isDark
@@ -285,7 +302,7 @@ export default function HomeScreen() {
                         {cat.subtitle}
                       </p>
 
-                      <div className={`mt-2 flex items-center justify-between text-sm ${
+                      <div className={`mt-2 flex items-center justify-between text-sm font-sans antialiased ${
                         isDark ? 'text-[#8C9BB4]' : 'text-slate-500'
                       }`}>
                         <span className={`flex items-center ${isDark ? 'text-white' : 'text-slate-700'}`}>
@@ -361,7 +378,7 @@ export default function HomeScreen() {
                       {cat.subtitle}
                     </p>
 
-                    <div className={`mt-2 flex items-center justify-between text-sm ${
+                    <div className={`mt-2 flex items-center justify-between text-sm font-sans antialiased ${
                       isDark ? 'text-[#8C9BB4]' : 'text-slate-500'
                     }`}>
                       <span className={`flex items-center ${isDark ? 'text-white' : 'text-slate-700'}`}>

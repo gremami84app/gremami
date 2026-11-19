@@ -1364,12 +1364,14 @@ export function AppProvider({ children }) {
   };
 
   // 2. Sistema de Alertas y Notificaciones de Solicitudes en Vivo
-  const createServiceRequest = ({ category, description, origin, destination }) => {
+  const createServiceRequest = ({ category, description, origin, destination, priceArs }) => {
     const categoryInfo = PEER_CATEGORIES.find((c) => c.id === category);
     // (S07) Con sesión se usa un UUID real: el pedido persiste y las ofertas pueden
     // referenciarlo por FK (bids.order_id -> orders.id). Sin sesión, id local de siempre.
     const authUid = isUuid(currentUser?.id) ? currentUser.id : null;
     const requestId = authUid ? newUuid() : `req-live-${Date.now()}`;
+    // (S09.4) El monto elegido en el bottom sheet se persiste en orders.price_ars.
+    const finalPriceArs = Number(priceArs) > 0 ? Number(priceArs) : 2500;
     const newReq = {
       id: requestId,
       clientName: userName || 'Cliente Alta Gracia',
@@ -1383,8 +1385,8 @@ export function AppProvider({ children }) {
       status: 'pending',
       timestamp: 'Recién',
       urgent: true,
-      proposedFeeArs: null,
-      proposedFeeValens: null
+      proposedFeeArs: finalPriceArs,
+      proposedFeeValens: +(finalPriceArs / EXCHANGE_RATES.ARS_PER_VALENS).toFixed(2)
     };
 
     setLiveRequests((prev) => [newReq, ...prev]);
@@ -1401,7 +1403,7 @@ export function AppProvider({ children }) {
         status: 'pendiente',
         origin_address: newReq.origin,
         destination_address: newReq.destination,
-        price_ars: 2500,
+        price_ars: finalPriceArs,
         reward_val: 1.0
       })
         .then((res) => {

@@ -1058,6 +1058,20 @@ export default function MapaP2P(props) {
                 <span>Publicar Envío Programado</span>
               </button>
 
+              {/* (S09.4) Acceso directo al flujo de pedido inmediato (reactiva el modal existente) */}
+              <button
+                onClick={() => setShowRequestModal(true)}
+                className={`px-2.5 py-1 rounded-xl border font-bold text-[11px] flex items-center gap-1 active:scale-95 transition-all ${
+                  isDark
+                    ? 'bg-[#121B2D] border-[#F7931A]/50 text-[#F7931A] hover:bg-[#1A253D]'
+                    : 'bg-amber-50 border-amber-400 text-amber-800 hover:bg-amber-100'
+                }`}
+                title="Pedir un envío ahora mismo (alerta a los cadetes cercanos)"
+              >
+                <PlusCircle size={13} />
+                <span>Pedir Ahora</span>
+              </button>
+
               {/* Botón: Comparador de Ofertas y Subastas */}
               <button
                 onClick={() => setShowAuctionQuotesModal(true)}
