@@ -42,9 +42,9 @@ function MainLayout() {
 
         {/* Global Toast Alert */}
         {toast && (
-          <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 max-w-xs w-full px-4 animate-bounce pointer-events-none">
+          <div className="fixed top-14 inset-x-0 z-50 flex justify-center px-4 pointer-events-none">
             <div
-              className={`p-3 rounded-2xl shadow-2xl backdrop-blur-md border text-xs flex items-center space-x-2 ${
+              className={`w-full max-w-sm p-3 rounded-2xl shadow-2xl backdrop-blur-md border text-xs flex items-center space-x-2 animate-fadeIn break-words ${
                 toast.type === 'success'
                   ? 'bg-[#0A2218]/95 border-emerald-500/80 text-emerald-300'
                   : toast.type === 'warning'
