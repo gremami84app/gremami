@@ -37,6 +37,13 @@ export default {
         sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'Courier New', 'monospace']
       },
+      // (S09.1) Design tokens: área táctil mínima accesible en móvil
+      minHeight: {
+        touch: '44px'
+      },
+      minWidth: {
+        touch: '44px'
+      },
       boxShadow: {
         'glow-orange': '0 0 18px -2px rgba(247, 147, 26, 0.45)',
         'glow-raven': '0 0 18px -2px rgba(224, 36, 36, 0.45)',

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { IconButton } from '../ui/Button';
 import {
   Menu,
   X,
@@ -195,25 +196,25 @@ export default function Header() {
           )}
 
           {/* Botón Buscador de Usuarios P2P */}
-          <button
+          <IconButton
             onClick={openSearchModal}
             aria-label="Buscar usuarios P2P"
             title="Buscar miembros por nick, nombre o correo"
-            className={`p-2 rounded-xl border transition-all flex items-center justify-center active:scale-95 ${
+            className={`transition-all ${
               isDark
                 ? 'bg-[#1A253D] text-slate-200 border-[#2D3E61] hover:border-[#F7931A] hover:text-[#F0B90B] hover:bg-[#22304E]'
                 : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200 hover:text-slate-900 shadow-xs'
             }`}
           >
             <Search className="w-4 h-4 stroke-[2.2]" />
-          </button>
+          </IconButton>
 
           {/* 1. Selector de Tema Día / Noche (Sol / Luna) Requerido */}
-          <button
+          <IconButton
             onClick={toggleTheme}
             aria-label="Alternar Modo Día / Noche"
             title={isDark ? 'Activar Modo Día (High Contrast)' : 'Activar Modo Noche (Cripto Dark)'}
-            className={`p-2 rounded-xl border transition-all flex items-center justify-center active:scale-95 ${
+            className={`transition-all ${
               isDark
                 ? 'bg-[#1A253D] text-[#F0B90B] border-[#2D3E61] hover:border-[#F7931A] hover:bg-[#22304E]'
                 : 'bg-amber-100 text-amber-700 border-amber-300 hover:bg-amber-200 shadow-sm'
@@ -224,18 +225,18 @@ export default function Header() {
             ) : (
               <Moon className="w-4 h-4 stroke-[2.2]" />
             )}
-          </button>
+          </IconButton>
 
           {/* Menú Hamburguesa Arriba a la Derecha */}
-          <button
+          <IconButton
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Abrir Menú de Navegación"
-            className={`p-2 rounded-xl border transition-all flex items-center justify-center ${
+            className={`transition-all ${
               isMenuOpen
                 ? 'bg-[#E02424] text-white border-[#E02424] shadow-glow-raven'
                 : isDark
-                ? 'bg-[#1A253D] text-white border-[#2D3E61] hover:border-[#F7931A] hover:bg-[#22304E] shadow-md active:scale-95'
-                : 'bg-slate-100 text-slate-800 border-slate-300 hover:bg-slate-200 active:scale-95'
+                ? 'bg-[#1A253D] text-white border-[#2D3E61] hover:border-[#F7931A] hover:bg-[#22304E] shadow-md'
+                : 'bg-slate-100 text-slate-800 border-slate-300 hover:bg-slate-200'
             }`}
           >
             {isMenuOpen ? (
@@ -243,7 +244,7 @@ export default function Header() {
             ) : (
               <Menu className="w-4 h-4 stroke-[2.5] text-[#F7931A]" />
             )}
-          </button>
+          </IconButton>
         </div>
       </div>
 

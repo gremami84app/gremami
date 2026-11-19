@@ -906,7 +906,7 @@ export default function MapaP2P(props) {
       <div className={`p-2.5 border-b z-20 transition-colors shadow-xs ${
         isDark ? 'bg-[#0B132B] border-[#1F2D48]' : 'bg-white border-slate-200'
       }`}>
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 snap-x snap-mandatory scroll-px-2">
           <button
             onClick={() => (goBack ? goBack() : setActiveTab('home'))}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all border flex-shrink-0 ${
@@ -926,7 +926,7 @@ export default function MapaP2P(props) {
               <button
                 key={cat.id}
                 onClick={() => handleSelectCategory(cat.id)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all snap-start shrink-0 ${
                   isSelected
                     ? 'bg-[#F7931A] text-slate-950 shadow-md font-bold'
                     : isDark
@@ -943,7 +943,7 @@ export default function MapaP2P(props) {
 
         {/* Sub-barra de Filtro por Modalidad (Pasajeros vs Envíos vs Mixto) */}
         {!isCadete && (
-          <div className="flex items-center gap-1.5 pt-1.5 overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-1.5 pt-1.5 overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-px-2">
             <span className="text-[10px] font-extrabold text-slate-400 whitespace-nowrap pl-1">
               Modalidad:
             </span>
