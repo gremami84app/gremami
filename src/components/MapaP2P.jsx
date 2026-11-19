@@ -413,9 +413,9 @@ function CustomMapControls({ onRecenter, userCoords, hasLiveGps, isDark }) {
         }}
         className={`p-2.5 rounded-xl border shadow-xl transition-all active:scale-95 flex items-center justify-center relative ${
           hasLiveGps
-            ? 'bg-blue-600 hover:bg-blue-500 text-white border-blue-400 ring-2 ring-blue-400/40'
+            ? 'bg-blue-600 hover:bg-blue-500 text-ink1 border-blue-400 ring-2 ring-blue-400/40'
             : isDark
-            ? 'bg-[#121B2D] hover:bg-slate-800 text-blue-400 border-slate-700'
+            ? 'bg-card hover:bg-slate-800 text-blue-400 border-slate-700'
             : 'bg-white hover:bg-slate-50 text-blue-600 border-slate-300'
         }`}
         title={hasLiveGps ? "Centrar suavemente en Mi Ubicación en Vivo (GPS)" : "Centrar suavemente en Mi Ubicación (Alta Gracia)"}
@@ -428,13 +428,13 @@ function CustomMapControls({ onRecenter, userCoords, hasLiveGps, isDark }) {
 
       {/* Controles de Zoom (+ / -) */}
       <div className={`flex flex-col rounded-xl border shadow-xl overflow-hidden ${
-        isDark ? 'bg-[#121B2D] border-slate-700' : 'bg-white border-slate-300'
+        isDark ? 'bg-card border-slate-700' : 'bg-white border-slate-300'
       }`}>
         <button
           type="button"
           onClick={() => map.zoomIn()}
           className={`p-2.5 border-b transition-colors active:scale-95 flex items-center justify-center ${
-            isDark ? 'text-slate-300 hover:text-white hover:bg-slate-800 border-slate-800' : 'text-slate-700 hover:bg-slate-100 border-slate-200'
+            isDark ? 'text-slate-300 hover:text-ink1 hover:bg-slate-800 border-slate-800' : 'text-slate-700 hover:bg-slate-100 border-slate-200'
           }`}
           title="Acercar mapa"
         >
@@ -444,7 +444,7 @@ function CustomMapControls({ onRecenter, userCoords, hasLiveGps, isDark }) {
           type="button"
           onClick={() => map.zoomOut()}
           className={`p-2.5 transition-colors active:scale-95 flex items-center justify-center ${
-            isDark ? 'text-slate-300 hover:text-white hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'
+            isDark ? 'text-slate-300 hover:text-ink1 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'
           }`}
           title="Alejar mapa"
         >
@@ -456,7 +456,7 @@ function CustomMapControls({ onRecenter, userCoords, hasLiveGps, isDark }) {
       <div
         className={`px-2.5 py-1 rounded-xl border shadow-md text-[9px] font-bold flex items-center gap-1.5 ${
           isDark
-            ? 'bg-[#121B2D] text-slate-300 border-slate-700'
+            ? 'bg-card text-slate-300 border-slate-700'
             : 'bg-white text-slate-700 border-slate-300'
         }`}
         title="Proveedor OpenStreetMap (OSM) Estándar y Gratuito"
@@ -907,14 +907,14 @@ export default function MapaP2P(props) {
         isMapExpanded ? 'max-h-0 opacity-0 pointer-events-none' : 'max-h-64 opacity-100'
       }`}>
       <div className={`p-2.5 border-b z-20 transition-colors shadow-xs ${
-        isDark ? 'bg-[#0B132B] border-[#1F2D48]' : 'bg-white border-slate-200'
+        isDark ? 'bg-card border-line' : 'bg-white border-slate-200'
       }`}>
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 snap-x snap-mandatory scroll-px-2">
           <button
             onClick={() => (goBack ? goBack() : setActiveTab('home'))}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all border flex-shrink-0 ${
               isDark
-                ? 'bg-[#18243C] text-slate-200 border-[#2A3B5C] hover:bg-[#233555] hover:text-white'
+                ? 'bg-[#18243C] text-slate-200 border-[#2A3B5C] hover:bg-[#233555] hover:text-ink1'
                 : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100 hover:text-slate-900 shadow-xs'
             }`}
             title="Volver a la pantalla anterior"
@@ -933,7 +933,7 @@ export default function MapaP2P(props) {
                   isSelected
                     ? 'bg-[#F7931A] text-slate-950 shadow-md font-bold'
                     : isDark
-                    ? 'bg-[#121B2D] text-slate-300 hover:text-white border border-[#1F2D48]'
+                    ? 'bg-card text-slate-300 hover:text-ink1 border border-line'
                     : 'bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200'
                 }`}
               >
@@ -967,9 +967,9 @@ export default function MapaP2P(props) {
                         ? 'bg-blue-500/25 text-blue-400 border-blue-500 shadow-xs'
                         : mod.id === 'mixto'
                         ? 'bg-emerald-500/25 text-emerald-400 border-emerald-500 shadow-xs'
-                        : 'bg-slate-700 text-white border-slate-500 shadow-xs'
+                        : 'bg-slate-700 text-ink1 border-slate-500 shadow-xs'
                       : isDark
-                      ? 'bg-[#121B2D]/70 text-slate-400 border-[#1F2D48] hover:text-slate-200'
+                      ? 'bg-card/70 text-slate-400 border-line hover:text-slate-200'
                       : 'bg-slate-100 text-slate-600 border-slate-200 hover:text-slate-900'
                   }`}
                   title={mod.description}
@@ -998,7 +998,7 @@ export default function MapaP2P(props) {
                 onClick={triggerAlertTest}
                 title="Probar Alarma P2P en Vivo"
                 className={`px-2.5 py-1 rounded-xl border flex items-center gap-1 text-[11px] font-bold transition-all ${
-                  isDark ? 'bg-[#121B2D] border-slate-700 text-[#F7931A] hover:bg-slate-800' : 'bg-slate-100 border-slate-300 text-amber-700 hover:bg-slate-200'
+                  isDark ? 'bg-card border-slate-700 text-[#F7931A] hover:bg-slate-800' : 'bg-slate-100 border-slate-300 text-amber-700 hover:bg-slate-200'
                 }`}
               >
                 <Volume2 size={13} />
@@ -1042,7 +1042,7 @@ export default function MapaP2P(props) {
                   className={`px-2 py-0.5 rounded-lg border text-[10px] flex items-center gap-1 transition-all ${
                     showBlockedUsers
                       ? isDark ? 'bg-rose-950/40 border-rose-500/50 text-rose-300' : 'bg-rose-50 border-rose-300 text-rose-800'
-                      : isDark ? 'bg-[#121B2D] border-slate-700 text-slate-400' : 'bg-slate-100 border-slate-300 text-slate-600'
+                      : isDark ? 'bg-card border-slate-700 text-slate-400' : 'bg-slate-100 border-slate-300 text-slate-600'
                   }`}
                   title="Mostrar u ocultar usuarios bloqueados en el mapa"
                 >
@@ -1066,7 +1066,7 @@ export default function MapaP2P(props) {
                 onClick={() => setIsRequestSheetOpen(true)}
                 className={`px-2.5 py-1 rounded-xl border font-bold text-[11px] flex items-center gap-1 active:scale-95 transition-all ${
                   isDark
-                    ? 'bg-[#121B2D] border-[#F7931A]/50 text-[#F7931A] hover:bg-[#1A253D]'
+                    ? 'bg-card border-[#F7931A]/50 text-[#F7931A] hover:bg-[#1A253D]'
                     : 'bg-amber-50 border-amber-400 text-amber-800 hover:bg-amber-100'
                 }`}
                 title="Pedir un envío ahora mismo (alerta a los cadetes cercanos)"
@@ -1081,7 +1081,7 @@ export default function MapaP2P(props) {
                 className={`px-2.5 py-1 rounded-xl border font-bold text-[11px] flex items-center gap-1.5 active:scale-95 transition-all relative ${
                   totalOffersCount > 0
                     ? 'bg-amber-500/20 border-[#F7931A] text-[#F7931A]'
-                    : isDark ? 'bg-[#121B2D] border-slate-700 text-slate-300' : 'bg-slate-100 border-slate-300 text-slate-700'
+                    : isDark ? 'bg-card border-slate-700 text-slate-300' : 'bg-slate-100 border-slate-300 text-slate-700'
                 }`}
                 title="Ver cotizaciones de cadetes recibidas para adjudicar"
               >
@@ -1099,7 +1099,7 @@ export default function MapaP2P(props) {
                 onClick={triggerAlertTest}
                 title="Probar Alarma P2P en Vivo"
                 className={`p-1 rounded-xl border flex items-center justify-center transition-all ${
-                  isDark ? 'bg-[#121B2D] border-slate-700 text-[#F7931A] hover:bg-slate-800' : 'bg-slate-100 border-slate-300 text-amber-700 hover:bg-slate-200'
+                  isDark ? 'bg-card border-slate-700 text-[#F7931A] hover:bg-slate-800' : 'bg-slate-100 border-slate-300 text-amber-700 hover:bg-slate-200'
                 }`}
               >
                 <Volume2 size={14} />
@@ -1121,7 +1121,7 @@ export default function MapaP2P(props) {
           title={isMapExpanded ? 'Restaurar vista con controles' : 'Expandir mapa a pantalla completa'}
           className={`absolute top-3 left-1/2 -translate-x-1/2 z-[1000] pointer-events-auto flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border shadow-lg text-[11px] font-bold transition-all duration-200 active:scale-95 ${
             isDark
-              ? 'bg-[#0B132B]/90 text-slate-200 border-[#2A3B5C] hover:bg-[#18243C] hover:text-white backdrop-blur-sm'
+              ? 'bg-card/90 text-slate-200 border-[#2A3B5C] hover:bg-[#18243C] hover:text-ink1 backdrop-blur-sm'
               : 'bg-white/90 text-slate-700 border-slate-300 hover:bg-slate-100 hover:text-slate-900 backdrop-blur-sm shadow-md'
           }`}
         >
@@ -1142,7 +1142,7 @@ export default function MapaP2P(props) {
         {isCategoryEmpty && (
           <div className={`absolute top-14 left-1/2 -translate-x-1/2 z-[1001] flex items-center gap-2 px-4 py-2.5 rounded-full border shadow-lg text-[12px] font-bold whitespace-nowrap pointer-events-none ${
             isDark
-              ? 'bg-[#0B132B]/95 text-amber-400 border-amber-500/40 backdrop-blur-sm'
+              ? 'bg-card/95 text-amber-400 border-amber-500/40 backdrop-blur-sm'
               : 'bg-white/95 text-amber-700 border-amber-300 backdrop-blur-sm'
           }`}>
             <AlertTriangle size={14} className="flex-shrink-0" />
@@ -1258,7 +1258,7 @@ export default function MapaP2P(props) {
       {selectedNode && (
         <div className={`absolute bottom-0 left-0 right-0 z-[1050] max-h-[85dvh] pb-8 overflow-y-auto border-t p-4 rounded-t-3xl shadow-2xl animate-in slide-in-from-bottom duration-200 ${
           isDark
-            ? 'bg-[#0B132B] border-slate-800 text-white'
+            ? 'bg-card border-slate-800 text-ink1'
             : 'bg-white border-slate-300 text-slate-900 shadow-2xl'
         }`}>
           {/* Top Bar with Return Button & Reputation Badge */}
@@ -1268,7 +1268,7 @@ export default function MapaP2P(props) {
                 onClick={() => setSelectedNode(null)}
                 className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold transition-all border flex-shrink-0 ${
                   isDark
-                    ? 'bg-slate-800/90 text-slate-300 hover:text-white border-slate-700 hover:bg-slate-700'
+                    ? 'bg-slate-800/90 text-slate-300 hover:text-ink1 border-slate-700 hover:bg-slate-700'
                     : 'bg-slate-100 text-slate-700 hover:text-slate-900 border-slate-200 hover:bg-slate-200'
                 }`}
                 title="Volver al mapa"
@@ -1295,7 +1295,7 @@ export default function MapaP2P(props) {
             <button
               onClick={() => setSelectedNode(null)}
               className={`p-1.5 rounded-full flex-shrink-0 ${
-                isDark ? 'text-slate-400 hover:text-white bg-slate-800/60' : 'text-slate-600 hover:text-slate-900 bg-slate-100'
+                isDark ? 'text-slate-400 hover:text-ink1 bg-slate-800/60' : 'text-slate-600 hover:text-slate-900 bg-slate-100'
               }`}
               title="Cerrar ficha"
             >
@@ -1398,7 +1398,7 @@ export default function MapaP2P(props) {
             const specs = getPeerOperationalSpecs(selectedNode);
             return (
               <div className={`mt-3 p-2.5 rounded-2xl border text-[11px] grid grid-cols-2 gap-2 shadow-xs ${
-                isDark ? 'bg-[#070C1E] border-slate-700/80 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800'
+                isDark ? 'bg-app border-slate-700/80 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800'
               }`}>
                 <div>
                   <span className="text-[10px] text-slate-400 block font-semibold flex items-center gap-1">
@@ -1421,7 +1421,7 @@ export default function MapaP2P(props) {
                     <span>📍</span> Cobertura Geográfica Local:
                   </span>
                   <span className={`font-semibold block mt-0.5 text-[11px] ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                    Barrios de Alta Gracia: <strong className={isDark ? 'text-white' : 'text-slate-900'}>{specs.coverage}</strong>
+                    Barrios de Alta Gracia: <strong className={isDark ? 'text-ink1' : 'text-slate-900'}>{specs.coverage}</strong>
                   </span>
                 </div>
                 {selectedNode.category === 'fletes' && (
@@ -1443,7 +1443,7 @@ export default function MapaP2P(props) {
             const isAuth = !!user;
             return (
               <div className={`mt-3 p-3 rounded-2xl border space-y-2 shadow-xs ${
-                isDark ? 'bg-[#070C1E] border-slate-700/80 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800'
+                isDark ? 'bg-app border-slate-700/80 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800'
               }`}>
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-extrabold flex items-center gap-1.5 text-cyan-400">
@@ -1540,7 +1540,7 @@ export default function MapaP2P(props) {
                 ) : (
                   /* No autenticado: bloqueo con CTA de login */
                   <div className={`rounded-xl border p-4 flex flex-col items-center gap-3 text-center ${
-                    isDark ? 'bg-[#0B132B]/80 border-amber-500/30' : 'bg-amber-50/80 border-amber-300'
+                    isDark ? 'bg-card/80 border-amber-500/30' : 'bg-amber-50/80 border-amber-300'
                   }`}>
                     <div className="flex items-center gap-3 opacity-40 pointer-events-none">
                       <div className="w-9 h-9 rounded-xl bg-pink-500/20 flex items-center justify-center text-pink-400">
@@ -1576,7 +1576,7 @@ export default function MapaP2P(props) {
 
           {/* 2. Solicitud P2P de Imagen de DNI (Intercambio Voluntario) */}
           <div className={`mt-3 p-3 rounded-2xl border shadow-xs ${
-            isDark ? 'bg-gradient-to-r from-[#0C1B33] to-[#121B2D] border-blue-500/40 text-white' : 'bg-blue-50/80 border-blue-200 text-slate-900'
+            isDark ? 'bg-gradient-to-r from-[#0C1B33] to-[#121B2D] border-blue-500/40 text-ink1' : 'bg-blue-50/80 border-blue-200 text-slate-900'
           }`}>
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
@@ -1630,7 +1630,7 @@ export default function MapaP2P(props) {
                   onClick={() => {
                     requestDniVerification(selectedNode.id);
                   }}
-                  className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-xs flex items-center justify-center gap-2 shadow-md active:scale-95 transition-all"
+                  className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-ink1 font-black text-xs flex items-center justify-center gap-2 shadow-md active:scale-95 transition-all"
                   title="Enviar solicitud voluntaria de DNI por el Chat P2P"
                 >
                   <span>🪪</span>
@@ -1703,7 +1703,7 @@ export default function MapaP2P(props) {
           {/* Reseñas Post-Servicio Públicas y Transparentes */}
           {selectedNode.recentReviews && selectedNode.recentReviews.length > 0 && (
             <div className={`mt-2.5 p-2.5 rounded-xl border text-xs ${
-              isDark ? 'bg-[#121B2D] border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
+              isDark ? 'bg-card border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
             }`}>
               <div className="text-[10px] text-[#F7931A] font-semibold uppercase tracking-wider mb-1 flex items-center justify-between">
                 <span className="flex items-center gap-1">
@@ -1763,7 +1763,7 @@ export default function MapaP2P(props) {
         return (
           <div className={`absolute bottom-0 left-0 right-0 z-[1050] max-h-[85dvh] pb-8 overflow-y-auto border-t p-4 rounded-t-3xl shadow-2xl animate-in slide-in-from-bottom duration-200 ${
             isDark
-              ? 'bg-[#0B132B] border-slate-800 text-white'
+              ? 'bg-card border-slate-800 text-ink1'
               : 'bg-white border-slate-300 text-slate-900 shadow-2xl'
           }`}>
             {/* Header with Return Button */}
@@ -1773,7 +1773,7 @@ export default function MapaP2P(props) {
                   onClick={() => setSelectedAuction(null)}
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold transition-all border flex-shrink-0 ${
                     isDark
-                      ? 'bg-slate-800/90 text-slate-300 hover:text-white border-slate-700 hover:bg-slate-700'
+                      ? 'bg-slate-800/90 text-slate-300 hover:text-ink1 border-slate-700 hover:bg-slate-700'
                       : 'bg-slate-100 text-slate-700 hover:text-slate-900 border-slate-200 hover:bg-slate-200'
                   }`}
                   title="Volver al mapa"
@@ -1796,7 +1796,7 @@ export default function MapaP2P(props) {
               <button
                 onClick={() => setSelectedAuction(null)}
                 className={`p-1.5 rounded-full flex-shrink-0 ${
-                  isDark ? 'text-slate-400 hover:text-white bg-slate-800/60' : 'text-slate-600 hover:text-slate-900 bg-slate-100'
+                  isDark ? 'text-slate-400 hover:text-ink1 bg-slate-800/60' : 'text-slate-600 hover:text-slate-900 bg-slate-100'
                 }`}
                 title="Cerrar solicitud"
               >
@@ -1827,7 +1827,7 @@ export default function MapaP2P(props) {
 
             {/* Route & Timing Box */}
             <div className={`p-3 rounded-2xl border mb-3 space-y-2 text-xs ${
-              isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+              isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
               <div className="flex items-center justify-between">
                 <span className="text-slate-400 flex items-center gap-1 text-[11px]">
@@ -1866,7 +1866,7 @@ export default function MapaP2P(props) {
 
             {/* 2. & 3. DESGLOSE ANÓNIMO DE COMPETENCIA Y OFERTA PROPIA (VISTA CADETE) */}
             <div className={`rounded-2xl border p-3 mb-3.5 ${
-              isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+              isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
               <div
                 onClick={() => setShowCompetitorBids(!showCompetitorBids)}
@@ -1880,7 +1880,7 @@ export default function MapaP2P(props) {
                     {offersList.length} cotización(es) recibida(s)
                   </span>
                 </div>
-                <span className="text-[11px] text-slate-400 font-semibold hover:text-white transition-colors">
+                <span className="text-[11px] text-slate-400 font-semibold hover:text-ink1 transition-colors">
                   {showCompetitorBids ? '▲ Ocultar' : '▼ Ver desglose anónimo'}
                 </span>
               </div>
@@ -1932,7 +1932,7 @@ export default function MapaP2P(props) {
                         <div
                           key={offer.id || `comp-${idx}`}
                           className={`p-2.5 rounded-xl border transition-all ${
-                            isDark ? 'bg-[#0B132B] border-slate-700/70 text-slate-200' : 'bg-white border-slate-200 text-slate-800'
+                            isDark ? 'bg-card border-slate-700/70 text-slate-200' : 'bg-white border-slate-200 text-slate-800'
                           }`}
                         >
                           <div className="flex items-center justify-between mb-1">
@@ -1990,11 +1990,11 @@ export default function MapaP2P(props) {
       {showReportModal && selectedNode && (
         <div className="fixed inset-0 z-[2000] bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-[#0B132B] border-amber-500/50 text-white' : 'bg-white border-amber-300 text-slate-900'
+            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-amber-300 text-slate-900'
           }`}>
             <button
               onClick={() => setShowReportModal(false)}
-              className="absolute top-3 right-3 text-slate-400 hover:text-white"
+              className="absolute top-3 right-3 text-slate-400 hover:text-ink1"
               title="Cerrar"
             >
               <X size={18} />
@@ -2002,7 +2002,7 @@ export default function MapaP2P(props) {
             <button
               onClick={() => setShowReportModal(false)}
               className={`flex items-center gap-1.5 text-xs font-semibold mb-3 transition-colors ${
-                isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                isDark ? 'text-slate-400 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
               }`}
               title="Volver"
             >
@@ -2025,7 +2025,7 @@ export default function MapaP2P(props) {
                   value={reportReason}
                   onChange={(e) => setReportReason(e.target.value)}
                   className={`w-full border rounded-xl px-3 py-2 text-xs font-medium ${
-                    isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                    isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                   }`}
                 >
                   <option value="Cobro engañoso / Sobreprecio indebido">Cobro engañoso / Sobreprecio indebido</option>
@@ -2044,7 +2044,7 @@ export default function MapaP2P(props) {
                   onChange={(e) => setReportDetails(e.target.value)}
                   placeholder="Describe brevemente lo ocurrido para conocimiento de la comunidad..."
                   className={`w-full border rounded-xl px-3 py-2 text-xs ${
-                    isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                    isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                   }`}
                 />
               </div>
@@ -2079,11 +2079,11 @@ export default function MapaP2P(props) {
       {showProposalModal && activeAlert && (
         <div className="fixed inset-0 z-[2000] bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-[#0B132B] border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
+            isDark ? 'bg-card border-slate-700 text-ink1' : 'bg-white border-slate-300 text-slate-900'
           }`}>
             <button
               onClick={() => setShowProposalModal(false)}
-              className="absolute top-3 right-3 text-slate-400 hover:text-white"
+              className="absolute top-3 right-3 text-slate-400 hover:text-ink1"
               title="Cerrar"
             >
               <X size={18} />
@@ -2091,7 +2091,7 @@ export default function MapaP2P(props) {
             <button
               onClick={() => setShowProposalModal(false)}
               className={`flex items-center gap-1.5 text-xs font-semibold mb-3 transition-colors ${
-                isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                isDark ? 'text-slate-400 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
               }`}
               title="Volver"
             >
@@ -2105,7 +2105,7 @@ export default function MapaP2P(props) {
             </div>
 
             <div className={`p-2.5 rounded-xl border text-xs mb-3 ${
-              isDark ? 'bg-[#070C1E] border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-800'
+              isDark ? 'bg-app border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-800'
             }`}>
               <p className="font-bold text-[#F7931A]">{activeAlert.title}</p>
               <p className="text-[11px] mt-1">{activeAlert.subtitle}</p>
@@ -2122,7 +2122,7 @@ export default function MapaP2P(props) {
                   value={proposalFeeArs}
                   onChange={(e) => setProposalFeeArs(Number(e.target.value))}
                   className={`w-full border rounded-xl px-3 py-2 text-sm font-mono font-bold ${
-                    isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                    isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                   }`}
                 />
               </div>
@@ -2136,7 +2136,7 @@ export default function MapaP2P(props) {
                   value={proposalFeeValens}
                   onChange={(e) => setProposalFeeValens(Number(e.target.value))}
                   className={`w-full border rounded-xl px-3 py-2 text-sm font-mono font-bold ${
-                    isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                    isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                   }`}
                 />
               </div>
@@ -2165,7 +2165,7 @@ export default function MapaP2P(props) {
       {showBlockConfirm && selectedNode && (
         <div className="fixed inset-0 z-[2000] bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-xs w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-[#0B132B] border-rose-500/50 text-white' : 'bg-white border-rose-300 text-slate-900'
+            isDark ? 'bg-card border-rose-500/50 text-ink1' : 'bg-white border-rose-300 text-slate-900'
           }`}>
             <div className="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-500 flex items-center justify-center mx-auto mb-2">
               <ShieldAlert size={22} />
@@ -2195,7 +2195,7 @@ export default function MapaP2P(props) {
                 className={`flex-1 min-h-[44px] py-2 rounded-xl font-bold text-xs shadow-sm active:scale-95 ${
                   isUserBlocked(selectedNode.id)
                     ? 'bg-emerald-600 hover:bg-emerald-500 text-slate-950'
-                    : 'bg-rose-600 hover:bg-rose-500 text-white'
+                    : 'bg-rose-600 hover:bg-rose-500 text-ink1'
                 }`}
               >
                 {isUserBlocked(selectedNode.id) ? 'Confirmar Desbloqueo' : 'Confirmar Bloqueo'}
@@ -2209,11 +2209,11 @@ export default function MapaP2P(props) {
       {showQuoteSubmitModal && quoteTargetAuction && (
         <div className="fixed inset-0 z-[2000] bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-[#0B132B] border-amber-500/50 text-white' : 'bg-white border-amber-300 text-slate-900'
+            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-amber-300 text-slate-900'
           }`}>
             <button
               onClick={() => setShowQuoteSubmitModal(false)}
-              className="absolute top-3 right-3 text-slate-400 hover:text-white"
+              className="absolute top-3 right-3 text-slate-400 hover:text-ink1"
               title="Cerrar"
             >
               <X size={18} />
@@ -2221,7 +2221,7 @@ export default function MapaP2P(props) {
             <button
               onClick={() => setShowQuoteSubmitModal(false)}
               className={`flex items-center gap-1.5 text-xs font-semibold mb-3 transition-colors ${
-                isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                isDark ? 'text-slate-400 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
               }`}
               title="Volver"
             >
@@ -2250,7 +2250,7 @@ export default function MapaP2P(props) {
 
                   {/* Resumen del pedido */}
                   <div className={`p-2.5 rounded-xl border mb-3 text-[11px] space-y-1 ${
-                    isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+                    isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
                   }`}>
                     <div className="text-slate-400 truncate"><strong>Ruta:</strong> {quoteTargetAuction.origin} ➔ {quoteTargetAuction.destination}</div>
                     <div className="text-slate-400"><strong>Horario:</strong> <span className="text-[#F7931A] font-mono">{quoteTargetAuction.scheduledTime}</span></div>
@@ -2269,7 +2269,7 @@ export default function MapaP2P(props) {
                         value={cadeteQuoteFeeArs}
                         onChange={(e) => setCadeteQuoteFeeArs(Number(e.target.value))}
                         className={`w-full border rounded-xl px-3 py-2 text-sm font-mono font-bold ${
-                          isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                          isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                         }`}
                         required
                       />
@@ -2288,7 +2288,7 @@ export default function MapaP2P(props) {
                         onChange={(e) => setCadeteQuoteNote(e.target.value)}
                         placeholder="Ej: Llego puntual en bici, tengo mochila térmica..."
                         className={`w-full border rounded-xl px-3 py-2 text-xs ${
-                          isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                          isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                         }`}
                         required
                       />
@@ -2325,11 +2325,11 @@ export default function MapaP2P(props) {
       {showNewAuctionModal && (
         <div className="fixed inset-0 z-[2000] bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-md w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-[#0B132B] border-amber-500/50 text-white' : 'bg-white border-amber-300 text-slate-900'
+            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-amber-300 text-slate-900'
           }`}>
             <button
               onClick={() => setShowNewAuctionModal(false)}
-              className="absolute top-3 right-3 text-slate-400 hover:text-white"
+              className="absolute top-3 right-3 text-slate-400 hover:text-ink1"
               title="Cerrar"
             >
               <X size={18} />
@@ -2337,7 +2337,7 @@ export default function MapaP2P(props) {
             <button
               onClick={() => setShowNewAuctionModal(false)}
               className={`flex items-center gap-1.5 text-xs font-semibold mb-3 transition-colors ${
-                isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                isDark ? 'text-slate-400 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
               }`}
               title="Volver"
             >
@@ -2360,7 +2360,7 @@ export default function MapaP2P(props) {
                   value={auctionCategory}
                   onChange={(e) => setAuctionCategory(e.target.value)}
                   className={`w-full border rounded-xl px-3 py-2 text-xs font-medium ${
-                    isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                    isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                   }`}
                 >
                   <option value="bicicleta">🚲 Bicicleta (Envíos ligeros, ciclovías)</option>
@@ -2379,7 +2379,7 @@ export default function MapaP2P(props) {
                   onChange={(e) => setAuctionOrigin(e.target.value)}
                   placeholder="Ej: Av. Belgrano 180 (Farmacia Central)"
                   className={`w-full border rounded-xl px-3 py-2 text-xs ${
-                    isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                    isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                   }`}
                   required
                 />
@@ -2393,7 +2393,7 @@ export default function MapaP2P(props) {
                   onChange={(e) => setAuctionDestination(e.target.value)}
                   placeholder="Ej: Bv. Pellegrini 320, B° Pellegrini"
                   className={`w-full border rounded-xl px-3 py-2 text-xs ${
-                    isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                    isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                   }`}
                   required
                 />
@@ -2408,7 +2408,7 @@ export default function MapaP2P(props) {
                     onChange={(e) => setAuctionTime(e.target.value)}
                     placeholder="Ej: Hoy 17:00 hs"
                     className={`w-full border rounded-xl px-3 py-2 text-xs font-mono font-bold ${
-                      isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                      isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                     }`}
                     required
                   />
@@ -2422,7 +2422,7 @@ export default function MapaP2P(props) {
                     value={auctionFeeArs}
                     onChange={(e) => setAuctionFeeArs(Number(e.target.value))}
                     className={`w-full border rounded-xl px-3 py-2 text-xs font-mono font-bold ${
-                      isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                      isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                     }`}
                     required
                   />
@@ -2437,7 +2437,7 @@ export default function MapaP2P(props) {
                   onChange={(e) => setAuctionDescription(e.target.value)}
                   placeholder="Detalla qué se traslada (ej: medicamento urgente, llaves, vianda caliente...)"
                   className={`w-full border rounded-xl px-3 py-2 text-xs ${
-                    isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                    isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                   }`}
                   required
                 />
@@ -2467,11 +2467,11 @@ export default function MapaP2P(props) {
       {showAuctionQuotesModal && (
         <div className="fixed inset-0 z-[2000] bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-lg w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-[#0B132B] border-amber-500/50 text-white' : 'bg-white border-amber-300 text-slate-900'
+            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-amber-300 text-slate-900'
           }`}>
             <button
               onClick={() => setShowAuctionQuotesModal(false)}
-              className="absolute top-3 right-3 text-slate-400 hover:text-white"
+              className="absolute top-3 right-3 text-slate-400 hover:text-ink1"
               title="Cerrar"
             >
               <X size={18} />
@@ -2479,7 +2479,7 @@ export default function MapaP2P(props) {
             <button
               onClick={() => setShowAuctionQuotesModal(false)}
               className={`flex items-center gap-1.5 text-xs font-semibold mb-3 transition-colors ${
-                isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                isDark ? 'text-slate-400 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
               }`}
               title="Volver"
             >
@@ -2509,7 +2509,7 @@ export default function MapaP2P(props) {
                     <div
                       key={req.id}
                       className={`p-3.5 rounded-2xl border space-y-3 ${
-                        isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+                        isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
                       }`}
                     >
                       {/* Cabecera del pedido */}
@@ -2579,7 +2579,7 @@ export default function MapaP2P(props) {
                                       ? 'bg-emerald-950/40 border-emerald-500/60 ring-1 ring-emerald-500/50'
                                       : 'bg-emerald-50 border-emerald-400 ring-1 ring-emerald-400'
                                     : isDark
-                                    ? 'bg-[#0B132B] border-slate-800'
+                                    ? 'bg-card border-slate-800'
                                     : 'bg-white border-slate-200'
                                 }`}
                               >
