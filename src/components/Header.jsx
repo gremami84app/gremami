@@ -275,7 +275,7 @@ export default function Header() {
                 : 'text-ink3 hover:text-ink1'
             }`}
           >
-            Cliente
+            Cliente (Pedir)
           </button>
 
           <button
@@ -288,7 +288,7 @@ export default function Header() {
                 : 'text-ink3 hover:text-ink1'
             }`}
           >
-            Cadete
+            Cadete (Trabajar)
           </button>
         </div>
       </div>

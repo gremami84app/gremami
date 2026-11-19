@@ -494,7 +494,7 @@ export default function WalletScreen() {
             </div>
           </div>
 
-          {/* 1.2 Tarjeta de Saldo ValensCoin (Testnet L1) */}
+          {/* 1.2 Tarjeta de Saldo ValensCoin */}
           <div className={`relative rounded-2xl border p-5 shadow-xl overflow-hidden transition-colors ${
             isDark
               ? 'bg-gradient-to-br from-[#121B2D] via-[#101726] to-[#070C1E] border-[#1F2D48]'
@@ -551,7 +551,7 @@ export default function WalletScreen() {
               <p className="mt-1 opacity-80">Detalles técnicos: red Valens L1 · 1.000.000.000.000 VAL · sin decimales.</p>
             </details>
 
-            {/* Botones de Acción: Recibir (QR), Enviar VAL & Grifo (+5 VAL) */}
+            {/* Botones de Acción: Recibir (QR) y Enviar VAL */}
             <div className="mt-5 grid grid-cols-3 gap-2">
               <button
                 onClick={() => {

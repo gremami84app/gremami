@@ -320,13 +320,19 @@ export default function ProfileScreen() {
           <ArrowLeft className="w-4 h-4" />
           <span>Volver al Inicio</span>
         </button>
-        <span className={`text-[10px] font-mono px-2 py-0.5 rounded-lg border ${
-          isDark
-            ? 'text-[#F0B90B] bg-card border-line'
-            : 'text-amber-700 bg-amber-50 border-amber-200 font-bold'
-        }`}>
-          Perfil y Logística P2P
-        </span>
+        <button
+          onClick={() => setIsEditingProfile(!isEditingProfile)}
+          aria-pressed={isEditingProfile}
+          className={`min-h-touch px-3 rounded-control text-xs font-bold border transition-all ${
+            isEditingProfile
+              ? 'bg-accent text-slate-950 border-transparent'
+              : isDark
+              ? 'bg-card text-ink2 border-line'
+              : 'bg-white text-slate-700 border-slate-300'
+          }`}
+        >
+          {isEditingProfile ? 'Listo' : 'Editar perfil'}
+        </button>
       </div>
 
       {/* 4. Conmutador de Estado en Tiempo Real (Online / Offline - Disponible para Trabajar) */}
@@ -673,16 +679,9 @@ export default function ProfileScreen() {
                 Datos de Servicio, Fletes y Redes Sociales
               </h3>
             </div>
-            <button
-              onClick={() => setIsEditingProfile(!isEditingProfile)}
-              className={`text-[11px] font-bold px-2.5 py-1 rounded-xl border transition-all ${
-                isEditingProfile
-                  ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
-                  : isDark ? 'bg-app text-slate-300 border-slate-700' : 'bg-slate-100 text-slate-700 border-slate-300'
-              }`}
-            >
-              {isEditingProfile ? 'Cancelar' : 'Editar Formulario'}
-            </button>
+            {isEditingProfile && (
+              <span className="text-xs font-semibold text-accent">Editando…</span>
+            )}
           </div>
 
           <form onSubmit={handleSaveProfile} className="space-y-3.5">
