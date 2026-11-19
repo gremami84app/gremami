@@ -135,16 +135,22 @@ export default function ChatScreen() {
   };
 
   // Cadete submitting pin verification with reward transfer and security handling
-  const handleVerifyPinSubmit = (e) => {
+  const handleVerifyPinSubmit = async (e) => {
     e?.preventDefault();
     if (!currentPeer) return;
     if (cadetePinInput.length !== 4) {
       showToast('⚠️ El código PIN debe tener exactamente 4 dígitos', 'warning');
       return;
     }
-    const res = completeDeliveryWithPin(cadetePinInput, currentPeer.id, 1.0);
-    if (res.success) {
-      setCadetePinInput('');
+    // (S08) La verificación es autoritativa en el servidor -> ahora es asíncrona.
+    try {
+      const res = await completeDeliveryWithPin(cadetePinInput, currentPeer.id, 1.0);
+      if (res?.success) {
+        setCadetePinInput('');
+      }
+    } catch (err) {
+      console.error('[S08] Error al validar el PIN:', err);
+      showToast('⚠️ No se pudo validar el PIN. Intentá de nuevo.', 'warning');
     }
   };
 
@@ -600,7 +606,7 @@ export default function ChatScreen() {
                     </button>
 
                     <button
-                      onClick={() => completeDeliveryWithPin(orderPin, currentPeer.id, 1.0)}
+                      onClick={() => { completeDeliveryWithPin(orderPin, currentPeer.id, 1.0).catch(() => {}); }}
                       className="ml-auto px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/50 text-emerald-400 font-bold flex items-center gap-1 active:scale-95 transition-all"
                       title="Simular validación del cadete para ver la recompensa"
                     >

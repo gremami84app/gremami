@@ -23,7 +23,7 @@ import {
   newUuid,
   isUuid
 } from '../lib/supabase';
-import { authService, profileService, isSupabaseConfigured, supabase, valensService } from '../lib/supabaseClient';
+import { authService, profileService, isSupabaseConfigured, supabase, valensService, pinService } from '../lib/supabaseClient';
 import { derivePublicAddress, generateSeedPhrase, generateValensQrUri, localTransferTokens, localClaimFaucet } from '../services/cryptoWalletService';
 
 
@@ -1030,7 +1030,14 @@ export function AppProvider({ children }) {
 
   // Sistema Antifraude: Generar nuevo PIN dinámico
   const generateNewPin = () => {
-    const newCode = Math.floor(1000 + Math.random() * 9000).toString();
+    // (S08) CSPRNG en lugar de Math.random(): 4 dígitos sin sesgo predecible
+    const buf = new Uint32Array(1);
+    if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+      crypto.getRandomValues(buf);
+    } else {
+      buf[0] = Math.floor(Math.random() * 0xffffffff);
+    }
+    const newCode = String(1000 + (buf[0] % 9000));
     setOrderPin(newCode);
     setPinStatus('pending');
     setPinFailedAttempts(0);
@@ -1080,7 +1087,7 @@ export function AppProvider({ children }) {
   };
 
   // 2. Flujo de Pago Físico, Recaudación Fiduciaria y Liberación de ValensCoin mediante PIN
-  const completeDeliveryWithPin = (inputPin, peerId = null, rewardAmount = 1.0, agreedFeeArs = 2000) => {
+  const completeDeliveryWithPin = async (inputPin, peerId = null, rewardAmount = 1.0, agreedFeeArs = 2000) => {
     if (isPinLocked) {
       showToast('⚠️ Campo bloqueado temporalmente tras 3 intentos. Reenvía el PIN por chat o contacta soporte.', 'warning');
       return { success: false, locked: true };
@@ -1105,6 +1112,64 @@ export function AppProvider({ children }) {
       }
     }
 
+    // (S08) Verificación AUTORITATIVA en el servidor.
+    // El cliente fija el hash del PIN en la orden y la liberación se resuelve
+    // comparando hashes dentro de release_reward_by_pin (nunca texto plano).
+    const authUid = isUuid(currentUser?.id) ? currentUser.id : null;
+    let orderIdForPin = null;
+
+    if (authUid) {
+      try {
+        orderIdForPin = newUuid();
+
+        const orderRes = await saveOrderToSupabase({
+          id: orderIdForPin,
+          client_id: authUid,
+          cadete_id: authUid,
+          title: `Entrega verificada con PIN — ${peerName}`,
+          description: `Entrega P2P validada con PIN para ${peerName}`,
+          category: 'moto',
+          status: 'pendiente',
+          origin_address: 'Centro Alta Gracia',
+          destination_address: 'Destino Verificado',
+          price_ars: Number(agreedFeeArs || 2000),
+          reward_val: Number(rewardAmount || 1.0),
+          delivery_pin: null
+        });
+
+        if (!orderRes.remote && orderRes.reason !== 'already-exists') {
+          showToast('⚠️ No se pudo registrar la orden en el servidor. La entrega no se liberó.', 'warning');
+          return { success: false, locked: false, error: 'order-not-persisted' };
+        }
+
+        const pinSet = await pinService.setOrderPin(orderIdForPin, orderPin);
+        if (!pinSet.success) {
+          showToast(`⚠️ No se pudo registrar el PIN: ${pinSet.error?.message || 'error'}`, 'warning');
+          return { success: false, locked: false, error: 'pin-not-set' };
+        }
+
+        const release = await pinService.releaseReward(orderIdForPin, inputPin, authUid);
+        if (!release.success) {
+          const nextFailed = pinFailedAttempts + 1;
+          setPinFailedAttempts(nextFailed);
+          playP2PAlertChime();
+          if (nextFailed >= 3) {
+            setIsPinLocked(true);
+            showToast('⚠️ 3 intentos fallidos consecutivos. Campo bloqueado por seguridad P2P.', 'error');
+            return { success: false, locked: true, attempts: nextFailed };
+          }
+          showToast(`❌ ${release.error?.message || 'PIN incorrecto'} (Intento ${nextFailed}/3).`, 'error');
+          return { success: false, locked: false, attempts: nextFailed };
+        }
+      } catch (err) {
+        console.error('[S08] Error verificando PIN en el servidor:', err);
+        showToast('⚠️ No se pudo verificar el PIN con el servidor.', 'warning');
+        return { success: false, locked: false, error: 'network' };
+      }
+    } else {
+      showToast('⚠️ PIN validado localmente (sin sesión: no se verificó en el servidor).', 'warning');
+    }
+
     // PIN Correcto!
     setPinFailedAttempts(0);
     setIsPinLocked(false);
@@ -1117,17 +1182,14 @@ export function AppProvider({ children }) {
     // Acreditar simultáneamente el token en el balance (+1.0 VAL)
     setBalance((prev) => +(prev + finalRewardVal).toFixed(2));
 
-    // (S07) IDs reales: UUID cuando hay sesión (las FK y las RLS lo exigen).
-    // Sin sesión se mantienen los IDs locales de siempre y solo se respalda en localStorage.
-    const authUid = isUuid(currentUser?.id) ? currentUser.id : null;
+    // (S07/S08) authUid y orderIdForPin ya se resolvieron en la verificación del PIN.
     const deliveryId = authUid ? newUuid() : `del-${Date.now()}`;
-    const orderId = authUid ? newUuid() : `ord-${Date.now()}`;
+    const orderId = orderIdForPin || `ord-${Date.now()}`;
 
     // 1. Persistencia en Supabase: primero la orden y después la entrega
     //    (deliveries.order_id tiene FK a orders.id, así que el orden importa).
-    //    No se usa await: completeDeliveryWithPin es sincrónica y su resultado se
-    //    consume de inmediato en verifyPin/ChatScreen. Se captura el rechazo de la
-    //    promesa para evitar unhandled rejections sin alterar el flujo del PIN.
+    //    (S08) El PIN ya se verificó arriba contra el servidor; aquí solo se
+    //    registran los efectos secundarios sin bloquear la UI.
     const deliveryPayload = {
       delivery_id: deliveryId,
       order_id: orderId,
@@ -1296,9 +1358,9 @@ export function AppProvider({ children }) {
   };
 
   // Sistema Antifraude: Verificar PIN ingresado por el cadete
-  const verifyPin = (inputPin) => {
-    const res = completeDeliveryWithPin(inputPin);
-    return res.success;
+  const verifyPin = async (inputPin) => {
+    const res = await completeDeliveryWithPin(inputPin);
+    return Boolean(res?.success);
   };
 
   // 2. Sistema de Alertas y Notificaciones de Solicitudes en Vivo

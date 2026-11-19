@@ -746,7 +746,8 @@ export const orderService = {
       base_price_ars: priceArs,
       reward_val: rewardVal,
       val_incentive: rewardVal,
-      delivery_pin: String(orderData.delivery_pin || Math.floor(1000 + Math.random() * 9000)),
+      // (S08) Sin PIN en claro: se registra como hash con set_order_pin
+      delivery_pin: orderData.delivery_pin == null ? null : String(orderData.delivery_pin),
       pin_attempts: 0,
       whatsapp_shared: Boolean(orderData.whatsapp_shared || false),
       cadete_id: orderData.cadete_id || null,
@@ -1472,6 +1473,54 @@ export const valensService = {
 
     if (error || !data) return defaultGenesis;
     return data;
+  }
+};
+
+// ====================================================================
+// (S08) SERVICIO DE PIN — verificación autoritativa en el servidor
+// El PIN nunca se guarda en claro: el cliente fija un hash con
+// set_order_pin y release_reward_by_pin compara hashes (pgcrypto).
+// ====================================================================
+export const pinService = {
+  // Registra el hash del PIN en una orden (solo el cliente dueño puede hacerlo)
+  setOrderPin: async (orderId, pin) => {
+    if (!isSupabaseConfigured) {
+      return { success: false, error: { message: 'Supabase no configurado' } };
+    }
+    try {
+      const { data, error } = await supabase.rpc('set_order_pin', {
+        p_order_id: orderId,
+        p_pin: String(pin || '').trim()
+      });
+      if (error) return { success: false, error };
+      if (data && data.success === false) {
+        return { success: false, error: { message: data.error || 'No se pudo registrar el PIN' } };
+      }
+      return { success: true, data };
+    } catch (e) {
+      return { success: false, error: { message: e?.message || 'Error de red al registrar el PIN' } };
+    }
+  },
+
+  // Libera el pago comparando el PIN contra el hash guardado en el servidor
+  releaseReward: async (orderId, pin, cadetId) => {
+    if (!isSupabaseConfigured) {
+      return { success: false, error: { message: 'Supabase no configurado' } };
+    }
+    try {
+      const { data, error } = await supabase.rpc('release_reward_by_pin', {
+        p_order_id: orderId,
+        p_pin: String(pin || '').trim(),
+        p_cadet_id: cadetId
+      });
+      if (error) return { success: false, error };
+      if (data && data.success === false) {
+        return { success: false, error: { message: data.error || 'PIN incorrecto' }, data };
+      }
+      return { success: true, data };
+    } catch (e) {
+      return { success: false, error: { message: e?.message || 'Error de red al liberar el pago' } };
+    }
   }
 };
 

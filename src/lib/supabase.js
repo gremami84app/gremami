@@ -220,7 +220,8 @@ export const saveOrderToSupabase = async ({
     base_price_ars: priceArs,
     reward_val: rewardVal,
     val_incentive: rewardVal,
-    delivery_pin: String(delivery_pin || Math.floor(1000 + Math.random() * 9000)),
+    // (S08) El PIN ya no se genera ni guarda en claro: vive como hash en orders.pin_hash
+    delivery_pin: delivery_pin == null ? null : String(delivery_pin),
     pin_attempts: 0,
     whatsapp_shared: Boolean(whatsapp_shared),
     created_at: new Date().toISOString()
