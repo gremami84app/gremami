@@ -111,14 +111,14 @@ export default function DexScreen() {
         <button
           onClick={() => goBack ? goBack() : setActiveTab('home')}
           className={`flex items-center space-x-1.5 text-xs transition-colors ${
-            isDark ? 'text-[#8C9BB4] hover:text-white' : 'text-slate-600 hover:text-slate-900'
+            isDark ? 'text-ink3 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           <ChevronLeft size={16} />
           <span>Volver</span>
         </button>
         <span className={`text-[10px] font-mono px-2 py-0.5 rounded-lg border ${
-          isDark ? 'text-[#F0B90B] bg-[#121B2D] border-[#1F2D48]' : 'text-amber-700 bg-amber-50 border-amber-200 font-bold'
+          isDark ? 'text-[#F0B90B] bg-card border-line' : 'text-amber-700 bg-amber-50 border-amber-200 font-bold'
         }`}>
           Mercado DEX
         </span>
@@ -127,7 +127,7 @@ export default function DexScreen() {
       {/* 1. Header Banner */}
       <div className={`relative rounded-2xl border p-4 shadow-xl overflow-hidden transition-colors ${
         isDark
-          ? 'bg-gradient-to-br from-[#121B2D] via-[#101726] to-[#0A1128] border-[#1F2D48]'
+          ? 'bg-gradient-to-br from-[#121B2D] via-[#101726] to-[#0A1128] border-line'
           : 'bg-gradient-to-br from-white via-slate-50 to-amber-50/50 border-slate-200'
       }`}>
         <div className="flex items-center justify-between mb-2">
@@ -141,13 +141,13 @@ export default function DexScreen() {
             </span>
           </div>
           <span className={`text-[10px] font-mono px-2 py-0.5 rounded-md border ${
-            isDark ? 'bg-[#070C1E] border-slate-700 text-emerald-400' : 'bg-emerald-50 border-emerald-300 text-emerald-800 font-bold'
+            isDark ? 'bg-app border-slate-700 text-emerald-400' : 'bg-emerald-50 border-emerald-300 text-emerald-800 font-bold'
           }`}>
             Libro Abierto Sin Intermediarios
           </span>
         </div>
 
-        <h2 className={`text-lg font-black tracking-tight leading-snug ${isDark ? 'text-white' : 'text-slate-900'}`}>
+        <h2 className={`text-lg font-black tracking-tight leading-snug ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
           Donaciones e Intercambio de ValensCoin
         </h2>
         <p className={`text-xs mt-1 leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
@@ -225,7 +225,7 @@ export default function DexScreen() {
               activeFilter === f.id
                 ? 'bg-[#F7931A] text-slate-950 border-amber-400 shadow-md font-bold'
                 : isDark
-                ? 'bg-[#121B2D] text-slate-300 hover:text-white border-slate-800'
+                ? 'bg-card text-slate-300 hover:text-ink1 border-slate-800'
                 : 'bg-white text-slate-700 hover:text-slate-900 border-slate-200 shadow-xs'
             }`}
           >
@@ -238,7 +238,7 @@ export default function DexScreen() {
       <div className="space-y-3">
         {filteredOrders.length === 0 ? (
           <div className={`p-8 rounded-2xl border text-center ${
-            isDark ? 'bg-[#121B2D] border-slate-800 text-slate-400' : 'bg-white border-slate-200 text-slate-600'
+            isDark ? 'bg-card border-slate-800 text-slate-400' : 'bg-white border-slate-200 text-slate-600'
           }`}>
             <p className="text-sm font-semibold">No hay órdenes en esta categoría.</p>
             <p className="text-xs mt-1">Sé el primero en publicar una oferta o solicitud solidaria.</p>
@@ -257,10 +257,10 @@ export default function DexScreen() {
                   isCompleted
                     ? isDark ? 'bg-[#0E1524] border-slate-800 opacity-60' : 'bg-slate-100 border-slate-200 opacity-60'
                     : isDonation
-                    ? isDark ? 'bg-[#121B2D] border-emerald-500/40 hover:border-emerald-500' : 'bg-white border-emerald-300 hover:border-emerald-500'
+                    ? isDark ? 'bg-card border-emerald-500/40 hover:border-emerald-500' : 'bg-white border-emerald-300 hover:border-emerald-500'
                     : isSell
-                    ? isDark ? 'bg-[#121B2D] border-amber-500/40 hover:border-amber-500' : 'bg-white border-amber-300 hover:border-amber-500'
-                    : isDark ? 'bg-[#121B2D] border-cyan-500/40 hover:border-cyan-500' : 'bg-white border-cyan-300 hover:border-cyan-500'
+                    ? isDark ? 'bg-card border-amber-500/40 hover:border-amber-500' : 'bg-white border-amber-300 hover:border-amber-500'
+                    : isDark ? 'bg-card border-cyan-500/40 hover:border-cyan-500' : 'bg-white border-cyan-300 hover:border-cyan-500'
                 }`}
               >
                 {/* Lateral accent strip */}
@@ -313,7 +313,7 @@ export default function DexScreen() {
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <h4 className={`text-xs font-bold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                        <h4 className={`text-xs font-bold truncate ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                           {order.userName}
                         </h4>
                         <div className="text-right">
@@ -330,7 +330,7 @@ export default function DexScreen() {
 
                   {/* Order Description Message */}
                   <div className={`mt-2.5 p-2 rounded-xl text-xs leading-relaxed ${
-                    isDark ? 'bg-[#070C1E] border border-slate-800 text-slate-300' : 'bg-slate-50 border border-slate-200 text-slate-700'
+                    isDark ? 'bg-app border border-slate-800 text-slate-300' : 'bg-slate-50 border border-slate-200 text-slate-700'
                   }`}>
                     <p className="italic text-[11px]">"{order.description}"</p>
                   </div>
@@ -400,11 +400,11 @@ export default function DexScreen() {
       {showCreateModal && (
         <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-[#0B132B] border-[#1F2D48] text-white' : 'bg-white border-slate-300 text-slate-900'
+            isDark ? 'bg-card border-line text-ink1' : 'bg-white border-slate-300 text-slate-900'
           }`}>
             <button
               onClick={() => setShowCreateModal(false)}
-              className="absolute top-3 right-3 text-slate-400 hover:text-white"
+              className="absolute top-3 right-3 text-slate-400 hover:text-ink1"
               title="Cerrar"
             >
               <X size={18} />
@@ -412,7 +412,7 @@ export default function DexScreen() {
             <button
               onClick={() => setShowCreateModal(false)}
               className={`flex items-center gap-1.5 text-xs font-semibold mb-3 transition-colors ${
-                isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                isDark ? 'text-slate-400 hover:text-ink1' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <ChevronLeft size={15} />
@@ -457,7 +457,7 @@ export default function DexScreen() {
                         orderType === t.id
                           ? 'bg-[#F7931A] text-slate-950 border-amber-400 font-bold'
                           : isDark
-                          ? 'bg-[#121B2D] border-slate-800 text-slate-300'
+                          ? 'bg-card border-slate-800 text-slate-300'
                           : 'bg-slate-100 border-slate-300 text-slate-700'
                       }`}
                     >
@@ -478,7 +478,7 @@ export default function DexScreen() {
                   value={orderAmount}
                   onChange={(e) => setOrderAmount(Number(e.target.value))}
                   className={`w-full border rounded-xl px-3 py-2 text-xs font-mono font-bold ${
-                    isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                    isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                   }`}
                 />
               </div>
@@ -495,7 +495,7 @@ export default function DexScreen() {
                     value={orderUnitPrice}
                     onChange={(e) => setOrderUnitPrice(Number(e.target.value))}
                     className={`w-full border rounded-xl px-3 py-2 text-xs font-mono font-bold ${
-                      isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                      isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                     }`}
                   />
                   <span className="text-[10px] text-slate-500 mt-0.5 block font-mono">
@@ -514,7 +514,7 @@ export default function DexScreen() {
                   onChange={(e) => setOrderPaymentMethod(e.target.value)}
                   placeholder="Ej. Transferencia Mercado Pago, Efectivo en Mano"
                   className={`w-full border rounded-xl px-3 py-2 text-xs ${
-                    isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                    isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                   }`}
                 />
               </div>
@@ -533,7 +533,7 @@ export default function DexScreen() {
                       : 'Ej. Vendo saldo acumulado por entregas de la semana en Alta Gracia.'
                   }
                   className={`w-full border rounded-xl px-3 py-2 text-xs ${
-                    isDark ? 'bg-[#070C1E] border-slate-700 text-white' : 'bg-slate-100 border-slate-300 text-slate-900'
+                    isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
                   }`}
                 />
               </div>
@@ -562,7 +562,7 @@ export default function DexScreen() {
       {showDonateModal && (
         <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-[#0B132B] border-emerald-500/50 text-white' : 'bg-white border-emerald-300 text-slate-900'
+            isDark ? 'bg-card border-emerald-500/50 text-ink1' : 'bg-white border-emerald-300 text-slate-900'
           }`}>
             <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-2 border border-emerald-500/40">
               <Gift size={24} />
@@ -574,7 +574,7 @@ export default function DexScreen() {
             </p>
 
             <div className={`mt-3 p-3 rounded-xl border text-xs ${
-              isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+              isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
               <div className="flex justify-between items-center mb-1">
                 <span className="text-slate-400">Monto a transferir:</span>
@@ -613,7 +613,7 @@ export default function DexScreen() {
       {showTradeModal && (
         <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-[#0B132B] border-amber-500/50 text-white' : 'bg-white border-amber-300 text-slate-900'
+            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-amber-300 text-slate-900'
           }`}>
             <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-[#F7931A] flex items-center justify-center mx-auto mb-2 border border-amber-500/40">
               <Coins size={24} />
@@ -628,7 +628,7 @@ export default function DexScreen() {
             </p>
 
             <div className={`mt-3 p-3 rounded-xl border text-xs space-y-1.5 ${
-              isDark ? 'bg-[#070C1E] border-slate-800' : 'bg-slate-50 border-slate-200'
+              isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Tokens:</span>
@@ -659,7 +659,7 @@ export default function DexScreen() {
                   handleChatWithOrderUser(showTradeModal);
                   setShowTradeModal(null);
                 }}
-                className="w-full min-h-[44px] py-2 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-center gap-1.5"
+                className="w-full min-h-[44px] py-2 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-800 text-ink1 text-xs font-semibold flex items-center justify-center gap-1.5"
               >
                 <MessageSquare size={14} className="text-[#F7931A]" />
                 <span>Abrir Chat con {showTradeModal.userName}</span>
@@ -668,7 +668,7 @@ export default function DexScreen() {
               <button
                 type="button"
                 onClick={() => setShowTradeModal(null)}
-                className="w-full py-1 text-slate-400 hover:text-white text-xs font-medium"
+                className="w-full py-1 text-slate-400 hover:text-ink1 text-xs font-medium"
               >
                 Volver
               </button>
