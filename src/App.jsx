@@ -1,10 +1,11 @@
-import React, { lazy, Suspense, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import Header from './components/Header';
 import AuthModal from './components/AuthModal';
 import UserSearchModal from './components/UserSearchModal';
 import PublicProfileModal from './components/PublicProfileModal';
 import OnboardingScreen from './components/OnboardingScreen';
+import LegalDonationModal from './components/LegalDonationModal';
 import { AlertCircle, CheckCircle2, Info } from 'lucide-react';
 
 const DexScreen = lazy(() => import('./components/DexScreen'));
@@ -119,6 +120,19 @@ function OnboardingGate() {
   const [seen, setSeen] = useState(() => {
     try { return localStorage.getItem('gremami_onboarding_seen') === '1'; } catch (e) { return true; }
   });
+  const [legalOpen, setLegalOpen] = useState(false);
+
+  // (S13b) El menú del Header dispara eventos globales: sin tocar AppContext.
+  useEffect(() => {
+    const openOnboarding = () => setSeen(false);
+    const openLegal = () => setLegalOpen(true);
+    window.addEventListener('gremami:open-onboarding', openOnboarding);
+    window.addEventListener('gremami:open-legal', openLegal);
+    return () => {
+      window.removeEventListener('gremami:open-onboarding', openOnboarding);
+      window.removeEventListener('gremami:open-legal', openLegal);
+    };
+  }, []);
 
   const markSeen = () => {
     try { localStorage.setItem('gremami_onboarding_seen', '1'); } catch (e) {}
@@ -135,7 +149,12 @@ function OnboardingGate() {
     );
   }
 
-  return <MainLayout />;
+  return (
+    <>
+      <MainLayout />
+      <LegalDonationModal open={legalOpen} onClose={() => setLegalOpen(false)} />
+    </>
+  );
 }
 
 export default function App() {

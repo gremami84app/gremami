@@ -69,6 +69,23 @@ export default function Header() {
   const hasMinBalance = balance >= 1.0;
 
   const navMenuItems = [
+    // (S13b) Accesos de demo: reabrir onboarding y ver aviso legal
+    {
+      id: 'onboarding',
+      label: 'Cómo funciona GREMAMI',
+      icon: Sparkles,
+      desc: 'Volver a ver la introducción de 3 pasos',
+      badge: null,
+      onAction: () => window.dispatchEvent(new Event('gremami:open-onboarding'))
+    },
+    {
+      id: 'legal',
+      label: 'Aviso Legal y Donaciones',
+      icon: ShieldCheck,
+      desc: 'Proyecto educativo sin fines de lucro',
+      badge: null,
+      onAction: () => window.dispatchEvent(new Event('gremami:open-legal'))
+    },
     {
       id: 'home',
       label: 'Inicio / Categorías',
@@ -468,7 +485,14 @@ export default function Header() {
                 return (
                   <button
                     key={item.id}
-                    onClick={() => handleNavigate(item.id)}
+                    onClick={() => {
+                if (item.onAction) {
+                  item.onAction();
+                  setIsMenuOpen(false);
+                } else {
+                  handleNavigate(item.id);
+                }
+              }}
                     type="button"
                     className={`w-full flex items-center justify-between p-2.5 rounded-xl text-left transition-all ${
                       isActive

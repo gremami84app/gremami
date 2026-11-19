@@ -138,9 +138,13 @@ export default function OnboardingScreen({ onComplete, onExplore, onSkip }) {
         </p>
 
         {isLast && (
-          <p className="mt-5 text-[11px] leading-relaxed text-ink3">
-            Proyecto educativo y comunitario sin fines de lucro • Escuela práctica de usuarios cripto
-          </p>
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event('gremami:open-legal'))}
+            className="mt-5 text-[11px] leading-relaxed text-ink3 underline decoration-line underline-offset-2 text-left"
+          >
+            Proyecto educativo y comunitario sin fines de lucro · Escuela práctica de usuarios cripto
+          </button>
         )}
       </main>
 
