@@ -474,7 +474,9 @@ CREATE OR REPLACE FUNCTION public.set_order_pin(
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+-- (S08-Fix) pgcrypto vive en el schema "extensions" en Supabase: sin él,
+-- crypt()/gen_salt() no resuelven y PostgREST responde 404.
+SET search_path = public, extensions
 AS $$
 DECLARE
   v_order RECORD;
@@ -519,6 +521,9 @@ CREATE OR REPLACE FUNCTION public.release_reward_by_pin(
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
+-- (S08-Fix) pgcrypto vive en el schema "extensions" en Supabase: sin él,
+-- crypt() no resuelve y PostgREST responde 404 al validar el PIN.
+SET search_path = public, extensions
 AS $$
 DECLARE
   v_order RECORD;
