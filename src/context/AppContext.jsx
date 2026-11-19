@@ -459,6 +459,10 @@ export function AppProvider({ children }) {
       }
       if (progress) {
         persistSchoolRewardClaimed(Boolean(progress.reward_claimed));
+      } else {
+        // Sin fila de progreso (o tabla aún no disponible): este usuario todavía
+        // no reclamó. Evita heredar el estado de otra cuenta en el mismo equipo.
+        persistSchoolRewardClaimed(false);
       }
 
       return { address: addressResult?.address || null, snapshot, progress };
@@ -589,6 +593,8 @@ export function AppProvider({ children }) {
         }
       } else if (event === 'SIGNED_OUT') {
         setCurrentUser(null);
+        setWalletAddress('');
+        setSchoolRewardClaimed(false);
         localStorage.removeItem('gremami_auth_user');
       }
     });

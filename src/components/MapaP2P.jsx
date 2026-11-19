@@ -68,33 +68,34 @@ const haversineKm = (lat1, lng1, lat2, lng2) => {
 };
 
 // Monumentos e Hitos Históricos del Gran Córdoba y Valle de Paravachasca
+// (S11) `pin` define el glifo vectorial de PIN_SVG; ya no se usan emojis.
 const LANDMARKS = [
   // Alta Gracia
-  { id: 'reloj', title: 'Reloj Público', subtitle: 'Torre Cívica 1938 • Alta Gracia', emoji: '🏛️', pos: [-31.6529, -64.4283] },
-  { id: 'tajamar', title: 'El Tajamar', subtitle: 'Dique Jesuítico 1643 • Alta Gracia', emoji: '🌊', pos: [-31.6538, -64.4270] },
-  { id: 'sierras-hotel', title: 'Sierras Hotel & Casino', subtitle: 'Casino 1908 • Alta Gracia', emoji: '🎰', pos: [-31.6465, -64.4230] },
-  { id: 'estancia', title: 'Plaza Solares & Estancia', subtitle: 'Patrimonio UNESCO • Alta Gracia', emoji: '⛪', pos: [-31.6520, -64.4305] },
-  { id: 'crucero', title: 'Rotonda El Crucero', subtitle: 'Acceso Ruta 5 & C45', emoji: '⭕', pos: [-31.6610, -64.4395] },
-  { id: 'che', title: 'Casa del Che Guevara', subtitle: 'Villa Nydia 1932 • Alta Gracia', emoji: '🏍️', pos: [-31.6480, -64.4190] },
+  { id: 'reloj', title: 'Reloj Público', subtitle: 'Torre Cívica 1938 • Alta Gracia', pin: 'civic', pos: [-31.6529, -64.4283] },
+  { id: 'tajamar', title: 'El Tajamar', subtitle: 'Dique Jesuítico 1643 • Alta Gracia', pin: 'water', pos: [-31.6538, -64.4270] },
+  { id: 'sierras-hotel', title: 'Sierras Hotel & Casino', subtitle: 'Casino 1908 • Alta Gracia', pin: 'casino', pos: [-31.6465, -64.4230] },
+  { id: 'estancia', title: 'Plaza Solares & Estancia', subtitle: 'Patrimonio UNESCO • Alta Gracia', pin: 'church', pos: [-31.6520, -64.4305] },
+  { id: 'crucero', title: 'Rotonda El Crucero', subtitle: 'Acceso Ruta 5 & C45', pin: 'ring', pos: [-31.6610, -64.4395] },
+  { id: 'che', title: 'Casa del Che Guevara', subtitle: 'Villa Nydia 1932 • Alta Gracia', pin: 'motocicleta', pos: [-31.6480, -64.4190] },
 
   // Localidades Intermedias
-  { id: 'santa-ana', title: 'Villa Parque Santa Ana', subtitle: 'Ruta 5 Km 18 • Paravachasca', emoji: '🏡', pos: [-31.5720, -64.3580] },
-  { id: 'malagueno', title: 'Malagueño', subtitle: 'Autopista Córdoba - C. Paz', emoji: '⛰️', pos: [-31.4650, -64.3320] },
-  { id: 'bouwer', title: 'Bouwer', subtitle: 'Ruta 36 Sur', emoji: '🌾', pos: [-31.5620, -64.1950] },
-  { id: 'toledo', title: 'Toledo', subtitle: 'Ruta 9 Sur', emoji: '🏭', pos: [-31.5550, -64.0850] },
+  { id: 'santa-ana', title: 'Villa Parque Santa Ana', subtitle: 'Ruta 5 Km 18 • Paravachasca', pin: 'house', pos: [-31.5720, -64.3580] },
+  { id: 'malagueno', title: 'Malagueño', subtitle: 'Autopista Córdoba - C. Paz', pin: 'mountain', pos: [-31.4650, -64.3320] },
+  { id: 'bouwer', title: 'Bouwer', subtitle: 'Ruta 36 Sur', pin: 'wheat', pos: [-31.5620, -64.1950] },
+  { id: 'toledo', title: 'Toledo', subtitle: 'Ruta 9 Sur', pin: 'factory', pos: [-31.5550, -64.0850] },
 
   // Córdoba Capital (Zona Sur, Centro, Nueva Córdoba, Güemes)
-  { id: 'cba-centro', title: 'Córdoba Centro', subtitle: 'Plaza San Martín & Cabildo', emoji: '🏙️', pos: [-31.4165, -64.1835] },
-  { id: 'nueva-cba', title: 'Nueva Córdoba', subtitle: 'Buen Pastor & Plaza España', emoji: '🏛️', pos: [-31.4280, -64.1880] },
-  { id: 'guemes', title: 'Barrio Güemes', subtitle: 'Paseo de las Artes & La Cañada', emoji: '🎨', pos: [-31.4245, -64.1925] },
-  { id: 'cba-sur', title: 'Córdoba Zona Sur', subtitle: 'Ciudad Universitaria & B° Jardín', emoji: '🎓', pos: [-31.4550, -64.2050] },
+  { id: 'cba-centro', title: 'Córdoba Centro', subtitle: 'Plaza San Martín & Cabildo', pin: 'city', pos: [-31.4165, -64.1835] },
+  { id: 'nueva-cba', title: 'Nueva Córdoba', subtitle: 'Buen Pastor & Plaza España', pin: 'civic', pos: [-31.4280, -64.1880] },
+  { id: 'guemes', title: 'Barrio Güemes', subtitle: 'Paseo de las Artes & La Cañada', pin: 'art', pos: [-31.4245, -64.1925] },
+  { id: 'cba-sur', title: 'Córdoba Zona Sur', subtitle: 'Ciudad Universitaria & B° Jardín', pin: 'graduation', pos: [-31.4550, -64.2050] },
 
   // Valle de Paravachasca
-  { id: 'anisacate', title: 'Anisacate', subtitle: 'Ruta 5 & Río Anisacate', emoji: '🌲', pos: [-31.7125, -64.4085] },
-  { id: 'la-bolsa', title: 'Villa La Bolsa', subtitle: 'Balneario El Hornito', emoji: '🏖️', pos: [-31.7220, -64.4410] },
-  { id: 'valle-anisacate', title: 'Valle de Anisacate', subtitle: 'Ruta 5 Km 36', emoji: '🌄', pos: [-31.7320, -64.4120] },
-  { id: 'dique-chico', title: 'Dique Chico', subtitle: 'Costanera del Río & Camping', emoji: '⛺', pos: [-31.7425, -64.3825] },
-  { id: 'la-serranita', title: 'La Serranita', subtitle: 'Puente & Balneario Municipal', emoji: '🌉', pos: [-31.7525, -64.4540] }
+  { id: 'anisacate', title: 'Anisacate', subtitle: 'Ruta 5 & Río Anisacate', pin: 'tree', pos: [-31.7125, -64.4085] },
+  { id: 'la-bolsa', title: 'Villa La Bolsa', subtitle: 'Balneario El Hornito', pin: 'beach', pos: [-31.7220, -64.4410] },
+  { id: 'valle-anisacate', title: 'Valle de Anisacate', subtitle: 'Ruta 5 Km 36', pin: 'sunrise', pos: [-31.7320, -64.4120] },
+  { id: 'dique-chico', title: 'Dique Chico', subtitle: 'Costanera del Río & Camping', pin: 'camp', pos: [-31.7425, -64.3825] },
+  { id: 'la-serranita', title: 'La Serranita', subtitle: 'Puente & Balneario Municipal', pin: 'bridge', pos: [-31.7525, -64.4540] }
 ];
 
 // Helper para convertir coordenadas relativas (o lat/lng reales) al plano geográfico de Alta Gracia y Paravachasca
@@ -127,6 +128,52 @@ export const normalizeMobility = (raw) => {
 
 const normalizeCategoryForIcon = normalizeMobility;
 
+// ====================================================================
+// (S11) PINES VECTORIALES SVG — reemplazan los emojis residuales de L.divIcon.
+// Trazos limpios 24x24 con stroke-width 1.75, sin dependencias externas.
+// PIN_SVG(category, active) devuelve el markup que se inyecta en el divIcon;
+// usa currentColor (heredado del contenedor) o var(--accent) cuando el pin
+// está activo/seleccionado. La lógica de tamaño/anclaje de Leaflet no cambia.
+// ====================================================================
+const PIN_GLYPHS = {
+  caminando: '<circle cx="13" cy="4" r="2"/><path d="m9 20 1-5 3-3 3 2 1 6"/><path d="m13 9-3 2-3 3"/>',
+  bicicleta: '<circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/>',
+  motocicleta: '<circle cx="5" cy="17" r="3"/><circle cx="19" cy="17" r="3"/><path d="M5 17h4l3-7h4l2 7"/><path d="M10 10h4"/><path d="M16 7h2"/>',
+  automovil: '<path d="M5 17h14"/><path d="M6 17v-5l2-4h8l2 4v5"/><circle cx="8" cy="17" r="2"/><circle cx="16" cy="17" r="2"/><path d="M8 12h8"/><path d="M10 8h4"/>',
+  fletes: '<path d="M14 17V7H2v10h12Z"/><path d="M14 10h4l4 4v3h-8"/><circle cx="6" cy="17" r="2"/><circle cx="18" cy="17" r="2"/>',
+  negocios: '<path d="M3 9 4.5 4h15L21 9"/><path d="M4 9v10h16V9"/><path d="M9 19v-5h6v5"/>',
+  package: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="M4 7.5 12 12l8-4.5"/><path d="M12 12v9"/>',
+  swap: '<path d="M7 4 3 8l4 4"/><path d="M3 8h13"/><path d="m17 20 4-4-4-4"/><path d="M21 16H8"/>',
+  clock: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
+  civic: '<path d="M3 21h18"/><path d="M5 21V10h14v11"/><path d="m12 3 9 6H3l9-6Z"/><path d="M10 21v-5h4v5"/>',
+  water: '<path d="M2 7c2.5 0 2.5 2 5 2s2.5-2 5-2 2.5 2 5 2 2.5-2 5-2"/><path d="M2 13c2.5 0 2.5 2 5 2s2.5-2 5-2 2.5 2 5 2 2.5-2 5-2"/><path d="M2 19c2.5 0 2.5 2 5 2s2.5-2 5-2 2.5 2 5 2 2.5-2 5-2"/>',
+  casino: '<rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="8.5" cy="8.5" r="1"/><circle cx="15.5" cy="8.5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="8.5" cy="15.5" r="1"/><circle cx="15.5" cy="15.5" r="1"/>',
+  church: '<path d="M12 2v6"/><path d="M9 5h6"/><path d="M6 21v-8l6-4 6 4v8"/><path d="M10 21v-4h4v4"/>',
+  ring: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',
+  house: '<path d="m3 11 9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+  mountain: '<path d="m3 20 6-11 4 7 3-5 5 9H3Z"/>',
+  wheat: '<path d="M12 21V8"/><path d="M12 12c-3 0-4-2-4-4 2 0 4 1 4 4Z"/><path d="M12 12c3 0 4-2 4-4-2 0-4 1-4 4Z"/><path d="M12 17c-3 0-4-2-4-4 2 0 4 1 4 4Z"/><path d="M12 17c3 0 4-2 4-4-2 0-4 1-4 4Z"/>',
+  factory: '<path d="M3 21V10l6 4V10l6 4V7h6v14H3Z"/><path d="M7 17h.01"/><path d="M12 17h.01"/><path d="M17 17h.01"/>',
+  city: '<path d="M3 21V7h6v14"/><path d="M9 21V3h6v18"/><path d="M15 21v-9h6v9"/><path d="M6 11h.01"/><path d="M12 7h.01"/><path d="M12 11h.01"/><path d="M18 15h.01"/>',
+  art: '<path d="M12 3a9 9 0 0 0 0 18c1.5 0 2-1 1.5-2-.6-1.2.2-2.5 1.5-2.5H18a3 3 0 0 0 3-3c0-5-4-10.5-9-10.5Z"/><circle cx="7.5" cy="10.5" r="1"/><circle cx="10.5" cy="6.5" r="1"/><circle cx="15" cy="7.5" r="1"/>',
+  graduation: '<path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5"/>',
+  tree: '<path d="m12 3 5 7h-3l4 6H6l4-6H7l5-7Z"/><path d="M12 16v5"/>',
+  beach: '<path d="M12 3a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9Z"/><path d="M12 12v8"/><path d="M9 21h6"/>',
+  sunrise: '<path d="M12 2v4"/><path d="m5 7 2.5 2.5"/><path d="m19 7-2.5 2.5"/><path d="M2 18h20"/><path d="M4 14a8 8 0 0 1 16 0"/>',
+  camp: '<path d="m12 4 8 16H4L12 4Z"/><path d="m12 12 4 8"/><path d="m12 12-4 8"/>',
+  bridge: '<path d="M3 18V8"/><path d="M21 18V8"/><path d="M3 12c6-6 12-6 18 0"/><path d="M7 18v-4"/><path d="M12 18v-6"/><path d="M17 18v-4"/><path d="M3 18h18"/>'
+};
+
+const PIN_SVG = (category, active = false, size = 18) => {
+  const glyph = PIN_GLYPHS[category] || PIN_GLYPHS.civic;
+  const color = active ? 'var(--accent, #F7931A)' : 'currentColor';
+  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="${color}" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="display:block;flex-shrink:0;pointer-events:none;">${glyph}</svg>`;
+};
+
+// Punto de reputación vectorial (reemplaza los emojis 🟢/🟡/🔴 del label)
+const REP_DOT = (color) =>
+  `<span style="width:6px;height:6px;border-radius:9999px;background:${color};display:inline-block;flex-shrink:0;"></span>`;
+
 // Generador de Icono Leaflet Personalizado para Nodos / Prestadores (Estilo Original Nativo)
 const createPeerIcon = (node, isSelected, repStatus, formatDistanceKm, isDark) => {
   if (!node) return L.divIcon({ className: 'custom-peer-marker-empty' });
@@ -136,41 +183,33 @@ const createPeerIcon = (node, isSelected, repStatus, formatDistanceKm, isDark) =
     ? formatDistanceKm(node.distanceMeters || node.distance)
     : '0.5 km';
 
-  let iconEmoji = '\u{1F6B6}'; // 🚶 Caminando
-  const rawCat = node.category || node.vehicle_type || node.vehicle || node.role;
-  const cat = normalizeMobility(rawCat);
+  const cat = normalizeMobility(node.category || node.vehicle_type || node.vehicle || node.role);
   const modality = node.serviceModality;
-
-  if (cat === 'bicicleta') {
-    iconEmoji = '\u{1F6B2}'; // 🚲 Bicicleta
-  } else if (cat === 'motocicleta') {
-    iconEmoji = modality === 'pasajeros' ? '\u{1F6F5}' : modality === 'envios' ? '\u{1F4E6}' : '\u{1F3CD}\u{FE0F}'; // 🛵 : 📦 : 🏍️
-  } else if (cat === 'automovil') {
-    iconEmoji = modality === 'pasajeros' ? '\u{1F695}' : modality === 'envios' ? '\u{1F4E6}' : '\u{1F697}'; // 🚖 : 📦 : 🚗
-  } else if (cat === 'fletes') {
-    iconEmoji = '\u{1F69A}'; // 🚚 Flete / Camión
-  } else if (cat === 'negocios') {
-    iconEmoji = '\u{1F3EA}'; // 🏪 Comercio / Tienda
-  }
+  // Envíos en moto/auto muestran el paquete; el resto, su categoría vectorial.
+  const pinKind =
+    modality === 'envios' && (cat === 'motocicleta' || cat === 'automovil')
+      ? 'package'
+      : cat;
+  const pinSvg = PIN_SVG(pinKind, isSelected);
 
   let modalityBadge = '';
   if (modality === 'pasajeros') {
-    modalityBadge = '<span title="Transporte de Pasajeros">\u{1F695}</span>';
+    modalityBadge = `<span title="Transporte de Pasajeros" style="display:inline-flex;">${PIN_SVG('automovil', false, 12)}</span>`;
   } else if (modality === 'envios') {
-    modalityBadge = '<span title="Envíos y Paquetes">\u{1F4E6}</span>';
+    modalityBadge = `<span title="Envíos y Paquetes" style="display:inline-flex;">${PIN_SVG('package', false, 12)}</span>`;
   } else if (modality === 'mixto') {
-    modalityBadge = '<span title="Servicio Mixto">\u{1F504}</span>';
+    modalityBadge = `<span title="Servicio Mixto" style="display:inline-flex;">${PIN_SVG('swap', false, 12)}</span>`;
   }
 
   let borderColor = '#10B981';
-  let repIcon = '\u{1F7E2}'; // 🟢
+  let repDot = REP_DOT('#10B981');
 
   if (isBlocked) {
     borderColor = '#F43F5E';
-    repIcon = '\u{1F534}'; // 🔴
+    repDot = REP_DOT('#F43F5E');
   } else if (isReported) {
     borderColor = '#F59E0B';
-    repIcon = '\u{1F7E1}'; // 🟡
+    repDot = REP_DOT('#F59E0B');
   }
 
   const bgNode = isDark ? '#0B132B' : '#FFFFFF';
@@ -181,11 +220,11 @@ const createPeerIcon = (node, isSelected, repStatus, formatDistanceKm, isDark) =
     className: 'custom-peer-marker',
     html: `
       <div style="display:flex; flex-direction:column; align-items:center; cursor:pointer; ${scaleStyle}">
-        <div style="background:${bgNode}; border:2.5px solid ${borderColor}; border-radius:14px; padding:3px 7px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.3); font-size:16px; line-height:1;">
-          ${iconEmoji}
+        <div style="background:${bgNode}; color:${isSelected ? 'var(--accent, #F7931A)' : borderColor}; border:2.5px solid ${borderColor}; border-radius:14px; padding:3px 7px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.3); font-size:16px; line-height:1;">
+          ${pinSvg}
         </div>
         <div style="margin-top:2px; background:${isDark ? '#070C1E' : '#FFFFFF'}; color:${textColor}; border:1px solid ${borderColor}; border-radius:6px; padding:1px 6px; font-size:9.5px; font-weight:800; white-space:nowrap; box-shadow:0 2px 6px rgba(0,0,0,0.25); display:flex; align-items:center; gap:3px;">
-          <span>${repIcon}</span>
+          ${repDot}
           ${modalityBadge ? `<span>${modalityBadge}</span>` : ''}
           <span>${node.name || ''}</span>
           ${node.locality ? `<span style="font-size:8px; opacity:0.9; color:${isDark ? '#38BDF8' : '#0284C7'};">(${node.locality})</span>` : ''}
@@ -236,14 +275,9 @@ const createAuctionMarkerIcon = (req, isSelected, isDark) => {
   const textColor = isDark ? '#F1F5F9' : '#0F172A';
   const borderColor = '#F59E0B';
   const offersCount = req.offers?.length || 0;
-  const categoryIcon = {
-    caminando: '🚶',
-    bicicleta: '🚲',
-    motocicleta: '🛵',
-    automovil: '🚗',
-    fletes: '🚚',
-    negocios: '🏪'
-  }[normalizeMobility(req.category || req.categoryLabel)] || '📦';
+  // Pin vectorial por categoría (S11): sin emojis dentro de L.divIcon.
+  const categoryKey = normalizeMobility(req.category || req.categoryLabel);
+  const categoryIcon = PIN_SVG(req.category || req.categoryLabel ? categoryKey : 'package', isSelected);
   const scaleStyle = isSelected ? 'transform: scale(1.22); filter: drop-shadow(0 0 10px #F59E0B);' : '';
   const scheduledTime = String(req.scheduledTime || 'Hoy').slice(0, 12);
   const locality = req.locality ? String(req.locality).slice(0, 14) : '';
@@ -258,7 +292,7 @@ const createAuctionMarkerIcon = (req, isSelected, isDark) => {
           <!-- Pulso de radar ámbar animado -->
           <div style="position:absolute; width:36px; height:36px; border-radius:9999px; background:rgba(245,158,11,0.35); animation:ping 2s cubic-bezier(0,0,0.2,1) infinite;"></div>
           <!-- Ícono categórico dentro del marcador P2P distintivo -->
-          <div style="background:${bgNode}; border:2.5px solid ${borderColor}; border-radius:14px; padding:3px 7px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(245,158,11,0.4); font-size:17px; line-height:1; position:relative; z-index:2;">
+          <div style="background:${bgNode}; color:${isSelected ? 'var(--accent, #F7931A)' : '#F59E0B'}; border:2.5px solid ${borderColor}; border-radius:14px; padding:3px 7px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(245,158,11,0.4); font-size:17px; line-height:1; position:relative; z-index:2;">
             ${categoryIcon}
           </div>
           ${offersCount > 0 ? `
@@ -268,7 +302,7 @@ const createAuctionMarkerIcon = (req, isSelected, isDark) => {
           ` : ''}
         </div>
         <div style="margin-top:2px; background:${isDark ? '#070C1E' : '#FFFFFF'}; color:${textColor}; border:1.5px solid ${borderColor}; border-radius:6px; padding:2px 6px; font-size:9.5px; font-weight:800; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.3); display:flex; align-items:center; gap:3px;">
-          <span style="color:#F59E0B;">⏰ ${scheduledTime}</span>
+          <span style="color:#F59E0B;display:inline-flex;align-items:center;gap:3px;">${PIN_SVG('clock', false, 10)} ${scheduledTime}</span>
           ${locality ? `<span style="font-size:7.5px; opacity:0.85; color:#38BDF8; font-weight:900;">(${locality})</span>` : ''}
           <span style="font-family:monospace; color:#94A3B8; font-size:8.5px;">(${distance})</span>
           <span>•</span>
@@ -331,14 +365,14 @@ const getPeerOperationalSpecs = (node) => {
   };
 };
 
-// Generador de Icono Leaflet para Hitos Emblemáticos
-const createLandmarkIcon = (emoji, title, subtitle, isDark) => {
+// Generador de Icono Leaflet para Hitos Emblemáticos (glifo vectorial S11)
+const createLandmarkIcon = (pin, title, subtitle, isDark) => {
   return L.divIcon({
     className: 'custom-landmark-marker',
     html: `
       <div style="display:flex; flex-direction:column; align-items:center; pointer-events:none;">
         <div style="background:${isDark ? 'rgba(11,19,43,0.92)' : 'rgba(255,255,255,0.95)'}; color:${isDark ? '#F1F5F9' : '#0F172A'}; border:1px solid ${isDark ? '#334155' : '#CBD5E1'}; border-radius:10px; padding:2px 6px; display:flex; align-items:center; gap:4px; box-shadow:0 4px 10px rgba(0,0,0,0.2); white-space:nowrap;">
-          <span style="font-size:12px;">${emoji}</span>
+          <span style="display:inline-flex;flex-shrink:0;">${PIN_SVG(pin, false, 14)}</span>
           <div style="text-align:left;">
             <div style="font-size:9.5px; font-weight:800; line-height:1.1;">${title}</div>
             <div style="font-size:8px; opacity:0.75; font-family:monospace; line-height:1;">${subtitle}</div>
@@ -1193,7 +1227,7 @@ export default function MapaP2P(props) {
             <Marker
               key={lm.id}
               position={lm.pos}
-              icon={createLandmarkIcon(lm.emoji, lm.title, lm.subtitle, isDark)}
+              icon={createLandmarkIcon(lm.pin, lm.title, lm.subtitle, isDark)}
             />
           ))}
 
