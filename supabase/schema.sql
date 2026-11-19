@@ -739,17 +739,18 @@ DROP POLICY IF EXISTS "wallets_select" ON public.wallets;
 CREATE POLICY "wallets_select" ON public.wallets
   FOR SELECT USING (auth.uid() = user_id);
 
+-- IMPORTANTE (S06.0): NO existe política de UPDATE sobre public.wallets, a propósito.
+--   * Con RLS habilitada y sin política de UPDATE, PostgreSQL DENIEGA todo UPDATE
+--     hecho por anon/authenticated (deny-by-default): el cliente no puede tocar saldos.
+--   * Se eliminó la política previa "wallets_update_own" porque su WITH CHECK consultaba
+--     public.wallets desde una política de public.wallets, lo que dispara
+--     "infinite recursion detected in policy for relation wallets" (SQLSTATE 42P17).
+--   * Las mutaciones de saldo SOLO ocurren dentro de funciones SECURITY DEFINER
+--     (transfer_valens_tokens, claim_faucet_tokens, release_reward_by_pin) y del trigger
+--     on_auth_user_created. Esas rutinas corren como owner y no pasan por RLS.
+--   * La línea DROP de abajo se mantiene para limpiar la política vieja si este script
+--     se vuelve a ejecutar sobre una base que ya la tenía.
 DROP POLICY IF EXISTS "wallets_update_own" ON public.wallets;
-CREATE POLICY "wallets_update_own" ON public.wallets
-  FOR UPDATE USING (auth.uid() = user_id)
-  WITH CHECK (
-    auth.uid() = user_id
-    -- Impide al cliente modificar saldos directamente; solo RPCs SECURITY DEFINER pueden hacerlo
-    AND balance_val IS NOT DISTINCT FROM (SELECT balance_val FROM public.wallets w WHERE w.user_id = auth.uid())
-    AND valens_balance IS NOT DISTINCT FROM (SELECT valens_balance FROM public.wallets w WHERE w.user_id = auth.uid())
-    AND balance_ars IS NOT DISTINCT FROM (SELECT balance_ars FROM public.wallets w WHERE w.user_id = auth.uid())
-    AND ars_collected IS NOT DISTINCT FROM (SELECT ars_collected FROM public.wallets w WHERE w.user_id = auth.uid())
-  );
 
 -- 10. Políticas Transactions
 DROP POLICY IF EXISTS "tx_select" ON public.valens_transactions;
