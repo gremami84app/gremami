@@ -216,21 +216,23 @@ const createPeerIcon = (node, isSelected, repStatus, formatDistanceKm, isDark) =
     repDot = REP_DOT('#F59E0B');
   }
 
-  // (S09) Pin Uber: punto con halo. El halo marca el área, el punto la posición.
+  // (S12) Pin con identidad: halo + disco de acento + glifo de la categoría.
+  // Glifo en #09090B: contraste AA en los 4 temas (blanco fallaba en ámbar/verde).
   const pinAccent = 'var(--accent, #F7931A)';
   const pinBg = isSelected ? pinAccent : borderColor;
-  const dot = isSelected ? 14 : 11;
 
   return L.divIcon({
     className: 'custom-peer-marker',
     html: `
-      <div style="position:relative;width:26px;height:26px;display:flex;align-items:center;justify-content:center;">
-        <span style="position:absolute;width:26px;height:26px;border-radius:9999px;background:${pinBg};opacity:.18;"></span>
-        <span style="width:${dot}px;height:${dot}px;border-radius:9999px;background:${pinBg};border:2px solid rgba(255,255,255,.95);box-shadow:0 0 0 1px rgba(0,0,0,.28);transition:width 140ms cubic-bezier(.2,.8,.2,1),height 140ms cubic-bezier(.2,.8,.2,1);"></span>
+      <div style="position:relative;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:#09090B;">
+        <span style="position:absolute;width:${isSelected ? 32 : 28}px;height:${isSelected ? 32 : 28}px;border-radius:9999px;background:${pinBg};opacity:.20;"></span>
+        <span style="width:${isSelected ? 24 : 22}px;height:${isSelected ? 24 : 22}px;border-radius:9999px;background:${pinBg};border:1.5px solid rgba(255,255,255,.92);box-shadow:0 1px 3px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;color:#09090B;">
+          ${PIN_SVG(pinKind, false, isSelected ? 15 : 13)}
+        </span>
       </div>
     `,
-    iconSize: [26, 26],
-    iconAnchor: [13, 13]
+    iconSize: [28, 28],
+    iconAnchor: [14, 14]
   });
 };
 
@@ -289,8 +291,8 @@ const createAuctionMarkerIcon = (req, isSelected, isDark) => {
           <!-- Pulso de radar ámbar animado -->
           <div style="position:absolute; width:36px; height:36px; border-radius:9999px; background:rgba(245,158,11,0.35); animation:ping 2s cubic-bezier(0,0,0.2,1) infinite;"></div>
           <!-- Ícono categórico dentro del marcador P2P distintivo -->
-          <div style="background:${bgNode}; color:${isSelected ? 'var(--accent, #F7931A)' : '#F59E0B'}; border:2.5px solid ${borderColor}; border-radius:14px; padding:3px 7px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(245,158,11,0.4); font-size:17px; line-height:1; position:relative; z-index:2;">
-            ${categoryIcon}
+          <div style="width:${isSelected ? 24 : 22}px;height:${isSelected ? 24 : 22}px;border-radius:9999px;background:#F59E0B;color:#09090B;border:1.5px solid rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.35);position:relative;z-index:2;">
+            ${PIN_SVG(categoryKey, false, isSelected ? 15 : 13)}
           </div>
           ${offersCount > 0 ? `
             <div style="position:absolute; top:-6px; right:-8px; background:#10B981; color:#FFFFFF; font-size:8px; font-weight:900; border-radius:9999px; padding:1px 5px; border:1.5px solid #FFFFFF; z-index:3; box-shadow:0 2px 4px rgba(0,0,0,0.3);">
