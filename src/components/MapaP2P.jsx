@@ -4,6 +4,10 @@ import MotorcycleIcon from './MotorcycleIcon';
 import RequestSheet from './RequestSheet';
 import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, LayerGroup, useMap, useMapEvents } from 'react-leaflet';
+// (S08b) Clustering real: agrupa pines cercanos y los separa al hacer zoom
+import MarkerClusterGroup from 'react-leaflet-cluster';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import { 
   MapPin, 
   Footprints, 
@@ -1269,8 +1273,15 @@ export default function MapaP2P(props) {
               })}
             </LayerGroup>
           ) : (
-            /* Modo Cliente: Muestra exclusivamente los pines de Prestadores/Cadetes/Comercios disponibles */
-            <LayerGroup key={`cliente-peers-layer-${selectedCategory}-${selectedModalityFilter}-${showBlockedUsers}`}>
+            /* (S08b) Cliente: pines agrupados con MarkerClusterGroup */
+            <MarkerClusterGroup
+              key={`cliente-peers-cluster-${selectedCategory}-${selectedModalityFilter}-${showBlockedUsers}`}
+              chunkedLoading
+              showCoverageOnHover={false}
+              spiderfyOnMaxZoom
+              maxClusterRadius={52}
+              disableClusteringAtZoom={17}
+            >
               {visibleNodes.map((node) => {
                 const [lat, lng] = getNodeCoordinates(node);
                 const repStatus = getPeerReputation(node.id);
@@ -1291,7 +1302,7 @@ export default function MapaP2P(props) {
                   />
                 );
               })}
-            </LayerGroup>
+            </MarkerClusterGroup>
           )}
         </MapContainer>
       </div>
