@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import useOpenOrders from '../hooks/useOpenOrders';
 import { Button } from '../ui/Button';
-import { AlertTriangle, Bike, Car, Clock, Footprints, MapPin, RefreshCw, Store, Truck, Zap } from 'lucide-react';
+import { AlertTriangle, Bike, Car, CheckCircle2, Clock, Footprints, MapPin, RefreshCw, ShieldCheck, Store, Truck, Zap } from 'lucide-react';
 
 /**
  * (S09.6b) Panel operativo del cadete:
@@ -48,7 +48,7 @@ export default function CadetePanel() {
 
   const openQuote = (order) => {
     if (!hasFianza) {
-      showToast('⚠️ Necesitás al menos 1 VAL de fianza para cotizar.', 'warning');
+      showToast('Necesitás al menos 1 VAL de fianza para cotizar.', 'warning');
       return;
     }
     setQuotingId(order.id);
@@ -58,17 +58,17 @@ export default function CadetePanel() {
 
   const submitQuote = async (order) => {
     if (!currentUser?.id) {
-      showToast('⚠️ Iniciá sesión para cotizar.', 'warning');
+      showToast('Iniciá sesión para cotizar.', 'warning');
       return;
     }
     setBusy(true);
     try {
       const res = await submitOfferReal({ orderId: order.id, amountArs: Number(amount), note });
       if (res?.success) {
-        showToast('✅ Oferta enviada al cliente.', 'success');
+        showToast('Oferta enviada al cliente.', 'success');
         setQuotingId(null);
       } else {
-        showToast('⚠️ No se pudo enviar la oferta.', 'warning');
+        showToast('No se pudo enviar la oferta.', 'warning');
       }
     } finally {
       setBusy(false);
@@ -109,7 +109,7 @@ export default function CadetePanel() {
         }`}>
           <div className="flex items-center gap-2 min-w-0">
             {hasFianza ? (
-              <span className="text-xs">🛡️</span>
+              <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" strokeWidth={1.75} />
             ) : (
               <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0" />
             )}

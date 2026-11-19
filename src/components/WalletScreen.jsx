@@ -257,7 +257,7 @@ export default function WalletScreen() {
             ? isDark ? 'text-[#F0B90B] bg-[#121B2D] border-[#1F2D48]' : 'text-amber-700 bg-amber-50 border-amber-200 font-bold'
             : isDark ? 'text-emerald-400 bg-[#064E3B]/40 border-emerald-500/40' : 'text-emerald-700 bg-emerald-50 border-emerald-300 font-bold'
         }`}>
-          {walletSectionTab === 'wallet' ? '💳 Mi billetera' : '🎓 Escuela Cripto'}
+          {walletSectionTab === 'wallet' ? 'Mi billetera' : 'Escuela Cripto'}
         </span>
       </div>
 
@@ -277,7 +277,7 @@ export default function WalletScreen() {
           }`}
         >
           <CreditCard className={`w-4 h-4 ${walletSectionTab === 'wallet' ? 'text-black' : 'text-[#F7931A]'}`} />
-          <span>💳 Mi billetera</span>
+          <span>Mi billetera</span>
         </button>
 
         <button
@@ -292,7 +292,7 @@ export default function WalletScreen() {
           }`}
         >
           <GraduationCap className={`w-4 h-4 ${walletSectionTab === 'school' ? 'text-black' : 'text-[#F0B90B]'}`} />
-          <span>🎓 Escuela Cripto</span>
+          <span>Escuela Cripto</span>
         </button>
       </div>
 
