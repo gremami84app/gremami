@@ -357,6 +357,15 @@ export function AppProvider({ children }) {
 
   // Sistema Antifraude: PIN dinámico de 4 dígitos
   const [orderPin, setOrderPin] = useState('4821');
+  // (S09.6c) PIN individual por pedido: { [orderId]: '1234' }
+  const [pinsByOrder, setPinsByOrder] = useState(() => {
+    try {
+      const raw = JSON.parse(localStorage.getItem('gremami_pins') || '{}');
+      return raw && typeof raw === 'object' ? raw : {};
+    } catch (e) {
+      return {};
+    }
+  });
   const [pinStatus, setPinStatus] = useState('pending'); // 'pending' | 'verified'
   const [pinFailedAttempts, setPinFailedAttempts] = useState(0);
   const [isPinLocked, setIsPinLocked] = useState(false);
@@ -1029,15 +1038,34 @@ export function AppProvider({ children }) {
   };
 
   // Sistema Antifraude: Generar nuevo PIN dinámico
-  const generateNewPin = () => {
-    // (S08) CSPRNG en lugar de Math.random(): 4 dígitos sin sesgo predecible
+  // (S09.6c) Generador CSPRNG reutilizable por pedido
+  const generateSecurePin = () => {
     const buf = new Uint32Array(1);
     if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
       crypto.getRandomValues(buf);
     } else {
       buf[0] = Math.floor(Math.random() * 0xffffffff);
     }
-    const newCode = String(1000 + (buf[0] % 9000));
+    return String(1000 + (buf[0] % 9000));
+  };
+
+  // (S09.6c) Mapa de PINs por orden, persistido en localStorage
+  const registerOrderPin = (orderId, pin) => {
+    if (!orderId || !pin) return;
+    setPinsByOrder((prev) => {
+      const next = { ...prev, [orderId]: String(pin) };
+      try { localStorage.setItem('gremami_pins', JSON.stringify(next)); } catch (e) {}
+      return next;
+    });
+  };
+
+  const getOrderPin = (orderId) => {
+    if (orderId && pinsByOrder[orderId]) return pinsByOrder[orderId];
+    return orderPin;
+  };
+
+  const generateNewPin = () => {
+    const newCode = generateSecurePin();
     setOrderPin(newCode);
     setPinStatus('pending');
     setPinFailedAttempts(0);
@@ -1460,6 +1488,9 @@ export function AppProvider({ children }) {
 
     // (S07.5) El toast refleja el resultado REAL de la persistencia, no un optimismo.
     if (authUid) {
+      // (S09.6c) PIN único para este pedido (sin colisiones entre pedidos)
+      const pinForOrder = generateSecurePin();
+      registerOrderPin(requestId, pinForOrder);
       saveOrderToSupabase({
         id: requestId,
         client_id: authUid,
@@ -1475,7 +1506,14 @@ export function AppProvider({ children }) {
         scheduled_for: scheduledFor || null,
         is_urgent: Boolean(isUrgent)
       })
-        .then((res) => {
+        .then(async (res) => {
+          // (S09.6c) Registrar el PIN del pedido en el backend (hash bcrypt)
+          try {
+            const pinRes = await pinService.setOrderPin(requestId, pinForOrder);
+            if (!pinRes?.success) console.warn('[S09.6c] set_order_pin:', pinRes?.error);
+          } catch (pinErr) {
+            console.warn('[S09.6c] set_order_pin falló:', pinErr?.message || pinErr);
+          }
           const warning = persistenceWarning(res);
           if (warning) {
             console.warn('[S07.5] Pedido no sincronizado:', res);
@@ -1714,6 +1752,9 @@ export function AppProvider({ children }) {
     }, 4000);
 
     if (authUid) {
+      // (S09.6c) PIN único para esta subasta programada
+      const pinForOrder = generateSecurePin();
+      registerOrderPin(requestId, pinForOrder);
       saveOrderToSupabase({
         id: requestId,
         client_id: authUid,
@@ -1731,7 +1772,14 @@ export function AppProvider({ children }) {
         scheduled_for: scheduledFor || null,
         is_urgent: false
       })
-        .then((res) => {
+        .then(async (res) => {
+          // (S09.6c) Registrar el PIN en el backend al crear la subasta
+          try {
+            const pinRes = await pinService.setOrderPin(requestId, pinForOrder);
+            if (!pinRes?.success) console.warn('[S09.6c] set_order_pin (subasta):', pinRes?.error);
+          } catch (pinErr) {
+            console.warn('[S09.6c] set_order_pin (subasta) falló:', pinErr?.message || pinErr);
+          }
           const warning = persistenceWarning(res);
           if (warning) {
             console.warn('[S07.5] Subasta no sincronizada:', res);
@@ -2279,6 +2327,10 @@ export function AppProvider({ children }) {
         toast,
         showToast,
         orderPin,
+        // (S09.6c) PIN por pedido
+        pinsByOrder,
+        getOrderPin,
+        registerOrderPin,
         pinStatus,
         setPinStatus,
         generateNewPin,

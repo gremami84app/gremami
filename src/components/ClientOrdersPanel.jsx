@@ -8,12 +8,23 @@ import { ChevronDown, ChevronUp, Clock, KeyRound, Package, RefreshCw, Zap } from
  * con las ofertas recibidas, aceptación en un toque y PIN de entrega.
  */
 export default function ClientOrdersPanel() {
-  const { isDark, currentUser, myOrders, refreshMyOrders, getOrderOffersReal, acceptOfferReal, showToast } = useApp();
+  const { isDark, currentUser, myOrders, refreshMyOrders, getOrderOffersReal, acceptOfferReal, getOrderPin, showToast } = useApp();
 
   const [expandedId, setExpandedId] = useState(null);
   const [offersByOrder, setOffersByOrder] = useState({});
   const [loadingOffers, setLoadingOffers] = useState(false);
   const [busyOfferId, setBusyOfferId] = useState(null);
+
+  // (S09.6c) Copiar el PIN del pedido para compartirlo con el cadete
+  const copyPin = async (orderId) => {
+    const pin = getOrderPin(orderId);
+    try {
+      await navigator.clipboard.writeText(pin);
+      showToast('📋 PIN copiado. Compartilo con tu cadete.', 'success');
+    } catch (e) {
+      showToast(`Tu PIN es ${pin}`, 'info');
+    }
+  };
 
   const uid = currentUser?.id;
   const clientOrders = (myOrders || []).filter((o) => o && o.client_id === uid);
@@ -173,14 +184,24 @@ export default function ClientOrdersPanel() {
                   </div>
                 ))}
 
-                {order.status === 'en_curso' && (
-                  <div className={`flex items-center gap-2 rounded-xl px-2.5 py-2 ${
+                {(order.status === 'en_curso' || hasCadete) && (
+                  <div className={`flex items-center justify-between gap-2 rounded-xl px-2.5 py-2 ${
                     isDark ? 'bg-[#0A2218] border border-emerald-500/30' : 'bg-emerald-50 border border-emerald-200'
                   }`}>
-                    <KeyRound className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                    <p className={`text-xs ${isDark ? 'text-emerald-300' : 'text-emerald-800'}`}>
-                      Entregá el PIN al cadete para liberar el pago. Lo encontrás en el chat de la entrega.
-                    </p>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <KeyRound className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                      <p className={`text-xs ${isDark ? 'text-emerald-300' : 'text-emerald-800'}`}>
+                        PIN de entrega:{' '}
+                        <strong className="font-mono tracking-widest text-sm">{getOrderPin(order.id)}</strong>
+                      </p>
+                    </div>
+                    <Button
+                      variant="secondary"
+                      className="text-xs px-2.5 flex-shrink-0"
+                      onClick={() => copyPin(order.id)}
+                    >
+                      Copiar
+                    </Button>
                   </div>
                 )}
 
