@@ -81,17 +81,21 @@ function AddressField({ id, label, value, onChange, onPick, placeholder }) {
     const ctrl = new AbortController();
     const timer = setTimeout(async () => {
       try {
-        const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&${PHOTON_BIAS}&limit=8&lang=es`;
-        const res = await fetch(url, { signal: ctrl.signal });
+        // (S12d) Photon devuelve 400 (verificado 2026-11): migrado a Nominatim,
+        // que responde 200 con resultados reales de Alta Gracia y no pide API key.
+        const url =
+          'https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1' +
+          '&limit=6&countrycodes=ar&viewbox=-64.50,-31.58,-64.36,-31.72&bounded=1' +
+          `&q=${encodeURIComponent(q)}`;
+        const res = await fetch(url, { signal: ctrl.signal, headers: { Accept: 'application/json' } });
         if (!res.ok) throw new Error(String(res.status));
         const data = await res.json();
-        const list = (data.features || [])
-          .map((f) => ({
-            label: formatPlace(f.properties || {}),
-            lat: f.geometry?.coordinates?.[1],
-            lng: f.geometry?.coordinates?.[0]
+        const list = (Array.isArray(data) ? data : [])
+          .map((x) => ({
+            label: String(x.display_name || '').split(',').slice(0, 3).join(',').trim(),
+            lat: Number(x.lat),
+            lng: Number(x.lon)
           }))
-          // (S12c) Photon no acepta `bbox`: acotamos Alta Gracia en cliente.
           .filter(
             (r) =>
               r.label &&
@@ -100,7 +104,7 @@ function AddressField({ id, label, value, onChange, onPick, placeholder }) {
               r.lat >= -31.72 && r.lat <= -31.58 &&
               r.lng >= -64.50 && r.lng <= -64.36
           )
-          .slice(0, 6);
+          .slice(0, 5);
         setItems(list);
         setOpen(list.length > 0);
         setActive(-1);
