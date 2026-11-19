@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import Sheet from '../ui/Sheet';
 import { Button } from '../ui/Button';
-import { ArrowLeft, ArrowRight, Check, Clock, MapPin, Sparkles, Zap } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Bike, Car, Check, Clock, Footprints, MapPin, Sparkles, Store, Truck, Zap } from 'lucide-react';
 
 /**
  * (S09.4) Flujo guiado "Pedir un envío" en 3 pasos.
@@ -11,12 +11,12 @@ import { ArrowLeft, ArrowRight, Check, Clock, MapPin, Sparkles, Zap } from 'luci
  */
 
 const VEHICLES = [
-  { id: 'caminando', label: 'A pie', emoji: '🚶' },
-  { id: 'bicicleta', label: 'Bicicleta', emoji: '🚲' },
-  { id: 'motocicleta', label: 'Moto', emoji: '🏍️' },
-  { id: 'automovil', label: 'Auto', emoji: '🚗' },
-  { id: 'fletes', label: 'Flete', emoji: '🚚' },
-  { id: 'comercio', label: 'Comercio', emoji: '🏪' }
+  { id: 'caminando', label: 'A pie', Icon: Footprints },
+  { id: 'bicicleta', label: 'Bicicleta', Icon: Bike },
+  { id: 'motocicleta', label: 'Moto', Icon: Bike },
+  { id: 'automovil', label: 'Auto', Icon: Car },
+  { id: 'fletes', label: 'Flete', Icon: Truck },
+  { id: 'comercio', label: 'Comercio', Icon: Store }
 ];
 
 const QUICK_PLACES = [
@@ -219,13 +219,14 @@ export default function RequestSheet({ open, onClose, initialMode = 'urgent' }) 
                   type="button"
                   onClick={() => setCategory(v.id)}
                   aria-pressed={category === v.id}
-                  className={`min-h-touch rounded-xl text-xs font-semibold border transition-all active:scale-95 ${
+                  className={`min-h-touch rounded-control text-xs font-semibold border transition-all duration-[120ms] active:scale-[0.98] flex flex-col items-center justify-center gap-0.5 ${
                     category === v.id
                       ? 'bg-accent text-slate-950 border-transparent font-bold'
-                      : 'bg-[#121B2D] border-[#1F2D48] text-slate-300 hover:border-accent/60'
+                      : 'bg-card border-line text-ink2 hover:border-accent/60'
                   }`}
                 >
-                  <span aria-hidden="true">{v.emoji}</span> {v.label}
+                  <v.Icon className="w-4 h-4" aria-hidden="true" />
+                  {v.label}
                 </button>
               ))}
             </div>
