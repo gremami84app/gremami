@@ -685,9 +685,14 @@ export default function MapaP2P(props) {
       if (isBlocked && !showBlockedUsers) return false;
 
       // (S07) En Modo Cliente no mostrarse a sí mismo como proveedor tercero.
+      // (S07d) filter(Boolean) evita comparar contra `undefined`: sin sesión
+      // currentUser?.id es undefined y, como los mocks no tienen `userId`,
+      // myIds.includes(undefined) devolvía true y ocultaba TODOS los nodos.
       if (role === 'cliente') {
-        const myIds = [currentUser?.id, CURRENT_CADET_ID, 'current-user-cadete', 'current-cadet-satoshidev'];
-        if (myIds.includes(node.id) || myIds.includes(node.userId)) return false;
+        const myIds = [currentUser?.id, CURRENT_CADET_ID, 'current-user-cadete', 'current-cadet-satoshidev']
+          .filter(Boolean);
+        if (node.id && myIds.includes(node.id)) return false;
+        if (node.userId && myIds.includes(node.userId)) return false;
       }
 
       // 1. Filtrado por viewport bounding box (si el mapa ya tiene bounds disponibles)
