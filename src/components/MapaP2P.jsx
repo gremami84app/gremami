@@ -987,7 +987,7 @@ export default function MapaP2P(props) {
             <div className="flex items-center gap-2">
               <span className="flex items-center gap-1.5 text-accent font-extrabold">
                 <span className="w-2.5 h-2.5 rounded-full bg-accent shadow-glow-gold animate-pulse" />
-                <span>📦 Modo Cadete: Logística Descentralizada • Gran Córdoba & Valle de Paravachasca ({visibleAuctions.length} Solicitudes)</span>
+                <span>Modo Cadete: Logística Descentralizada • Gran Córdoba & Valle de Paravachasca ({visibleAuctions.length} Solicitudes)</span>
               </span>
               <span className="text-slate-500 hidden sm:inline">•</span>
               <span className="text-[10px] text-slate-400 hidden sm:inline">Pines de otros cadetes ocultos</span>
@@ -1347,7 +1347,7 @@ export default function MapaP2P(props) {
                       ? 'bg-blue-500/20 text-blue-400 border-blue-500/40'
                       : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
                   }`}>
-                    <span>{selectedNode.serviceModality === 'pasajeros' ? '🚖' : selectedNode.serviceModality === 'envios' ? '📦' : '🔄'}</span>
+                    <span>{selectedNode.serviceModality === 'pasajeros' ? 'Pasajeros' : selectedNode.serviceModality === 'envios' ? 'Envío' : 'Mixto'}</span>
                     <span>
                       {selectedNode.serviceModality === 'pasajeros'
                         ? 'Pasajeros (Taxi)'
@@ -1402,7 +1402,7 @@ export default function MapaP2P(props) {
               }`}>
                 <div>
                   <span className="text-[10px] text-slate-400 block font-semibold flex items-center gap-1">
-                    <span>🚗</span> Medio de Transporte:
+                    <Car className="w-4 h-4 text-accent inline" strokeWidth={1.75} /> Medio de Transporte:
                   </span>
                   <span className="font-bold text-accent truncate block mt-0.5">
                     {specs.vehicle}
@@ -1418,7 +1418,7 @@ export default function MapaP2P(props) {
                 </div>
                 <div className="col-span-2 pt-1.5 border-t border-slate-700/40">
                   <span className="text-[10px] text-slate-400 block font-semibold flex items-center gap-1">
-                    <span>📍</span> Cobertura Geográfica Local:
+                    <MapPin className="w-4 h-4 text-accent inline" strokeWidth={1.75} /> Cobertura Geográfica Local:
                   </span>
                   <span className={`font-semibold block mt-0.5 text-[11px] ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
                     Barrios de Alta Gracia: <strong className={isDark ? 'text-ink1' : 'text-slate-900'}>{specs.coverage}</strong>
@@ -1783,7 +1783,7 @@ export default function MapaP2P(props) {
                 </button>
 
                 <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-amber-500/20 text-accent border border-amber-500/40 flex items-center gap-1">
-                  📦 Solicitud P2P
+                  Solicitud P2P
                 </span>
                 <span className="text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/30">
                   {activeAuction.categoryLabel || 'Transporte'}
@@ -2350,7 +2350,7 @@ export default function MapaP2P(props) {
               <h3 className="text-sm font-bold">Publicar Envío Programado en Subasta P2P</h3>
             </div>
             <p className={`text-xs mb-3 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-              Tu pedido aparecerá como un pin distintivo (📦) en el mapa para los cadetes de Alta Gracia. Recibirás cotizaciones directas para comparar y adjudicar.
+              Tu pedido aparecerá como un pin distintivo en el mapa para los cadetes de Alta Gracia. Recibirás cotizaciones directas para comparar y adjudicar.
             </p>
 
             <form onSubmit={handlePublishAuctionSubmit} className="space-y-3">
