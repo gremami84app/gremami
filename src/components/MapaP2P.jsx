@@ -216,24 +216,21 @@ const createPeerIcon = (node, isSelected, repStatus, formatDistanceKm, isDark) =
     repDot = REP_DOT('#F59E0B');
   }
 
-  // (S08) Pin premium en forma de gota (teardrop): cabeza circular + punta,
-  // sombra profunda, glifo blanco y acento del tema. Escala al seleccionar.
+  // (S09) Pin Uber: punto con halo. El halo marca el área, el punto la posición.
   const pinAccent = 'var(--accent, #F7931A)';
   const pinBg = isSelected ? pinAccent : borderColor;
-  const scale = isSelected ? 1.15 : 1;
+  const dot = isSelected ? 14 : 11;
 
   return L.divIcon({
     className: 'custom-peer-marker',
     html: `
-      <div style="position:relative;width:30px;height:42px;transform:scale(${scale});transform-origin:50% 100%;transition:transform 140ms cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 6px 10px rgba(0,0,0,.38));">
-        <div style="width:30px;height:30px;border-radius:9999px;background:${pinBg};border:2px solid rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;color:#FFFFFF;">
-          ${PIN_SVG(pinKind, false, 16)}
-        </div>
-        <div style="position:absolute;left:50%;top:24px;width:13px;height:13px;background:${pinBg};border-right:2px solid rgba(255,255,255,.92);border-bottom:2px solid rgba(255,255,255,.92);transform:translateX(-50%) rotate(45deg);border-radius:2px;"></div>
+      <div style="position:relative;width:26px;height:26px;display:flex;align-items:center;justify-content:center;">
+        <span style="position:absolute;width:26px;height:26px;border-radius:9999px;background:${pinBg};opacity:.18;"></span>
+        <span style="width:${dot}px;height:${dot}px;border-radius:9999px;background:${pinBg};border:2px solid rgba(255,255,255,.95);box-shadow:0 0 0 1px rgba(0,0,0,.28);transition:width 140ms cubic-bezier(.2,.8,.2,1),height 140ms cubic-bezier(.2,.8,.2,1);"></span>
       </div>
     `,
-    iconSize: [30, 42],
-    iconAnchor: [15, 42]
+    iconSize: [26, 26],
+    iconAnchor: [13, 13]
   });
 };
 
@@ -1211,10 +1208,16 @@ export default function MapaP2P(props) {
           className="w-full h-full"
         >
           {/* Capa de Mapa Estándar y Gratuita de OpenStreetMap (OSM) */}
+          {/* (S09) Mapa oscuro estilo Uber: CARTO por modo, con atribución */}
           <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            key={`tiles-${isDark ? 'dark' : 'light'}`}
+            url={isDark
+              ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+              : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'}
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            subdomains="abcd"
             maxZoom={19}
+            detectRetina
           />
 
           {/* Controlador reactivo: escala barrial fija, centrado en el usuario y recalculo de tamaño */}
