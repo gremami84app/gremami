@@ -17,7 +17,11 @@ import { playP2PAlertChime, playCelebrationSound } from '../utils/audioAlert';
 import { 
   saveBidToSupabase, 
   recordDeliveryTransactionInSupabase,
-  saveFiatPaymentConfigToSupabase 
+  saveFiatPaymentConfigToSupabase,
+  saveOrderToSupabase,
+  persistDeliveryWithOrder,
+  newUuid,
+  isUuid
 } from '../lib/supabase';
 import { authService, profileService, isSupabaseConfigured, supabase, valensService } from '../lib/supabaseClient';
 import { derivePublicAddress, generateSeedPhrase, generateValensQrUri, localTransferTokens, localClaimFaucet } from '../services/cryptoWalletService';
@@ -1083,25 +1087,53 @@ export function AppProvider({ children }) {
     // Acreditar simultáneamente el token en el balance (+1.0 VAL)
     setBalance((prev) => +(prev + finalRewardVal).toFixed(2));
 
-    const deliveryId = `del-${Date.now()}`;
-    const orderId = `ord-${Date.now()}`;
+    // (S07) IDs reales: UUID cuando hay sesión (las FK y las RLS lo exigen).
+    // Sin sesión se mantienen los IDs locales de siempre y solo se respalda en localStorage.
+    const authUid = isUuid(currentUser?.id) ? currentUser.id : null;
+    const deliveryId = authUid ? newUuid() : `del-${Date.now()}`;
+    const orderId = authUid ? newUuid() : `ord-${Date.now()}`;
 
-    // 1. Persistencia en Supabase (tabla 'deliveries', con fallback a localStorage).
+    // 1. Persistencia en Supabase: primero la orden y después la entrega
+    //    (deliveries.order_id tiene FK a orders.id, así que el orden importa).
     //    No se usa await: completeDeliveryWithPin es sincrónica y su resultado se
     //    consume de inmediato en verifyPin/ChatScreen. Se captura el rechazo de la
     //    promesa para evitar unhandled rejections sin alterar el flujo del PIN.
-    recordDeliveryTransactionInSupabase({
+    const deliveryPayload = {
       delivery_id: deliveryId,
       order_id: orderId,
-      cadet_id: CURRENT_CADET_ID,
+      cadet_id: authUid || CURRENT_CADET_ID,
       client_name: peerName,
       amount_ars: finalFeeArs,
       amount_val: finalRewardVal,
       pin: inputPin,
       created_at: new Date().toISOString()
-    }).catch((err) => {
-      console.warn('Aviso de persistencia de entrega (no bloqueante):', err?.message || err);
-    });
+    };
+
+    if (authUid) {
+      persistDeliveryWithOrder({
+        order: {
+          id: orderId,
+          client_id: authUid,
+          cadete_id: authUid,
+          title: `Entrega verificada con PIN — ${peerName}`,
+          description: `Entrega P2P validada con PIN para ${peerName}`,
+          category: 'moto',
+          status: 'completado',
+          origin_address: 'Centro Alta Gracia',
+          destination_address: 'Destino Verificado',
+          price_ars: finalFeeArs,
+          reward_val: finalRewardVal,
+          delivery_pin: inputPin
+        },
+        delivery: deliveryPayload
+      }).catch((err) => {
+        console.warn('Aviso de persistencia de entrega (no bloqueante):', err?.message || err);
+      });
+    } else {
+      recordDeliveryTransactionInSupabase(deliveryPayload).catch((err) => {
+        console.warn('Aviso de respaldo local de entrega (sin sesión):', err?.message || err);
+      });
+    }
 
     // 2. Registrar en historial de órdenes y entregas (ordersHistory)
     const newCadetRecord = {
@@ -1229,8 +1261,12 @@ export function AppProvider({ children }) {
   // 2. Sistema de Alertas y Notificaciones de Solicitudes en Vivo
   const createServiceRequest = ({ category, description, origin, destination }) => {
     const categoryInfo = PEER_CATEGORIES.find((c) => c.id === category);
+    // (S07) Con sesión se usa un UUID real: el pedido persiste y las ofertas pueden
+    // referenciarlo por FK (bids.order_id -> orders.id). Sin sesión, id local de siempre.
+    const authUid = isUuid(currentUser?.id) ? currentUser.id : null;
+    const requestId = authUid ? newUuid() : `req-live-${Date.now()}`;
     const newReq = {
-      id: `req-live-${Date.now()}`,
+      id: requestId,
       clientName: userName || 'Cliente Alta Gracia',
       category: category || 'bicicleta',
       categoryLabel: categoryInfo?.title || 'Servicio P2P',
@@ -1249,6 +1285,23 @@ export function AppProvider({ children }) {
     setLiveRequests((prev) => [newReq, ...prev]);
     playP2PAlertChime();
     showToast('🚀 ¡Solicitud publicada en vivo a todos los prestadores de Alta Gracia!', 'success');
+
+    if (authUid) {
+      saveOrderToSupabase({
+        id: requestId,
+        client_id: authUid,
+        title: `Pedido P2P — ${newReq.categoryLabel}`,
+        description: newReq.description,
+        category: newReq.category,
+        status: 'pendiente',
+        origin_address: newReq.origin,
+        destination_address: newReq.destination,
+        price_ars: 2500,
+        reward_val: 1.0
+      }).catch((err) => {
+        console.warn('Aviso al persistir pedido en Supabase (no bloqueante):', err?.message || err);
+      });
+    }
 
     return newReq;
   };
@@ -1410,13 +1463,16 @@ export function AppProvider({ children }) {
   // 4.5. Sistema de Subasta P2P y Envíos Programados
   const createAuctionRequest = ({ origin, destination, description, scheduledTime, estimatedFeeArs, category = 'bicicleta' }) => {
     const categoryInfo = PEER_CATEGORIES.find((c) => c.id === category);
+    // (S07) UUID real con sesión para que la subasta persista y las ofertas la referencien.
+    const authUid = isUuid(currentUser?.id) ? currentUser.id : null;
+    const requestId = authUid ? newUuid() : `req-live-${Date.now()}`;
     const lat = Number((-31.6529 + (Math.random() - 0.5) * 0.009).toFixed(6));
     const lng = Number((-64.4283 + (Math.random() - 0.5) * 0.009).toFixed(6));
     const feeArs = Number(estimatedFeeArs) || 2500;
     const feeValens = +(feeArs / 2400).toFixed(1);
 
     const newReq = {
-      id: `req-live-${Date.now()}`,
+      id: requestId,
       clientName: userName || 'Cliente Alta Gracia',
       clientAvatar: userProfile?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
       clientRating: 5.0,
@@ -1468,13 +1524,34 @@ export function AppProvider({ children }) {
       showToast(`🔔 ¡Nueva oferta recibida de ${matchingCadete.name} para tu subasta!`, 'info');
     }, 4000);
 
+    if (authUid) {
+      saveOrderToSupabase({
+        id: requestId,
+        client_id: authUid,
+        title: `Subasta P2P — ${newReq.categoryLabel}`,
+        description: newReq.description,
+        category: newReq.category,
+        status: 'open',
+        origin_address: newReq.origin,
+        destination_address: newReq.destination,
+        origin_lat: lat,
+        origin_lng: lng,
+        price_ars: feeArs,
+        reward_val: feeValens
+      }).catch((err) => {
+        console.warn('Aviso al persistir subasta en Supabase (no bloqueante):', err?.message || err);
+      });
+    }
+
     return newReq;
   };
 
   const submitCadeteQuote = async (requestId, { feeArs, note }) => {
     const fee = Number(feeArs) || 2500;
     const cadeteReference = peers.find((p) => p.id === 'cadete-moto-1') || peers[0];
-    const cadetId = CURRENT_CADET_ID;
+    // (S07) bids.cadet_id es FK a profiles.id: con sesión se usa el UUID real;
+    // sin sesión se conserva el id local (la cotización queda solo en memoria/localStorage).
+    const cadetId = isUuid(currentUser?.id) ? currentUser.id : CURRENT_CADET_ID;
     
     // 1. Guardar la cotización en la tabla 'bids' de Supabase
     // Campos: order_id, cadet_id, amount_ars, note, created_at
@@ -1861,7 +1938,8 @@ export function AppProvider({ children }) {
     // Persistencia en Supabase de la config FIAT (no bloqueante: la UI ya se actualizó
     // en localStorage arriba). Se captura el rechazo para evitar unhandled rejections.
     saveFiatPaymentConfigToSupabase({
-      cadet_id: CURRENT_CADET_ID,
+      // (S07) profiles.id es UUID: con sesión se persiste la config FIAT real.
+      cadet_id: isUuid(currentUser?.id) ? currentUser.id : CURRENT_CADET_ID,
       fiat_provider: nextConfig.fiatProvider,
       fiat_alias: nextConfig.fiatAlias,
       fiat_cbu_cvu: nextConfig.fiatCbuCvu,
