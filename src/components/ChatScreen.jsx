@@ -51,6 +51,9 @@ export default function ChatScreen() {
     balance,
     requestFaucet,
     showToast,
+    // (S14a-2) Gate de escritura sin sesión
+    openAuthModal,
+    currentUser,
     role,
     orderPin,
     // (S09.8) PIN individual por orden
@@ -131,6 +134,12 @@ export default function ChatScreen() {
 
   const handleSend = (e) => {
     e?.preventDefault();
+    // (S14a-2) Sin sesión: abre login en vez de enviar.
+    if (!currentUser?.id) {
+      showToast('Iniciá sesión para chatear con vecinos y cadetes', 'warning');
+      openAuthModal?.();
+      return;
+    }
     if (!currentPeer || !inputText.trim()) return;
     sendTextMessage(currentPeer.id, inputText);
     setInputText('');
