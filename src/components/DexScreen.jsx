@@ -178,7 +178,7 @@ export default function DexScreen() {
           {!hasMinBalance && (
             <button
               onClick={requestFaucet}
-              className="px-2 py-1 rounded-lg bg-[#F7931A] text-slate-950 font-bold text-[10px] shadow-sm flex-shrink-0"
+              className="px-2 py-1 rounded-lg bg-accent text-slate-950 font-bold text-[10px] shadow-sm flex-shrink-0"
             >
               +5 Grifo
             </button>
@@ -189,7 +189,7 @@ export default function DexScreen() {
         <div className="mt-3.5 pt-2.5 border-t flex items-center justify-between gap-2 border-slate-700/50">
           <div className="flex items-center space-x-1.5 text-xs">
             <span className={`text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Mi Saldo:</span>
-            <span className="font-mono font-black text-[#F7931A]">{balance.toFixed(2)} VAL</span>
+            <span className="font-mono font-black text-accent">{balance.toFixed(2)} VAL</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -201,7 +201,7 @@ export default function DexScreen() {
                 setOrderPaymentMethod('Solidaridad Comunitaria');
                 setShowCreateModal(true);
               }}
-              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#F7931A] to-[#E07D09] hover:from-[#F0B90B] hover:to-[#F7931A] text-slate-950 font-bold text-xs shadow-md active:scale-95 flex items-center gap-1.5 transition-all"
+              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-accent to-accent-strong hover:from-[#F0B90B] hover:to-[#F7931A] text-slate-950 font-bold text-xs shadow-md active:scale-95 flex items-center gap-1.5 transition-all"
             >
               <PlusCircle size={14} />
               <span>Publicar Orden DEX</span>
@@ -223,7 +223,7 @@ export default function DexScreen() {
             onClick={() => setActiveFilter(f.id)}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border ${
               activeFilter === f.id
-                ? 'bg-[#F7931A] text-slate-950 border-amber-400 shadow-md font-bold'
+                ? 'bg-accent text-slate-950 border-amber-400 shadow-md font-bold'
                 : isDark
                 ? 'bg-card text-slate-300 hover:text-ink1 border-slate-800'
                 : 'bg-white text-slate-700 hover:text-slate-900 border-slate-200 shadow-xs'
@@ -265,7 +265,7 @@ export default function DexScreen() {
               >
                 {/* Lateral accent strip */}
                 <div className={`absolute top-0 left-0 bottom-0 w-1.5 ${
-                  isDonation ? 'bg-emerald-500' : isSell ? 'bg-[#F7931A]' : 'bg-cyan-500'
+                  isDonation ? 'bg-emerald-500' : isSell ? 'bg-accent' : 'bg-cyan-500'
                 }`} />
 
                 <div className="pl-1">
@@ -286,7 +286,7 @@ export default function DexScreen() {
                         isDonation
                           ? 'bg-emerald-950/40 text-emerald-300 border-emerald-700/50'
                           : isSell
-                          ? 'bg-amber-500/20 text-[#F7931A] border-amber-500/40'
+                          ? 'bg-amber-500/20 text-accent border-amber-500/40'
                           : 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40'
                       }`}>
                         {isDonation ? '🎁 Auxilio Mutuo' : isSell ? '🛒 Venta de Tokens' : '💰 Compra de Tokens'}
@@ -317,7 +317,7 @@ export default function DexScreen() {
                           {order.userName}
                         </h4>
                         <div className="text-right">
-                          <span className="text-sm font-black font-mono text-[#F7931A]">
+                          <span className="text-sm font-black font-mono text-accent">
                             {order.amountValens} VAL
                           </span>
                         </div>
@@ -373,7 +373,7 @@ export default function DexScreen() {
                       ) : isSell ? (
                         <button
                           onClick={() => setShowTradeModal(order)}
-                          className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#F7931A] to-[#E07D09] hover:from-[#F0B90B] hover:to-[#F7931A] text-slate-950 font-black text-xs shadow-md active:scale-95 flex items-center gap-1"
+                          className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-accent to-accent-strong hover:from-[#F0B90B] hover:to-[#F7931A] text-slate-950 font-black text-xs shadow-md active:scale-95 flex items-center gap-1"
                         >
                           <ShoppingCart size={13} />
                           <span>Comprar Tokens</span>
@@ -419,7 +419,7 @@ export default function DexScreen() {
               <span>Volver</span>
             </button>
 
-            <div className="flex items-center gap-2 text-[#F7931A] mb-2">
+            <div className="flex items-center gap-2 text-accent mb-2">
               <TrendingUp size={20} />
               <h3 className="text-sm font-bold">Publicar en el Mercado DEX</h3>
             </div>
@@ -455,7 +455,7 @@ export default function DexScreen() {
                       }}
                       className={`py-1.5 px-2 rounded-xl text-xs font-semibold border transition-all ${
                         orderType === t.id
-                          ? 'bg-[#F7931A] text-slate-950 border-amber-400 font-bold'
+                          ? 'bg-accent text-slate-950 border-amber-400 font-bold'
                           : isDark
                           ? 'bg-card border-slate-800 text-slate-300'
                           : 'bg-slate-100 border-slate-300 text-slate-700'
@@ -548,7 +548,7 @@ export default function DexScreen() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 min-h-[44px] py-2.5 rounded-xl bg-gradient-to-r from-[#F7931A] to-[#E07D09] text-slate-950 font-bold text-xs shadow-md active:scale-95"
+                  className="flex-1 min-h-[44px] py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-strong text-slate-950 font-bold text-xs shadow-md active:scale-95"
                 >
                   Publicar en DEX
                 </button>
@@ -582,7 +582,7 @@ export default function DexScreen() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Tu saldo después:</span>
-                <span className="font-mono font-bold text-[#F7931A]">{(balance - 1.0).toFixed(2)} VALENS</span>
+                <span className="font-mono font-bold text-accent">{(balance - 1.0).toFixed(2)} VALENS</span>
               </div>
             </div>
 
@@ -615,7 +615,7 @@ export default function DexScreen() {
           <div className={`rounded-2xl border max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
             isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-amber-300 text-slate-900'
           }`}>
-            <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-[#F7931A] flex items-center justify-center mx-auto mb-2 border border-amber-500/40">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-accent flex items-center justify-center mx-auto mb-2 border border-amber-500/40">
               <Coins size={24} />
             </div>
 
@@ -632,7 +632,7 @@ export default function DexScreen() {
             }`}>
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Tokens:</span>
-                <span className="font-mono font-bold text-[#F7931A]">{showTradeModal.amountValens} VALENS</span>
+                <span className="font-mono font-bold text-accent">{showTradeModal.amountValens} VALENS</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Precio total:</span>
@@ -648,7 +648,7 @@ export default function DexScreen() {
               <button
                 type="button"
                 onClick={handleConfirmTrade}
-                className="w-full min-h-[44px] py-2.5 rounded-xl bg-gradient-to-r from-[#F7931A] to-[#E07D09] text-slate-950 font-black text-xs shadow-md active:scale-95"
+                className="w-full min-h-[44px] py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-strong text-slate-950 font-black text-xs shadow-md active:scale-95"
               >
                 Concretar Intercambio Directo
               </button>
@@ -661,7 +661,7 @@ export default function DexScreen() {
                 }}
                 className="w-full min-h-[44px] py-2 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-800 text-ink1 text-xs font-semibold flex items-center justify-center gap-1.5"
               >
-                <MessageSquare size={14} className="text-[#F7931A]" />
+                <MessageSquare size={14} className="text-accent" />
                 <span>Abrir Chat con {showTradeModal.userName}</span>
               </button>
 

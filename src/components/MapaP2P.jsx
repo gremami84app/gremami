@@ -931,7 +931,7 @@ export default function MapaP2P(props) {
                 onClick={() => handleSelectCategory(cat.id)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all snap-start shrink-0 ${
                   isSelected
-                    ? 'bg-[#F7931A] text-slate-950 shadow-md font-bold'
+                    ? 'bg-accent text-slate-950 shadow-md font-bold'
                     : isDark
                     ? 'bg-card text-slate-300 hover:text-ink1 border border-line'
                     : 'bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200'
@@ -962,7 +962,7 @@ export default function MapaP2P(props) {
                   className={`px-2.5 py-1 rounded-lg text-[10.5px] font-bold whitespace-nowrap transition-all border ${
                     isModSelected
                       ? mod.id === 'pasajeros'
-                        ? 'bg-amber-500/25 text-[#F7931A] border-[#F7931A] shadow-xs'
+                        ? 'bg-amber-500/25 text-accent border-accent shadow-xs'
                         : mod.id === 'envios'
                         ? 'bg-blue-500/25 text-blue-400 border-blue-500 shadow-xs'
                         : mod.id === 'mixto'
@@ -985,8 +985,8 @@ export default function MapaP2P(props) {
         {isCadete ? (
           <div className="flex flex-wrap justify-between items-center mt-2 px-1 text-[11px] gap-2 pt-1 border-t border-slate-700/30">
             <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1.5 text-[#F7931A] font-extrabold">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#F7931A] shadow-glow-gold animate-pulse" />
+              <span className="flex items-center gap-1.5 text-accent font-extrabold">
+                <span className="w-2.5 h-2.5 rounded-full bg-accent shadow-glow-gold animate-pulse" />
                 <span>📦 Modo Cadete: Logística Descentralizada • Gran Córdoba & Valle de Paravachasca ({visibleAuctions.length} Solicitudes)</span>
               </span>
               <span className="text-slate-500 hidden sm:inline">•</span>
@@ -998,7 +998,7 @@ export default function MapaP2P(props) {
                 onClick={triggerAlertTest}
                 title="Probar Alarma P2P en Vivo"
                 className={`px-2.5 py-1 rounded-xl border flex items-center gap-1 text-[11px] font-bold transition-all ${
-                  isDark ? 'bg-card border-slate-700 text-[#F7931A] hover:bg-slate-800' : 'bg-slate-100 border-slate-300 text-amber-700 hover:bg-slate-200'
+                  isDark ? 'bg-card border-slate-700 text-accent hover:bg-slate-800' : 'bg-slate-100 border-slate-300 text-amber-700 hover:bg-slate-200'
                 }`}
               >
                 <Volume2 size={13} />
@@ -1010,7 +1010,7 @@ export default function MapaP2P(props) {
           <div className="flex flex-wrap justify-between items-center mt-2 px-1 text-[11px] gap-2 pt-1 border-t border-slate-700/30">
             {/* Leyenda Comunitaria de Reputación y Cobertura Gran Córdoba */}
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[10px] font-black text-[#F7931A] hidden lg:inline tracking-tight">
+              <span className="text-[10px] font-black text-accent hidden lg:inline tracking-tight">
                 Logística Descentralizada • Gran Córdoba & Valle de Paravachasca ({peers.length} Nodos)
               </span>
               <span className="text-slate-500 hidden lg:inline">•</span>
@@ -1054,7 +1054,7 @@ export default function MapaP2P(props) {
               {/* Botón: Publicar Envío Programado (Subasta P2P) */}
               <button
                 onClick={() => setShowNewAuctionModal(true)}
-                className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-[#F7931A] to-[#E07D09] hover:from-[#F0B90B] hover:to-[#F7931A] text-slate-950 font-black text-[11px] shadow-sm flex items-center gap-1 active:scale-95 transition-all"
+                className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-accent to-accent-strong hover:from-[#F0B90B] hover:to-[#F7931A] text-slate-950 font-black text-[11px] shadow-sm flex items-center gap-1 active:scale-95 transition-all"
                 title="Publicar pedido programado para recibir cotizaciones de cadetes"
               >
                 <PlusCircle size={13} />
@@ -1066,7 +1066,7 @@ export default function MapaP2P(props) {
                 onClick={() => setIsRequestSheetOpen(true)}
                 className={`px-2.5 py-1 rounded-xl border font-bold text-[11px] flex items-center gap-1 active:scale-95 transition-all ${
                   isDark
-                    ? 'bg-card border-[#F7931A]/50 text-[#F7931A] hover:bg-[#1A253D]'
+                    ? 'bg-card border-accent/50 text-accent hover:bg-[#1A253D]'
                     : 'bg-amber-50 border-amber-400 text-amber-800 hover:bg-amber-100'
                 }`}
                 title="Pedir un envío ahora mismo (alerta a los cadetes cercanos)"
@@ -1080,7 +1080,7 @@ export default function MapaP2P(props) {
                 onClick={() => setShowAuctionQuotesModal(true)}
                 className={`px-2.5 py-1 rounded-xl border font-bold text-[11px] flex items-center gap-1.5 active:scale-95 transition-all relative ${
                   totalOffersCount > 0
-                    ? 'bg-amber-500/20 border-[#F7931A] text-[#F7931A]'
+                    ? 'bg-amber-500/20 border-accent text-accent'
                     : isDark ? 'bg-card border-slate-700 text-slate-300' : 'bg-slate-100 border-slate-300 text-slate-700'
                 }`}
                 title="Ver cotizaciones de cadetes recibidas para adjudicar"
@@ -1099,7 +1099,7 @@ export default function MapaP2P(props) {
                 onClick={triggerAlertTest}
                 title="Probar Alarma P2P en Vivo"
                 className={`p-1 rounded-xl border flex items-center justify-center transition-all ${
-                  isDark ? 'bg-card border-slate-700 text-[#F7931A] hover:bg-slate-800' : 'bg-slate-100 border-slate-300 text-amber-700 hover:bg-slate-200'
+                  isDark ? 'bg-card border-slate-700 text-accent hover:bg-slate-800' : 'bg-slate-100 border-slate-300 text-amber-700 hover:bg-slate-200'
                 }`}
               >
                 <Volume2 size={14} />
@@ -1342,7 +1342,7 @@ export default function MapaP2P(props) {
                 {selectedNode.serviceModality && (
                   <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border shadow-xs flex items-center gap-1 ${
                     selectedNode.serviceModality === 'pasajeros'
-                      ? 'bg-amber-500/20 text-[#F7931A] border-amber-500/40'
+                      ? 'bg-amber-500/20 text-accent border-amber-500/40'
                       : selectedNode.serviceModality === 'envios'
                       ? 'bg-blue-500/20 text-blue-400 border-blue-500/40'
                       : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
@@ -1376,7 +1376,7 @@ export default function MapaP2P(props) {
 
               {selectedNode.locationLabel && (
                 <p className={`text-[11px] mt-1 font-medium flex items-center gap-1 truncate ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                  <MapPin size={11} className="text-[#F7931A]" />
+                  <MapPin size={11} className="text-accent" />
                   {selectedNode.locationLabel}
                 </p>
               )}
@@ -1404,7 +1404,7 @@ export default function MapaP2P(props) {
                   <span className="text-[10px] text-slate-400 block font-semibold flex items-center gap-1">
                     <span>🚗</span> Medio de Transporte:
                   </span>
-                  <span className="font-bold text-[#F7931A] truncate block mt-0.5">
+                  <span className="font-bold text-accent truncate block mt-0.5">
                     {specs.vehicle}
                   </span>
                 </div>
@@ -1533,7 +1533,7 @@ export default function MapaP2P(props) {
                     <div className={`mt-2 p-2 rounded-xl border flex items-center gap-2 text-[10px] ${
                       isDark ? 'bg-slate-900/60 border-slate-800 text-slate-400' : 'bg-slate-100 border-slate-200 text-slate-600'
                     }`}>
-                      <Lock size={12} className="text-[#F7931A] flex-shrink-0" />
+                      <Lock size={12} className="text-accent flex-shrink-0" />
                       <span>WhatsApp permanece <strong>privado</strong>. Se intercambia mediante el Chat P2P.</span>
                     </div>
                   </>
@@ -1562,7 +1562,7 @@ export default function MapaP2P(props) {
                     </div>
                     <button
                       onClick={() => setActiveTab('home')}
-                      className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#F7931A] to-[#E07D09] text-slate-950 font-black text-xs flex items-center justify-center gap-2 shadow-md active:scale-95 transition-all"
+                      className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-accent to-accent-strong text-slate-950 font-black text-xs flex items-center justify-center gap-2 shadow-md active:scale-95 transition-all"
                     >
                       <ArrowRight size={14} />
                       Ingresar para ver contacto
@@ -1681,7 +1681,7 @@ export default function MapaP2P(props) {
           {/* Distintivo Destacado: Recompensa P2P con ValensCoin */}
           <div className={`mt-2.5 px-3 py-2 rounded-2xl border flex items-center justify-between shadow-xs ${
             isDark
-              ? 'bg-gradient-to-r from-[#1A1305] via-[#121B2D] to-[#1A1305] border-[#F7931A]/50 text-[#F0B90B]'
+              ? 'bg-gradient-to-r from-[#1A1305] via-[#121B2D] to-[#1A1305] border-accent/50 text-[#F0B90B]'
               : 'bg-amber-50 border-amber-300 text-amber-900'
           }`}>
             <div className="flex items-center space-x-2.5">
@@ -1695,7 +1695,7 @@ export default function MapaP2P(props) {
                 </p>
               </div>
             </div>
-            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg border bg-[#F7931A]/20 border-[#F7931A]/40 text-[#F7931A]">
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg border bg-accent/20 border-accent/40 text-accent">
               +1.0 VAL
             </span>
           </div>
@@ -1705,7 +1705,7 @@ export default function MapaP2P(props) {
             <div className={`mt-2.5 p-2.5 rounded-xl border text-xs ${
               isDark ? 'bg-card border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
             }`}>
-              <div className="text-[10px] text-[#F7931A] font-semibold uppercase tracking-wider mb-1 flex items-center justify-between">
+              <div className="text-[10px] text-accent font-semibold uppercase tracking-wider mb-1 flex items-center justify-between">
                 <span className="flex items-center gap-1">
                   <ShieldCheck size={12} /> Reseña verificada post-servicio
                 </span>
@@ -1742,7 +1742,7 @@ export default function MapaP2P(props) {
             ) : (
               <button
                 onClick={() => handleStartChatOrConnect(selectedNode)}
-                className="w-full bg-gradient-to-r from-[#F7931A] to-[#E07D09] hover:from-[#F0B90B] hover:to-[#F7931A] text-slate-950 font-black py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md active:scale-[0.98]"
+                className="w-full bg-gradient-to-r from-accent to-accent-strong hover:from-[#F0B90B] hover:to-[#F7931A] text-slate-950 font-black py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md active:scale-[0.98]"
               >
                 <MessageSquare size={16} />
                 Abrir Chat P2P Directo (Conexión Activa)
@@ -1782,7 +1782,7 @@ export default function MapaP2P(props) {
                   <span>Volver</span>
                 </button>
 
-                <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-amber-500/20 text-[#F7931A] border border-amber-500/40 flex items-center gap-1">
+                <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-amber-500/20 text-accent border border-amber-500/40 flex items-center gap-1">
                   📦 Solicitud P2P
                 </span>
                 <span className="text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/30">
@@ -1831,9 +1831,9 @@ export default function MapaP2P(props) {
             }`}>
               <div className="flex items-center justify-between">
                 <span className="text-slate-400 flex items-center gap-1 text-[11px]">
-                  <Clock size={13} className="text-[#F7931A]" /> Horario de Retiro/Entrega:
+                  <Clock size={13} className="text-accent" /> Horario de Retiro/Entrega:
                 </span>
-                <span className="font-bold text-[#F7931A] font-mono">{activeAuction.scheduledTime || 'Hoy'}</span>
+                <span className="font-bold text-accent font-mono">{activeAuction.scheduledTime || 'Hoy'}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-slate-400 flex items-center gap-1 text-[11px]">
@@ -1873,10 +1873,10 @@ export default function MapaP2P(props) {
                 className="flex items-center justify-between cursor-pointer select-none"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-black flex items-center gap-1.5 text-[#F7931A]">
+                  <span className="text-xs font-black flex items-center gap-1.5 text-accent">
                     <span>📊 Cotizaciones de la Competencia</span>
                   </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-500/15 text-[#F7931A] border border-amber-500/30">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-500/15 text-accent border border-amber-500/30">
                     {offersList.length} cotización(es) recibida(s)
                   </span>
                 </div>
@@ -1900,11 +1900,11 @@ export default function MapaP2P(props) {
                           /* Identificación de Oferta Propia Resaltada */
                           <div
                             key={offer.id || `own-${idx}`}
-                            className="p-2.5 rounded-xl border-2 bg-gradient-to-r from-amber-500/15 via-[#1A1305] to-amber-500/15 border-[#F7931A] shadow-md transition-all"
+                            className="p-2.5 rounded-xl border-2 bg-gradient-to-r from-amber-500/15 via-[#1A1305] to-amber-500/15 border-accent shadow-md transition-all"
                           >
                             <div className="flex items-center justify-between mb-1">
                               <div className="flex items-center gap-1.5">
-                                <span className="text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-[#F7931A] to-[#E07D09] text-black px-2 py-0.5 rounded-full shadow-xs flex items-center gap-1">
+                                <span className="text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-accent to-accent-strong text-black px-2 py-0.5 rounded-full shadow-xs flex items-center gap-1">
                                   <span>⭐</span>
                                   <span>Tu Oferta</span>
                                 </span>
@@ -1967,7 +1967,7 @@ export default function MapaP2P(props) {
                 className={`flex-1 min-h-[44px] py-3 px-4 rounded-xl font-black text-xs shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-all ${
                   myOffer
                     ? 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 shadow-glow-green'
-                    : 'bg-gradient-to-r from-[#F7931A] to-[#E07D09] hover:from-[#F0B90B] hover:to-[#F7931A] text-slate-950'
+                    : 'bg-gradient-to-r from-accent to-accent-strong hover:from-[#F0B90B] hover:to-[#F7931A] text-slate-950'
                 }`}
               >
                 <Gavel size={15} />
@@ -2107,7 +2107,7 @@ export default function MapaP2P(props) {
             <div className={`p-2.5 rounded-xl border text-xs mb-3 ${
               isDark ? 'bg-app border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-800'
             }`}>
-              <p className="font-bold text-[#F7931A]">{activeAlert.title}</p>
+              <p className="font-bold text-accent">{activeAlert.title}</p>
               <p className="text-[11px] mt-1">{activeAlert.subtitle}</p>
               <p className="text-[10px] text-slate-500 mt-1">Distancia: {activeAlert.request?.distanceKm || '0.5 km'}</p>
             </div>
@@ -2236,7 +2236,7 @@ export default function MapaP2P(props) {
 
               return (
                 <>
-                  <div className="flex items-center gap-2 text-[#F7931A] mb-2">
+                  <div className="flex items-center gap-2 text-accent mb-2">
                     <Gavel size={20} />
                     <h3 className="text-sm font-bold">
                       {isEditQuote ? 'Editar / Re-cotizar Oferta 📝' : 'Cotizar Pedido en Subasta 📨'}
@@ -2253,7 +2253,7 @@ export default function MapaP2P(props) {
                     isDark ? 'bg-app border-slate-800' : 'bg-slate-50 border-slate-200'
                   }`}>
                     <div className="text-slate-400 truncate"><strong>Ruta:</strong> {quoteTargetAuction.origin} ➔ {quoteTargetAuction.destination}</div>
-                    <div className="text-slate-400"><strong>Horario:</strong> <span className="text-[#F7931A] font-mono">{quoteTargetAuction.scheduledTime}</span></div>
+                    <div className="text-slate-400"><strong>Horario:</strong> <span className="text-accent font-mono">{quoteTargetAuction.scheduledTime}</span></div>
                     <div className="text-slate-400"><strong>Tarifa Base Cliente:</strong> ${Number(quoteTargetAuction.estimatedFeeArs).toLocaleString('es-AR')} ARS</div>
                   </div>
 
@@ -2307,7 +2307,7 @@ export default function MapaP2P(props) {
                         className={`flex-1 min-h-[44px] py-2.5 rounded-xl font-black text-xs shadow-md active:scale-95 text-slate-950 ${
                           isEditQuote
                             ? 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 shadow-glow-green'
-                            : 'bg-gradient-to-r from-[#F7931A] to-[#E07D09]'
+                            : 'bg-gradient-to-r from-accent to-accent-strong'
                         }`}
                       >
                         {isEditQuote ? 'Actualizar Oferta 📝' : 'Enviar a Supabase 📨'}
@@ -2345,7 +2345,7 @@ export default function MapaP2P(props) {
               <span>Volver</span>
             </button>
 
-            <div className="flex items-center gap-2 text-[#F7931A] mb-1">
+            <div className="flex items-center gap-2 text-accent mb-1">
               <PlusCircle size={20} />
               <h3 className="text-sm font-bold">Publicar Envío Programado en Subasta P2P</h3>
             </div>
@@ -2453,7 +2453,7 @@ export default function MapaP2P(props) {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 min-h-[44px] py-2.5 rounded-xl bg-gradient-to-r from-[#F7931A] to-[#E07D09] text-slate-950 font-black text-xs shadow-md active:scale-95"
+                  className="flex-1 min-h-[44px] py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-strong text-slate-950 font-black text-xs shadow-md active:scale-95"
                 >
                   Publicar en Subasta 📢
                 </button>
@@ -2487,7 +2487,7 @@ export default function MapaP2P(props) {
               <span>Volver</span>
             </button>
 
-            <div className="flex items-center gap-2 text-[#F7931A] mb-1">
+            <div className="flex items-center gap-2 text-accent mb-1">
               <Gavel size={20} />
               <h3 className="text-sm font-bold">Comparador de Ofertas y Subastas P2P</h3>
             </div>
@@ -2516,7 +2516,7 @@ export default function MapaP2P(props) {
                       <div className="flex items-start justify-between gap-2 border-b border-slate-700/40 pb-2">
                         <div>
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="font-extrabold text-xs text-[#F7931A]">
+                            <span className="font-extrabold text-xs text-accent">
                               ⏰ {req.scheduledTime || 'Hoy'}
                             </span>
                             <span className="text-[10px] px-1.5 py-0.2 rounded font-mono font-bold bg-amber-500/20 text-amber-300">

@@ -245,7 +245,7 @@ export default function ChatScreen() {
                 <span className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>▼</span>
               </div>
               <div className={`flex items-center space-x-1.5 text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                <span className="text-[#F7931A] font-mono font-bold">{kmDistance}</span>
+                <span className="text-accent font-mono font-bold">{kmDistance}</span>
                 <span>•</span>
                 <span className="text-emerald-500 font-medium flex items-center truncate">
                   <ShieldCheck className="w-3 h-3 mr-0.5 inline flex-shrink-0" />
@@ -340,7 +340,7 @@ export default function ChatScreen() {
                       <span className={`text-xs font-semibold truncate ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                         {peer.name}
                       </span>
-                      <span className="text-[10px] text-[#F7931A] font-mono font-bold">
+                      <span className="text-[10px] text-accent font-mono font-bold">
                         {peerKm}
                       </span>
                     </div>
@@ -384,7 +384,7 @@ export default function ChatScreen() {
             isDark ? 'bg-card border-amber-500/40 text-amber-300' : 'bg-amber-50 border-amber-300 text-amber-950'
           }`}>
             <div className="flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider mb-1">
-              <Lock size={14} className="text-[#F7931A]" />
+              <Lock size={14} className="text-accent" />
               <span>Chat P2P Protegido - Esperando Aceptación Mutua</span>
             </div>
             <p className="text-[11px] leading-relaxed opacity-90">
@@ -405,11 +405,11 @@ export default function ChatScreen() {
               <div className="flex-1 min-w-0">
                 <h3 className="font-bold text-base truncate">{currentPeer.name}</h3>
                 <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
-                  <p className="text-xs text-[#F7931A] font-semibold">{currentPeer.role || currentPeer.category}</p>
+                  <p className="text-xs text-accent font-semibold">{currentPeer.role || currentPeer.category}</p>
                   {currentPeer.serviceModality && (
                     <span className={`text-[10px] font-extrabold px-2 py-0.2 rounded-full border shadow-xs ${
                       currentPeer.serviceModality === 'pasajeros'
-                        ? 'bg-amber-500/20 text-[#F7931A] border-amber-500/40'
+                        ? 'bg-amber-500/20 text-accent border-amber-500/40'
                         : currentPeer.serviceModality === 'envios'
                         ? 'bg-blue-500/20 text-blue-400 border-blue-500/40'
                         : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
@@ -449,7 +449,7 @@ export default function ChatScreen() {
             {/* Reseñas Públicas Recíprocas */}
             {currentPeer.recentReviews && currentPeer.recentReviews.length > 0 && (
               <div className="mt-3.5 space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#F7931A] block">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-accent block">
                   Reseñas Recíprocas de la Comunidad:
                 </span>
                 {currentPeer.recentReviews.map((rev, idx) => (
@@ -507,12 +507,12 @@ export default function ChatScreen() {
               type="button"
               className={`flex items-center justify-center space-x-1 py-1.5 px-2.5 rounded-xl border text-xs font-bold transition-all shadow-xs active:scale-[0.98] ${
                 isDark
-                  ? 'bg-card border-amber-500/40 text-[#F7931A] hover:bg-amber-500/10'
+                  ? 'bg-card border-amber-500/40 text-accent hover:bg-amber-500/10'
                   : 'bg-white border-amber-400 text-amber-700 hover:bg-amber-50'
               }`}
               title="Ver comparativa de ahorro vs apps tradicionales"
             >
-              <Calculator className="w-3.5 h-3.5 text-[#F7931A]" />
+              <Calculator className="w-3.5 h-3.5 text-accent" />
               <span className="hidden xs:inline">Tarifa Justa</span>
             </button>
 
@@ -543,7 +543,7 @@ export default function ChatScreen() {
             <button
               onClick={() => setShowQrTipModal(true)}
               type="button"
-              className="flex-1 flex items-center justify-center space-x-1 py-1.5 px-2 rounded-xl bg-gradient-to-r from-[#F7931A] to-[#E07D09] hover:from-[#F0B90B] hover:to-[#F7931A] text-black font-black text-xs shadow-glow-orange transition-all active:scale-[0.98]"
+              className="flex-1 flex items-center justify-center space-x-1 py-1.5 px-2 rounded-xl bg-gradient-to-r from-accent to-accent-strong hover:from-[#F0B90B] hover:to-[#F7931A] text-black font-black text-xs shadow-glow-orange transition-all active:scale-[0.98]"
             >
               <Zap className="w-3.5 h-3.5 fill-black stroke-black" />
               <span className="truncate">Entregar Recompensa (1 VAL)</span>
@@ -560,7 +560,7 @@ export default function ChatScreen() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center space-x-2 min-w-0">
-                      <div className="p-1.5 rounded-lg bg-[#F7931A]/20 text-[#F7931A] flex-shrink-0">
+                      <div className="p-1.5 rounded-lg bg-accent/20 text-accent flex-shrink-0">
                         <Key className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
@@ -568,7 +568,7 @@ export default function ChatScreen() {
                           <span className={`text-[11px] font-bold ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                             Tu PIN Antifraude:
                           </span>
-                          <span className="font-mono text-base font-black text-[#F7931A] tracking-widest px-2.5 py-0.5 rounded-lg bg-black/40 border border-amber-500/50 shadow-inner">
+                          <span className="font-mono text-base font-black text-accent tracking-widest px-2.5 py-0.5 rounded-lg bg-black/40 border border-amber-500/50 shadow-inner">
                             {activePin}
                           </span>
                         </div>
@@ -588,7 +588,7 @@ export default function ChatScreen() {
                         <button
                           onClick={generateNewPin}
                           title="Regenerar PIN aleatorio"
-                          className="p-1.5 text-xs text-[#F7931A] hover:bg-amber-500/10 rounded-lg border border-amber-500/30 active:scale-95 flex items-center gap-1 transition-all"
+                          className="p-1.5 text-xs text-accent hover:bg-amber-500/10 rounded-lg border border-amber-500/30 active:scale-95 flex items-center gap-1 transition-all"
                         >
                           <RefreshCw className="w-3 h-3" />
                           <span className="text-[10px] font-semibold">Nuevo</span>
@@ -615,7 +615,7 @@ export default function ChatScreen() {
                     <button
                       onClick={() => resendPinViaChat(currentPeer.id)}
                       className={`px-2 py-1 rounded-lg border flex items-center gap-1 transition-all ${
-                        isDark ? 'bg-card border-slate-700 text-[#F7931A] hover:bg-slate-800' : 'bg-white border-amber-300 text-amber-700 hover:bg-amber-50'
+                        isDark ? 'bg-card border-slate-700 text-accent hover:bg-slate-800' : 'bg-white border-amber-300 text-amber-700 hover:bg-amber-50'
                       }`}
                       title="Enviar código al chat"
                     >
@@ -679,7 +679,7 @@ export default function ChatScreen() {
                             <button
                               type="button"
                               onClick={() => resendPinViaChat(currentPeer.id)}
-                              className="py-1 px-2.5 rounded-lg bg-[#F7931A] text-slate-950 font-bold text-[10px] flex items-center gap-1 shadow-sm active:scale-95 transition-all"
+                              className="py-1 px-2.5 rounded-lg bg-accent text-slate-950 font-bold text-[10px] flex items-center gap-1 shadow-sm active:scale-95 transition-all"
                             >
                               <Send size={11} />
                               <span>Reenviar PIN por Chat P2P</span>
@@ -750,7 +750,7 @@ export default function ChatScreen() {
             <div className={`border rounded-xl p-2.5 text-center text-[11px] max-w-sm mx-auto ${
               isDark ? 'bg-card border-line text-slate-400' : 'bg-slate-100 border-slate-200 text-slate-600'
             }`}>
-              <div className="flex items-center justify-center space-x-1 text-[#F7931A] font-medium mb-0.5">
+              <div className="flex items-center justify-center space-x-1 text-accent font-medium mb-0.5">
                 <Lock className="w-3 h-3 inline" />
                 <span>Canal P2P Soberano • Alta Gracia, Córdoba</span>
               </div>
@@ -795,7 +795,7 @@ export default function ChatScreen() {
                     <div className={`border-2 rounded-2xl p-3.5 max-w-xs w-full shadow-xl ${
                       isDark ? 'bg-[#241A0B] border-[#F7931A]/70' : 'bg-amber-50 border-amber-400'
                     }`}>
-                      <div className="flex items-center space-x-2 text-[#F7931A] mb-1.5">
+                      <div className="flex items-center space-x-2 text-accent mb-1.5">
                         <Zap className="w-4 h-4 fill-[#F7931A]" />
                         <span className="text-xs font-bold uppercase tracking-wider">
                           Propina ValensCoin On-Chain
@@ -854,7 +854,7 @@ export default function ChatScreen() {
                     <div className={`border rounded-2xl p-3 max-w-xs w-full text-center ${
                       isDark ? 'bg-[#1F180B] border-amber-500/60 text-amber-300' : 'bg-amber-50 border-amber-300 text-amber-950'
                     }`}>
-                      <div className="flex items-center justify-center gap-1.5 font-bold text-xs text-[#F7931A] mb-1">
+                      <div className="flex items-center justify-center gap-1.5 font-bold text-xs text-accent mb-1">
                         <Key size={14} />
                         <span>Recordatorio de PIN Antifraude</span>
                       </div>
@@ -924,14 +924,14 @@ export default function ChatScreen() {
                   <div
                     className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-xs shadow-md ${
                       isUser
-                        ? 'bg-gradient-to-r from-[#F7931A] to-[#E07D09] text-black font-medium rounded-br-xs'
+                        ? 'bg-gradient-to-r from-accent to-accent-strong text-black font-medium rounded-br-xs'
                         : isDark
                         ? 'bg-card text-ink1 border border-line rounded-bl-xs'
                         : 'bg-white text-slate-900 border border-slate-200 rounded-bl-xs'
                     }`}
                   >
                     {!isUser && (
-                      <p className="text-[10px] font-bold text-[#F7931A] mb-1">
+                      <p className="text-[10px] font-bold text-accent mb-1">
                         {msg.senderName || currentPeer.name}
                       </p>
                     )}
@@ -974,7 +974,7 @@ export default function ChatScreen() {
               disabled={!inputText.trim()}
               className={`p-2.5 rounded-xl transition-all ${
                 inputText.trim()
-                  ? 'bg-gradient-to-r from-[#F7931A] to-[#E07D09] text-black shadow-glow-orange cursor-pointer hover:scale-105 active:scale-95'
+                  ? 'bg-gradient-to-r from-accent to-accent-strong text-black shadow-glow-orange cursor-pointer hover:scale-105 active:scale-95'
                   : isDark
                   ? 'bg-[#1F2D48] text-gray-500 cursor-not-allowed'
                   : 'bg-slate-200 text-slate-400 cursor-not-allowed'
@@ -1046,7 +1046,7 @@ export default function ChatScreen() {
               <span>Volver</span>
             </button>
 
-            <div className="flex items-center space-x-2 text-[#F7931A] mb-3">
+            <div className="flex items-center space-x-2 text-accent mb-3">
               <Calculator className="w-5 h-5" />
               <h3 className="text-sm font-bold">Calculadora de Tarifa Justa P2P</h3>
             </div>
@@ -1067,7 +1067,7 @@ export default function ChatScreen() {
                     onClick={() => setCalculatorFee(val)}
                     className={`py-1.5 px-1 rounded-xl text-xs font-mono font-bold transition-all ${
                       calculatorFee === val
-                        ? 'bg-[#F7931A] text-black shadow-glow-orange'
+                        ? 'bg-accent text-black shadow-glow-orange'
                         : isDark
                         ? 'bg-app border border-line text-slate-300'
                         : 'bg-slate-100 border border-slate-200 text-slate-700'
@@ -1237,9 +1237,9 @@ export default function ChatScreen() {
               <span>Volver</span>
             </button>
 
-            <div className="flex items-center space-x-2.5 text-[#F7931A] mb-3">
-              <div className="w-9 h-9 rounded-xl bg-[#F7931A]/20 border border-[#F7931A]/40 flex items-center justify-center shadow-glow-orange">
-                <Zap className="w-5 h-5 text-[#F7931A] fill-[#F7931A]" />
+            <div className="flex items-center space-x-2.5 text-accent mb-3">
+              <div className="w-9 h-9 rounded-xl bg-accent/20 border border-[#F7931A]/40 flex items-center justify-center shadow-glow-orange">
+                <Zap className="w-5 h-5 text-accent fill-[#F7931A]" />
               </div>
               <div>
                 <h3 className="text-sm font-bold">Transferir ValensCoin</h3>
@@ -1306,7 +1306,7 @@ export default function ChatScreen() {
                 onClick={confirmQrTip}
                 className={`flex-1 min-h-[44px] py-2.5 rounded-xl text-xs font-bold transition-all shadow-glow-orange flex items-center justify-center space-x-1.5 ${
                   balance >= 1.0
-                    ? 'bg-gradient-to-r from-[#F7931A] to-[#E07D09] text-black active:scale-[0.98]'
+                    ? 'bg-gradient-to-r from-accent to-accent-strong text-black active:scale-[0.98]'
                     : 'bg-slate-800 text-gray-500 cursor-not-allowed'
                 }`}
               >

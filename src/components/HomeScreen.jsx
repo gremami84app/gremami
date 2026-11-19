@@ -76,7 +76,7 @@ export default function HomeScreen() {
           : 'bg-gradient-to-br from-white via-slate-50 to-amber-50/40 border-slate-200'
       }`}>
         {/* Ambient Glows */}
-        <div className="absolute top-0 right-0 w-44 h-44 bg-[#F7931A]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-44 h-44 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[#E02424]/12 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10">
@@ -84,7 +84,7 @@ export default function HomeScreen() {
             <div className="flex items-center space-x-2">
               <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border ${
                 isDark
-                  ? 'bg-gradient-to-r from-[#F7931A]/20 to-[#E02424]/20 text-[#F0B90B] border-[#F7931A]/30'
+                  ? 'bg-gradient-to-r from-[#F7931A]/20 to-[#E02424]/20 text-[#F0B90B] border-accent/30'
                   : 'bg-amber-100 text-amber-800 border-amber-300'
               }`}>
                 📍 Alta Gracia, Córdoba
@@ -213,11 +213,11 @@ export default function HomeScreen() {
       {/* Acceso Global Destacado: 🌟 TODAS las Categorías y Comercios de Alta Gracia */}
       <div className={`p-4 rounded-2xl border flex items-center justify-between shadow-xl transition-all ${
         isDark
-          ? 'bg-gradient-to-r from-[#121B2D] via-[#1A253D] to-[#121B2D] border-[#F7931A]/40'
+          ? 'bg-gradient-to-r from-[#121B2D] via-[#1A253D] to-[#121B2D] border-accent/40'
           : 'bg-white border-amber-300 shadow-sm'
       }`}>
         <div className="flex items-center space-x-3 min-w-0">
-          <div className="w-11 h-11 rounded-2xl bg-[#F7931A]/20 border border-[#F7931A]/40 flex items-center justify-center text-accent flex-shrink-0">
+          <div className="w-11 h-11 rounded-2xl bg-accent/20 border border-accent/40 flex items-center justify-center text-accent flex-shrink-0">
             <Sparkles className="w-5 h-5" />
           </div>
           <div className="min-w-0">
@@ -225,7 +225,7 @@ export default function HomeScreen() {
               <h4 className={`text-xs font-black tracking-tight truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 🌟 TODAS las Categorías y Locales
               </h4>
-              <span className="text-xs font-mono font-bold bg-[#F7931A]/20 text-accent px-1.5 py-0.2 rounded border border-[#F7931A]/40 flex-shrink-0">
+              <span className="text-xs font-mono font-bold bg-accent/20 text-accent px-1.5 py-0.2 rounded border border-accent/40 flex-shrink-0">
                 {visiblePeers.length} Nodos
               </span>
             </div>
@@ -293,7 +293,7 @@ export default function HomeScreen() {
                         cat.id === 'caminando'
                           ? isDark ? 'bg-emerald-950/40 border border-emerald-500/40' : 'bg-emerald-100 border border-emerald-300'
                           : cat.id === 'bicicleta'
-                          ? isDark ? 'bg-[#F7931A]/15 border border-[#F7931A]/40' : 'bg-orange-100 border border-orange-300'
+                          ? isDark ? 'bg-accent/15 border border-accent/40' : 'bg-orange-100 border border-orange-300'
                           : cat.id === 'motocicleta'
                           ? isDark ? 'bg-[#F0B90B]/15 border border-[#F0B90B]/40' : 'bg-amber-100 border border-amber-300'
                           : cat.id === 'automovil'
@@ -316,7 +316,7 @@ export default function HomeScreen() {
                             cat.id === 'caminando'
                               ? isDark ? 'bg-emerald-950/60 text-emerald-400 border-emerald-700/50' : 'bg-emerald-100 text-emerald-800 border-emerald-300'
                               : cat.id === 'bicicleta'
-                              ? isDark ? 'bg-[#F7931A]/15 text-[#F0B90B] border-[#F7931A]/40' : 'bg-orange-100 text-orange-800 border-orange-300'
+                              ? isDark ? 'bg-accent/15 text-[#F0B90B] border-accent/40' : 'bg-orange-100 text-orange-800 border-orange-300'
                               : cat.id === 'motocicleta'
                               ? isDark ? 'bg-[#F0B90B]/15 text-[#F0B90B] border-[#F0B90B]/40' : 'bg-amber-100 text-amber-800 border-amber-300'
                               : cat.id === 'automovil'

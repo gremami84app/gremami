@@ -32,9 +32,9 @@ export default {
           muted: '#8C9BB4',
           light: '#EAECEF'
         },
-        // (S09.5) Acento dinámico: 4 temas vía variables CSS (data-accent en <html>)
+        // (S09.5/S09.9) Acento dinámico con canales RGB → soporta alpha nativo
         accent: {
-          DEFAULT: 'var(--accent)',
+          DEFAULT: 'rgb(var(--accent-rgb) / <alpha-value>)',
           strong: 'var(--accent-strong)',
           soft: 'var(--accent-soft)',
           ring: 'var(--accent-ring)'
