@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient';
+import { supabase, isSupabaseConfigured } from './supabaseClient';
 
 /**
  * Guarda o actualiza una cotización en la tabla 'bids' de Supabase

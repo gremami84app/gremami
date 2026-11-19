@@ -1086,7 +1086,10 @@ export function AppProvider({ children }) {
     const deliveryId = `del-${Date.now()}`;
     const orderId = `ord-${Date.now()}`;
 
-    // 1. Persistencia atómica en Supabase (tabla 'deliveries' con fallback indetectable a localStorage)
+    // 1. Persistencia en Supabase (tabla 'deliveries', con fallback a localStorage).
+    //    No se usa await: completeDeliveryWithPin es sincrónica y su resultado se
+    //    consume de inmediato en verifyPin/ChatScreen. Se captura el rechazo de la
+    //    promesa para evitar unhandled rejections sin alterar el flujo del PIN.
     recordDeliveryTransactionInSupabase({
       delivery_id: deliveryId,
       order_id: orderId,
@@ -1096,6 +1099,8 @@ export function AppProvider({ children }) {
       amount_val: finalRewardVal,
       pin: inputPin,
       created_at: new Date().toISOString()
+    }).catch((err) => {
+      console.warn('Aviso de persistencia de entrega (no bloqueante):', err?.message || err);
     });
 
     // 2. Registrar en historial de órdenes y entregas (ordersHistory)
@@ -1853,6 +1858,8 @@ export function AppProvider({ children }) {
       return updated;
     });
 
+    // Persistencia en Supabase de la config FIAT (no bloqueante: la UI ya se actualizó
+    // en localStorage arriba). Se captura el rechazo para evitar unhandled rejections.
     saveFiatPaymentConfigToSupabase({
       cadet_id: CURRENT_CADET_ID,
       fiat_provider: nextConfig.fiatProvider,
@@ -1860,6 +1867,8 @@ export function AppProvider({ children }) {
       fiat_cbu_cvu: nextConfig.fiatCbuCvu,
       fiat_holder_name: nextConfig.fiatHolderName,
       fiat_cuit: nextConfig.fiatCuit
+    }).catch((err) => {
+      console.warn('Aviso de persistencia de configuración FIAT (no bloqueante):', err?.message || err);
     });
 
     playP2PAlertChime();
