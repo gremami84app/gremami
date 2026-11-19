@@ -511,6 +511,7 @@ export default function MapaP2P(props) {
     startChatWithPeer,
     role,
     peers,
+    currentUser,
     theme,
     formatDistanceKm,
     activeAlert,
@@ -685,6 +686,12 @@ export default function MapaP2P(props) {
     return peers.filter((node) => {
       const isBlocked = isUserBlocked(node.id);
       if (isBlocked && !showBlockedUsers) return false;
+
+      // (S07) En Modo Cliente no mostrarse a sí mismo como proveedor tercero.
+      if (role === 'cliente') {
+        const myIds = [currentUser?.id, CURRENT_CADET_ID, 'current-user-cadete', 'current-cadet-satoshidev'];
+        if (myIds.includes(node.id) || myIds.includes(node.userId)) return false;
+      }
 
       // 1. Filtrado por viewport bounding box (si el mapa ya tiene bounds disponibles)
       if (mapBounds) {
