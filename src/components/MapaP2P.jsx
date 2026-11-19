@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useApp, CURRENT_CADET_ID } from '../context/AppContext';
 import MotorcycleIcon from './MotorcycleIcon';
+import RequestSheet from './RequestSheet';
 import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, LayerGroup, useMap, useMapEvents } from 'react-leaflet';
 import { 
@@ -617,6 +618,8 @@ export default function MapaP2P(props) {
   }, []);
 
   const [showRequestModal, setShowRequestModal] = useState(false);
+  // (S09.5) Flujo unificado: el mapa usa el mismo RequestSheet de 3 pasos que Home.
+  const [isRequestSheetOpen, setIsRequestSheetOpen] = useState(false);
   const [showProposalModal, setShowProposalModal] = useState(false);
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
@@ -1060,7 +1063,7 @@ export default function MapaP2P(props) {
 
               {/* (S09.4) Acceso directo al flujo de pedido inmediato (reactiva el modal existente) */}
               <button
-                onClick={() => setShowRequestModal(true)}
+                onClick={() => setIsRequestSheetOpen(true)}
                 className={`px-2.5 py-1 rounded-xl border font-bold text-[11px] flex items-center gap-1 active:scale-95 transition-all ${
                   isDark
                     ? 'bg-[#121B2D] border-[#F7931A]/50 text-[#F7931A] hover:bg-[#1A253D]'
@@ -2066,7 +2069,11 @@ export default function MapaP2P(props) {
         </div>
       )}
 
-      {/* 9. MODAL: Solicitar Servicio Cercano (Modo Cliente) */}
+      {/* (S09.5) Flujo único de pedido: mismo bottom sheet de 3 pasos que Home */}
+      <RequestSheet open={isRequestSheetOpen} onClose={() => setIsRequestSheetOpen(false)} />
+
+      {/* 9. MODAL: Solicitar Servicio Cercano (Modo Cliente) — OBSOLETO desde S09.5.
+          Se conserva el código como respaldo, pero ya no se abre: el flujo vivo es RequestSheet. */}
       {showRequestModal && (
         <div className="fixed inset-0 z-[2000] bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
