@@ -1272,7 +1272,7 @@ export default function WalletScreen() {
               {/* Dirección de destino */}
               <div className="text-left">
                 <label className={`text-xs font-bold block mb-1 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                  Dirección de destino (vlx1...):
+                  Dirección de destino (valens1q...):
                 </label>
                 <input
                   type="text"
@@ -1288,7 +1288,7 @@ export default function WalletScreen() {
                       setSendAddress(val);
                     }
                   }}
-                  placeholder="vlx1..."
+                  placeholder="valens1q..."
                   className={`w-full border rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-[#F7931A] transition-colors ${
                     isDark ? 'bg-[#070C1E] border-[#1F2D48] text-[#F0B90B]' : 'bg-white border-slate-300 text-slate-800'
                   }`}
@@ -1459,13 +1459,23 @@ export default function WalletScreen() {
                     if (isSending) return;
                     setIsSending(true);
                     try {
-                      // (S22) Normalizar a lo que espera transferTokens: si el usuario o el
-                      // QR traen "vlx1..." (o valens:vlx1...), se envía como "valens" + addr
-                      // para que la validación del contexto no rechace direcciones reales.
-                      const rawAddr = sendAddress.trim().replace(/^valens:\/*/i, '');
-                      const normalizedAddr = /^valens/i.test(rawAddr)
-                        ? rawAddr
-                        : `valens${rawAddr}`;
+                      // (S22) El formato canónico del proyecto es `valens1q...` (ver
+                      // VALENS_ADDRESS_RE en lib/supabase.js). Se normaliza cualquier
+                      // variante que llegue del QR o del portapapeles a ese formato.
+                      let core = sendAddress.trim().replace(/\s+/g, '');
+                      core = core.replace(/^valens:\/*/i, '');
+                      if (!/^valens1q/i.test(core)) {
+                        core = core.replace(/^valens/i, '').replace(/^vlx1/i, '');
+                        core = core.replace(/[^a-z0-9]/gi, '');
+                      }
+                      const normalizedAddr = /^valens1q/i.test(core)
+                        ? core
+                        : `valens1q${core}`;
+                      if (!/^valens1q[a-z0-9]{6,64}$/i.test(normalizedAddr)) {
+                        setQrStatus('Dirección inválida: debe tener al menos 6 caracteres alfanuméricos.');
+                        setIsSending(false);
+                        return;
+                      }
                       const result = await transferTokens(normalizedAddr, parseInt(sendAmount));
                       if (result?.success) {
                         setShowSendModal(false);
