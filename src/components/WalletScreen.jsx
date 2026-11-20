@@ -145,21 +145,28 @@ export default function WalletScreen() {
   const [qrStatus, setQrStatus] = useState('');
   const [qrScanning, setQrScanning] = useState(false);
 
+  // (S20) Devuelve true SOLO si el QR era de GREMAMI y se aplicó.
+  // Un frame ilegible o ajeno NO apaga la cámara: se sigue escaneando.
   const applyQrPayload = (raw) => {
     const val = String(raw || '').trim();
-    if (!val) return;
-    const addr = val.match(/valens:([^?\s]+)/i);
-    const amt = val.match(/amount=(\d+)/i);
-    if (!addr) {
-      setQrStatus('Ese QR no es de GREMAMI. Probá con el de la billetera.');
-      return;
+    if (val.length < 8) return false; // lectura parcial: ignorar en silencio
+    const normalized = val
+      .replace(/\s+/g, '')
+      .replace(/^valens:\/\//i, 'valens:')
+      .replace(/^VALENS:/, 'valens:');
+    const addr = normalized.match(/valens:([^?&#]+)/i);
+    if (!addr || !addr[1] || addr[1].length < 6) {
+      setQrStatus('Leímos un QR que no es de GREMAMI. Apuntá al QR de la billetera.');
+      return false;
     }
+    const amt = normalized.match(/(?:amount|amt|monto|valor)=(\d+)/i);
     setSendAddress(addr[1]);
     if (amt) setSendAmount(amt[1]);
     setQrStatus('QR leído: destinatario cargado');
-    // (S18) Auto-cerrar el lector para que se vean monto y botón de envío.
+    // Auto-cerrar el lector para que se vean monto y botón de envío.
     stopQrCamera();
     setShowQrScanner(false);
+    return true;
   };
 
   const stopQrCamera = () => {
@@ -233,14 +240,15 @@ export default function WalletScreen() {
     if ('BarcodeDetector' in window) {
       try {
         const detector = new window.BarcodeDetector({ formats: ['qr_code'] });
+        let lastRejected = '';
         const tick = async () => {
           if (!document.getElementById('gremami-qr-video')) { stopQrCamera(); return; }
           try {
             const codes = await detector.detect(video);
-            if (codes && codes.length && codes[0].rawValue) {
-              applyQrPayload(codes[0].rawValue);
-              stopQrCamera();
-              return;
+            const value = codes && codes.length ? codes[0].rawValue : null;
+            if (value && value !== lastRejected) {
+              if (applyQrPayload(value)) return; // válido: aplica y cierra
+              lastRejected = value;              // ajeno: avisa y sigue escaneando
             }
           } catch (e) { /* seguir intentando */ }
           requestAnimationFrame(tick);
@@ -254,6 +262,7 @@ export default function WalletScreen() {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     let lastScan = 0;
+    let lastRejected = '';
     const scanFallback = (now) => {
       if (!document.getElementById('gremami-qr-video')) { stopQrCamera(); return; }
       if (now - lastScan > 220 && video.videoWidth > 0) {
@@ -265,11 +274,11 @@ export default function WalletScreen() {
           canvas.height = h;
           ctx.drawImage(video, 0, 0, w, h);
           const img = ctx.getImageData(0, 0, w, h);
-          const found = jsQR(img.data, w, h, { inversionAttempts: 'dontInvert' });
-          if (found && found.data) {
-            applyQrPayload(found.data);
-            stopQrCamera();
-            return;
+          const found = jsQR(img.data, w, h, { inversionAttempts: 'attemptBoth' });
+          const value = found && found.data ? found.data : null;
+          if (value && value !== lastRejected) {
+            if (applyQrPayload(value)) return; // válido: aplica y cierra
+            lastRejected = value;              // ajeno: avisa y sigue escaneando
           }
         } catch (e) { /* frame no legible: seguir */ }
       }
