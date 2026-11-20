@@ -20,6 +20,7 @@ import {
   X,
   MessageSquare,
   HelpCircle,
+  Lock,
   ExternalLink
 } from 'lucide-react';
 
@@ -376,13 +377,25 @@ export default function DexScreen() {
                           Completada
                         </span>
                       ) : isDonation ? (
-                        <button
-                          onClick={() => setShowDonateModal(order)}
-                          className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs shadow-md active:scale-95 flex items-center gap-1"
-                        >
-                          <Gift size={13} />
-                          <span>Donar 1 VAL</span>
-                        </button>
+                        currentUser?.id ? (
+                          <button
+                            onClick={() => setShowDonateModal(order)}
+                            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs shadow-md active:scale-95 flex items-center gap-1"
+                          >
+                            <Gift size={13} />
+                            <span>Donar 1 VAL</span>
+                          </button>
+                        ) : (
+                          /* (S49) Invitado: el DEX sigue visible, el botón invita a entrar */
+                          <button
+                            onClick={() => openAuthModal?.()}
+                            className="px-3 py-1.5 rounded-xl border border-line bg-elev text-ink3 font-bold text-[11px] min-h-touch flex items-center gap-1.5"
+                            title="Iniciá sesión para donar VAL"
+                          >
+                            <Lock size={13} />
+                            <span>Ingresar para donar</span>
+                          </button>
+                        )
                       ) : isSell ? (
                         <button
                           onClick={() => setShowTradeModal(order)}

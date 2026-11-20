@@ -343,7 +343,8 @@ export default function Header() {
               <span className={`text-xs font-mono px-2 py-0.5 rounded border ${
                 isDark ? 'text-emerald-300 bg-emerald-950/50 border-emerald-700/50' : 'text-emerald-800 bg-emerald-100 border-emerald-300'
               }`}>
-                Depósito: {balance.toFixed(2)} VAL
+                {/* (S49) Misma etiqueta que la billetera: antes decía "Depósito" */}
+                Saldo VAL: {balance.toFixed(2)}
               </span>
             ) : (
               <button
