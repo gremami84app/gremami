@@ -1318,7 +1318,7 @@ export default function MapaP2P(props) {
 
       {/* 7. Bottom Sheet del Nodo con Perfil Público y Ficha Técnica Detallada */}
       {selectedNode && (
-        <div className={`absolute bottom-0 left-0 right-0 z-[1050] max-h-[85dvh] pb-8 overflow-y-auto border-t p-4 rounded-t-3xl shadow-2xl animate-in slide-in-from-bottom duration-200 ${
+        <div className={`absolute bottom-0 left-0 right-0 z-[1200] max-h-[85dvh] pb-8 overflow-y-auto border-t p-4 rounded-t-3xl shadow-2xl animate-in slide-in-from-bottom duration-200 ${
           isDark
             ? 'bg-card border-slate-800 text-ink1'
             : 'bg-white border-slate-300 text-slate-900 shadow-2xl'
@@ -1823,7 +1823,7 @@ export default function MapaP2P(props) {
         const offersList = activeAuction.offers || [];
 
         return (
-          <div className={`absolute bottom-0 left-0 right-0 z-[1050] max-h-[85dvh] pb-8 overflow-y-auto border-t p-4 rounded-t-3xl shadow-2xl animate-in slide-in-from-bottom duration-200 ${
+          <div className={`absolute bottom-0 left-0 right-0 z-[1200] max-h-[85dvh] pb-8 overflow-y-auto border-t p-4 rounded-t-3xl shadow-2xl animate-in slide-in-from-bottom duration-200 ${
             isDark
               ? 'bg-card border-slate-800 text-ink1'
               : 'bg-white border-slate-300 text-slate-900 shadow-2xl'
