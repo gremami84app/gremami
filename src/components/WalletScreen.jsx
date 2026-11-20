@@ -157,6 +157,9 @@ export default function WalletScreen() {
     setSendAddress(addr[1]);
     if (amt) setSendAmount(amt[1]);
     setQrStatus('QR leído: destinatario cargado');
+    // (S18) Auto-cerrar el lector para que se vean monto y botón de envío.
+    stopQrCamera();
+    setShowQrScanner(false);
   };
 
   const stopQrCamera = () => {
@@ -1343,22 +1346,24 @@ export default function WalletScreen() {
                     >
                       Usar este código
                     </button>
-                    {qrStatus && (
-                      <p
-                        role="status"
-                        aria-live="polite"
-                        className={`text-[11px] font-semibold leading-snug rounded-control px-2 py-1.5 border ${
-                          qrStatus.startsWith('QR leído')
-                            ? 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10'
-                            : qrStatus.startsWith('Apuntá')
-                            ? 'text-ink2 border-line bg-elev'
-                            : 'text-accent border-accent/40 bg-accent/10'
-                        }`}
-                      >
-                        {qrStatus}
-                      </p>
-                    )}
                   </div>
+                )}
+
+                {/* (S18) Confirmación fuera del panel: sigue visible al auto-cerrar */}
+                {qrStatus && (
+                  <p
+                    role="status"
+                    aria-live="polite"
+                    className={`mt-2 text-[11px] font-semibold leading-snug rounded-control px-2 py-1.5 border ${
+                      qrStatus.startsWith('QR leído')
+                        ? 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10'
+                        : qrStatus.startsWith('Apuntá')
+                        ? 'text-ink2 border-line bg-elev'
+                        : 'text-accent border-accent/40 bg-accent/10'
+                    }`}
+                  >
+                    {qrStatus}
+                  </p>
                 )}
               </div>
 
