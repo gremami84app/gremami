@@ -1459,7 +1459,14 @@ export default function WalletScreen() {
                     if (isSending) return;
                     setIsSending(true);
                     try {
-                      const result = await transferTokens(sendAddress.trim(), parseInt(sendAmount));
+                      // (S22) Normalizar a lo que espera transferTokens: si el usuario o el
+                      // QR traen "vlx1..." (o valens:vlx1...), se envía como "valens" + addr
+                      // para que la validación del contexto no rechace direcciones reales.
+                      const rawAddr = sendAddress.trim().replace(/^valens:\/*/i, '');
+                      const normalizedAddr = /^valens/i.test(rawAddr)
+                        ? rawAddr
+                        : `valens${rawAddr}`;
+                      const result = await transferTokens(normalizedAddr, parseInt(sendAmount));
                       if (result?.success) {
                         setShowSendModal(false);
                         setSendAddress('');
