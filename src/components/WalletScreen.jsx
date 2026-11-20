@@ -1472,20 +1472,15 @@ export default function WalletScreen() {
                     if (isSending) return;
                     setIsSending(true);
                     try {
-                      // (S22) El formato canónico del proyecto es `valens1q...` (ver
-                      // VALENS_ADDRESS_RE en lib/supabase.js). Se normaliza cualquier
-                      // variante que llegue del QR o del portapapeles a ese formato.
-                      let core = sendAddress.trim().replace(/\s+/g, '');
-                      core = core.replace(/^valens:\/*/i, '');
-                      if (!/^valens1q/i.test(core)) {
-                        core = core.replace(/^valens/i, '').replace(/^vlx1/i, '');
-                        core = core.replace(/[^a-z0-9]/gi, '');
-                      }
-                      const normalizedAddr = /^valens1q/i.test(core)
-                        ? core
-                        : `valens1q${core}`;
-                      if (!/^valens1q[a-z0-9]{6,64}$/i.test(normalizedAddr)) {
-                        setQrStatus('Dirección inválida: debe tener al menos 6 caracteres alfanuméricos.');
+                      // (S24) La base guarda `vlx1...` en profiles.wallet_address
+                      // (verificado: vlx146353c8… / vlx12325428…). Se preserva ese
+                      // formato y solo se limpia el prefijo de URI y espacios.
+                      const normalizedAddr = sendAddress
+                        .trim()
+                        .replace(/\s+/g, '')
+                        .replace(/^valens:\/*/i, '');
+                      if (!/^[a-z0-9]{8,128}$/i.test(normalizedAddr)) {
+                        setQrStatus('Dirección inválida: revisá el código o pegala de nuevo.');
                         setIsSending(false);
                         return;
                       }
