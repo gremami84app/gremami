@@ -206,7 +206,8 @@ export default function WalletScreen() {
 
   // Órdenes y Entregas del cadete / prestador
   const cadetOrders = ordersHistory?.cadete || [];
-  const totalRecaudadoArs = cadetOrders.reduce((acc, curr) => acc + (curr.amountArs || curr.amount_ars || 0), 0);
+  // (S14b-2) Métricas de actividad en VAL (sin conversiones a pesos)
+  const totalValRecibidos = cadetOrders.reduce((acc, curr) => acc + Number(curr.amount_val || curr.valensReward || 0), 0);
 
   const isRecentOrThisWeek = (dateStr) => {
     if (!dateStr) return true;
@@ -222,8 +223,8 @@ export default function WalletScreen() {
   };
 
   const semanaOrders = cadetOrders.filter((o) => isRecentOrThisWeek(o.date || o.created_at || o.timestamp));
-  const gananciasSemanaArs = semanaOrders.reduce((acc, curr) => acc + (curr.amountArs || curr.amount_ars || 0), 0);
-  const comisionesAhorradasArs = Math.round(totalRecaudadoArs * 0.30);
+  const valSemana = semanaOrders.reduce((acc, curr) => acc + Number(curr.amount_val || curr.valensReward || 0), 0);
+  const serviciosSemana = semanaOrders.length;
 
   const handleCopyAlias = () => {
     const alias = userProfile?.fiatAlias || userProfile?.aliasCbu || 'cadete.gremami.mp';
@@ -420,53 +421,48 @@ export default function WalletScreen() {
               </span>
             </div>
 
-            {/* Título y Saldo Total Recaudado ($ ARS) */}
+            {/* (S14b-2) Actividad en VAL: sin saldo ni cotización en pesos */}
             <div className="flex flex-wrap items-center justify-between gap-1.5 mb-1">
               <p className={`text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-emerald-300/80' : 'text-emerald-800'}`}>
-                Saldo Total Recaudado ($ ARS)
+                Actividad acumulada
               </p>
-              <span className="text-xs font-mono text-emerald-400 font-bold">
-                Cobros verificados
+              <span className="text-xs text-ink3">
+                Servicios completados
               </span>
             </div>
 
             <div className="my-1.5 flex items-baseline space-x-2">
-              <h2 className="text-3xl sm:text-4xl font-black text-emerald-400 font-mono tracking-tight drop-shadow-sm">
-                ${totalRecaudadoArs.toLocaleString('es-AR')}
+              <h2 className="text-3xl sm:text-4xl font-bold text-emerald-400 tracking-tight tabular-nums">
+                {Number(totalValRecibidos).toFixed(0)}
               </h2>
-              <span className={`text-base font-bold font-mono ${isDark ? 'text-emerald-200' : 'text-emerald-900'}`}>ARS</span>
+              <span className={`text-base font-semibold ${isDark ? 'text-emerald-200' : 'text-emerald-900'}`}>VAL</span>
             </div>
             <p className={`text-xs font-medium ${isDark ? 'text-emerald-200/70' : 'text-slate-600'}`}>
-              Dinero local en mano y transferencias bancarias directas a tu Alias/CBU
+              Agradecimientos recibidos por servicios completados en la red
             </p>
 
-            {/* Desglose de Métricas para Modo Cadete / Comercio */}
-            <div className="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-emerald-500/20">
-              <div className={`p-2.5 rounded-xl border ${
-                isDark ? 'bg-[#021A15]/70 border-emerald-500/30' : 'bg-white/80 border-emerald-200'
-              }`}>
+            <div className="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-line">
+              <div className={`p-2.5 rounded-card border border-line ${isDark ? 'bg-elev' : 'bg-white'}`}>
                 <div className="flex items-center space-x-1.5 mb-1">
                   <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-                    Ganancias de la Semana
+                  <span className={`text-xs font-semibold ${isDark ? 'text-ink2' : 'text-slate-600'}`}>
+                    Esta semana
                   </span>
                 </div>
-                <p className="text-base font-bold font-mono text-emerald-400">
-                  ${gananciasSemanaArs.toLocaleString('es-AR')} <span className="text-xs font-normal">ARS</span>
+                <p className="text-base font-semibold text-emerald-400 tabular-nums">
+                  {Number(valSemana).toFixed(0)} <span className="text-xs font-normal">VAL</span>
                 </p>
               </div>
 
-              <div className={`p-2.5 rounded-xl border ${
-                isDark ? 'bg-[#021A15]/70 border-emerald-500/30' : 'bg-white/80 border-emerald-200'
-              }`}>
+              <div className={`p-2.5 rounded-card border border-line ${isDark ? 'bg-elev' : 'bg-white'}`}>
                 <div className="flex items-center space-x-1.5 mb-1">
-                  <PiggyBank className="w-3.5 h-3.5 text-amber-400" />
-                  <span className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-                    Comisiones de Apps Ahorradas
+                  <PiggyBank className="w-3.5 h-3.5 text-accent" />
+                  <span className={`text-xs font-semibold ${isDark ? 'text-ink2' : 'text-slate-600'}`}>
+                    Servicios
                   </span>
                 </div>
-                <p className="text-base font-bold font-mono text-amber-400">
-                  +${comisionesAhorradasArs.toLocaleString('es-AR')} <span className="text-xs font-normal text-emerald-300">(30%)</span>
+                <p className="text-base font-semibold text-accent tabular-nums">
+                  {serviciosSemana} <span className="text-xs font-normal">completados</span>
                 </p>
               </div>
             </div>
