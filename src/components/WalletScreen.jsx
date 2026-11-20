@@ -155,12 +155,20 @@ export default function WalletScreen() {
       .replace(/^valens:\/\//i, 'valens:')
       .replace(/^VALENS:/, 'valens:');
     const addr = normalized.match(/valens:([^?&#]+)/i);
-    if (!addr || !addr[1] || addr[1].length < 6) {
-      setQrStatus('Leímos un QR que no es de GREMAMI. Apuntá al QR de la billetera.');
+    if (addr && (!addr[1] || addr[1].length < 6)) {
+      setQrStatus('Ese código de GREMAMI está incompleto. Probá de nuevo.');
       return false;
     }
     const amt = normalized.match(/(?:amount|amt|monto|valor)=(\d+)/i);
-    setSendAddress(addr[1]);
+    // (S21) Aceptar también la dirección suelta (el QR de Recibir codifica la
+    // dirección sin prefijo): vlx1... / valens1... o cualquier alfanumérica larga.
+    const bare = !addr && /^[a-z0-9]{10,}$/i.test(normalized) ? normalized : null;
+    const rawAddr = addr ? addr[1] : bare;
+    if (!rawAddr || rawAddr.length < 6) {
+      setQrStatus('Leímos un QR que no es de GREMAMI. Apuntá al QR de la billetera.');
+      return false;
+    }
+    setSendAddress(rawAddr);
     if (amt) setSendAmount(amt[1]);
     setQrStatus('QR leído: destinatario cargado');
     // Auto-cerrar el lector para que se vean monto y botón de envío.
@@ -680,17 +688,16 @@ export default function WalletScreen() {
               </p>
             </div>
 
-            {/* (S09.7) Jerarquía fintech: pesos como ancla, VAL como token secundario */}
+            {/* (S21) El saldo en VAL es la métrica principal: sin equivalencia en pesos */}
             <div className="my-1.5">
-              <p className={`text-xs font-medium ${isDark ? 'text-ink3' : 'text-ink3'}`}>Equivalente en pesos</p>
               <div className="flex items-baseline gap-2">
-                <h2 className="text-[32px] leading-none font-bold text-ink1 tracking-tight">
-                  ${(Math.floor(balance) * 2500).toLocaleString('es-AR')}
+                <h2 className="text-[34px] leading-none font-bold text-ink1 tracking-tight tabular-nums">
+                  {Math.floor(balance)}.00
                 </h2>
-                <span className="text-sm font-semibold text-ink3">ARS</span>
+                <span className="text-sm font-semibold text-accent">VAL</span>
               </div>
               <p className="text-xs text-ink3 mt-1">
-                {Math.floor(balance)} VAL · token de agradecimiento por cada servicio
+                Token de agradecimiento por cada servicio completado
               </p>
             </div>
 
@@ -1265,7 +1272,7 @@ export default function WalletScreen() {
               {/* Dirección de destino */}
               <div className="text-left">
                 <label className={`text-xs font-bold block mb-1 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                  Dirección de destino (valens1q...):
+                  Dirección de destino (vlx1...):
                 </label>
                 <input
                   type="text"
@@ -1281,7 +1288,7 @@ export default function WalletScreen() {
                       setSendAddress(val);
                     }
                   }}
-                  placeholder="valens1q..."
+                  placeholder="vlx1..."
                   className={`w-full border rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-[#F7931A] transition-colors ${
                     isDark ? 'bg-[#070C1E] border-[#1F2D48] text-[#F0B90B]' : 'bg-white border-slate-300 text-slate-800'
                   }`}
@@ -1735,36 +1742,8 @@ export default function WalletScreen() {
                   </div>
                 ) : (
                   <>
-                    {/* Código QR de Pago Formateado */}
-                    <div className="text-center">
-                      <div className="p-4 bg-white rounded-2xl shadow-xl inline-block border-4 border-emerald-500 my-1 relative">
-                        <svg width="150" height="150" viewBox="0 0 100 100" className="w-36 h-36">
-                          <rect x="5" y="5" width="26" height="26" fill="#042F2E" rx="4" />
-                          <rect x="9" y="9" width="18" height="18" fill="white" rx="2" />
-                          <rect x="13" y="13" width="10" height="10" fill="#042F2E" rx="1" />
-
-                          <rect x="69" y="5" width="26" height="26" fill="#042F2E" rx="4" />
-                          <rect x="73" y="9" width="18" height="18" fill="white" rx="2" />
-                          <rect x="77" y="13" width="10" height="10" fill="#042F2E" rx="1" />
-
-                          <rect x="5" y="69" width="26" height="26" fill="#042F2E" rx="4" />
-                          <rect x="9" y="73" width="18" height="18" fill="white" rx="2" />
-                          <rect x="13" y="77" width="10" height="10" fill="#042F2E" rx="1" />
-
-                          <rect x="36" y="10" width="10" height="10" fill="#042F2E" />
-                          <rect x="52" y="10" width="8" height="8" fill="#042F2E" />
-                          <rect x="36" y="24" width="24" height="6" fill="#042F2E" />
-                          <rect x="8" y="38" width="14" height="8" fill="#042F2E" />
-                          <rect x="28" y="42" width="12" height="12" fill="#042F2E" />
-                          <rect x="60" y="36" width="18" height="8" fill="#042F2E" />
-                          <rect x="76" y="50" width="14" height="14" fill="#042F2E" />
-                          <circle cx="50" cy="50" r="16" fill="#10B981" stroke="#FFFFFF" strokeWidth="2" />
-                          <text x="50" y="54" fill="white" fontSize="9" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">
-                            $ ARS
-                          </text>
-                        </svg>
-                      </div>
-                    </div>
+                    {/* (S21) Sin QR decorativo: se removió el gráfico sin función operativa.
+                        Los datos de cobro (alias, titular, CBU/CVU) son la fuente real. */}
 
                     {/* Ficha de Datos Bancarios para Transferencia */}
                     <div className={`p-3 rounded-xl border space-y-2 ${
