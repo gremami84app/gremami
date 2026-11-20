@@ -1356,10 +1356,14 @@ export default function WalletScreen() {
                     aria-live="polite"
                     className={`mt-2 text-[11px] font-semibold leading-snug rounded-control px-2 py-1.5 border ${
                       qrStatus.startsWith('QR leído')
-                        ? 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10'
+                        ? isDark
+                          ? 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10'
+                          : 'text-emerald-700 border-emerald-300 bg-emerald-50'
                         : qrStatus.startsWith('Apuntá')
                         ? 'text-ink2 border-line bg-elev'
-                        : 'text-accent border-accent/40 bg-accent/10'
+                        : isDark
+                        ? 'text-accent border-accent/40 bg-accent/10'
+                        : 'text-amber-700 border-amber-300 bg-amber-50'
                     }`}
                   >
                     {qrStatus}
