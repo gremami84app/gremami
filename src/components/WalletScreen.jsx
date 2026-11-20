@@ -219,7 +219,8 @@ export default function WalletScreen() {
   }, [showQrScanner]);
 
   const startQrCamera = async () => {
-    setQrStatus('');
+    // (S46) No limpiar el estado acá: el auto-arranque corre dos veces en dev
+    // (StrictMode) y el segundo borraba el mensaje del QR recién leído.
     if (!navigator.mediaDevices?.getUserMedia) {
       setQrStatus('Este dispositivo no permite cámara. Pegá el código abajo.');
       return;
