@@ -163,11 +163,12 @@ export default function Header() {
             </button>
           )}
 
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#E02424] via-[#F7931A] to-[#F0B90B] p-0.5 shadow-glow-orange flex-shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-card border border-line flex-shrink-0 overflow-hidden">
+            {/* (S14d) Marca PNG: variante blanca en Modo Noche, color en Modo Día */}
             <img
-              src="/icon-192.svg"
+              src={isDark ? '/logo-night.png' : '/logo-day.png'}
               alt="Gremami P2P Logo"
-              className={`w-full h-full rounded-[10px] object-cover ${isDark ? 'bg-[#0A1128]' : 'bg-white'}`}
+              className="w-full h-full object-contain"
             />
           </div>
 
