@@ -2025,6 +2025,19 @@ export function AppProvider({ children }) {
 
   const submitCadeteQuote = async (requestId, { feeArs, note }) => {
     const fee = Number(feeArs) || 2500;
+    // (S43) Compromiso de VAL por categoría: frena postulaciones sin compromiso.
+    const requestRef = (liveRequests || []).find((r) => r.id === requestId) || null;
+    const stakeVal = getValCostForCategory(
+      requestRef?.category || userProfile?.vehicleType || 'caminando'
+    );
+    const saldoActual = Math.floor(Number(balance) || 0);
+    if (saldoActual < stakeVal) {
+      showToast(
+        `Para postularte necesitás comprometer ${stakeVal} VAL y tenés ${saldoActual}. Conseguí VAL en el Mercado DEX (donación, compra o préstamo).`,
+        'warning'
+      );
+      return { success: false, reason: 'insufficient-val', required: stakeVal, balance: saldoActual };
+    }
     const cadeteReference = peers.find((p) => p.id === 'cadete-moto-1') || peers[0];
     // (S07) bids.cadet_id es FK a profiles.id: con sesión se usa el UUID real;
     // sin sesión se conserva el id local (la cotización queda solo en memoria/localStorage).
@@ -2054,8 +2067,27 @@ export function AppProvider({ children }) {
       feeValens: +(fee / 2400).toFixed(1),
       note: note?.trim() || `Propuesta económica: $${fee.toLocaleString('es-AR')} ARS. Entrega puntual.`,
       timestamp: 'Recién',
-      isOwnOffer: true
+      isOwnOffer: true,
+      // (S43) VAL comprometido por postularse; se reintegra si no gana.
+      stakeVal,
+      stakeSettled: false
     };
+
+    // Se reserva el VAL del postulante al cotizar (si no gana, se devuelve).
+    setBalance((prev) => Math.max(0, Math.floor(Number(prev) || 0) - stakeVal));
+    setTransactions((prev) => [
+      {
+        id: `tx-stake-${Date.now()}`,
+        type: 'stake_val',
+        amount: -stakeVal,
+        title: 'Reserva VAL · subasta',
+        date: 'Recién',
+        hash: `0x${String(Date.now()).slice(-12)}`,
+        status: 'Comprometido',
+        note: `Compromiso de ${stakeVal} VAL al postularte`
+      },
+      ...prev
+    ]);
 
     let isEdit = false;
     setLiveRequests((prev) =>
@@ -2095,6 +2127,58 @@ export function AppProvider({ children }) {
   const awardAuctionOffer = (requestId, offerId) => {
     let chosenOffer = null;
     let chosenRequest = null;
+
+    // (S43) Liquidación de los VAL comprometidos, resuelta de forma síncrona
+    // sobre el estado actual (no dentro del updater de React).
+    const requestNow = (liveRequests || []).find((r) => r.id === requestId) || null;
+    const winnerNow = requestNow?.offers?.find((o) => o.id === offerId) || null;
+    const isOwnRequest = Boolean(
+      requestNow?.clientId && currentUser?.id && requestNow.clientId === currentUser.id
+    );
+
+    if (requestNow) {
+      const myOwnOffer = (requestNow.offers || []).find((o) => o.isOwnOffer && o.stakeVal);
+      const loserStake = myOwnOffer && myOwnOffer.id !== offerId ? Number(myOwnOffer.stakeVal) || 0 : 0;
+      const winnerStake = Number(winnerNow?.stakeVal) || 0;
+
+      // Reintegro al postulante que no ganó (si era el usuario actual).
+      if (loserStake > 0) {
+        setBalance((prev) => Math.floor(Number(prev) || 0) + loserStake);
+        setTransactions((prev) => [
+          {
+            id: `tx-refund-${Date.now()}`,
+            type: 'stake_refund',
+            amount: loserStake,
+            title: 'Reintegro VAL · subasta',
+            date: 'Recién',
+            hash: `0x${String(Date.now()).slice(-12)}`,
+            status: 'Reintegrado',
+            note: `No ganaste la subasta: se te devolvieron ${loserStake} VAL`
+          },
+          ...prev
+        ]);
+        showToast(`↩️ Se te reintegraron ${loserStake} VAL por no ganar la subasta.`, 'success');
+      }
+
+      // El compromiso del ganador pasa al creador de la subasta.
+      if (winnerStake > 0 && isOwnRequest) {
+        setBalance((prev) => Math.floor(Number(prev) || 0) + winnerStake);
+        setTransactions((prev) => [
+          {
+            id: `tx-award-${Date.now()}`,
+            type: 'stake_awarded',
+            amount: winnerStake,
+            title: 'Compromiso VAL recibido · subasta',
+            date: 'Recién',
+            hash: `0x${String(Date.now()).slice(-12)}`,
+            status: 'Acreditado',
+            note: `${winnerNow?.cadeteName || 'El cadete'} comprometió ${winnerStake} VAL en tu subasta`
+          },
+          ...prev
+        ]);
+        showToast(`✅ Recibiste ${winnerStake} VAL del cadete que ganó tu subasta.`, 'success');
+      }
+    }
 
     setLiveRequests((prev) =>
       prev.map((r) => {
