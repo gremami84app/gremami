@@ -138,6 +138,70 @@ export default function WalletScreen() {
   // Estados del Modal "Enviar VAL"
   const [showSendModal, setShowSendModal] = useState(false);
   const [sendAddress, setSendAddress] = useState('');
+  // (S14e) Lector de QR compatible con el formato propio: valens:DIRECCION?amount=N
+  const [showQrScanner, setShowQrScanner] = useState(false);
+  const [qrManual, setQrManual] = useState('');
+  const [qrStatus, setQrStatus] = useState('');
+  const [qrScanning, setQrScanning] = useState(false);
+
+  const applyQrPayload = (raw) => {
+    const val = String(raw || '').trim();
+    if (!val) return;
+    const addr = val.match(/valens:([^?\s]+)/i);
+    const amt = val.match(/amount=(\d+)/i);
+    if (!addr) {
+      setQrStatus('Ese QR no es de GREMAMI. Probá con el de la billetera.');
+      return;
+    }
+    setSendAddress(addr[1]);
+    if (amt) setSendAmount(amt[1]);
+    setQrStatus('QR leído: destinatario cargado');
+  };
+
+  const stopQrCamera = () => {
+    const video = document.getElementById('gremami-qr-video');
+    const stream = video && video.srcObject;
+    if (stream && stream.getTracks) stream.getTracks().forEach((t) => t.stop());
+    if (video) video.srcObject = null;
+    setQrScanning(false);
+  };
+
+  const startQrCamera = async () => {
+    setQrStatus('');
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setQrStatus('Este dispositivo no permite cámara. Pegá el código abajo.');
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      const video = document.getElementById('gremami-qr-video');
+      if (!video) { stream.getTracks().forEach((t) => t.stop()); return; }
+      video.srcObject = stream;
+      await video.play();
+      setQrScanning(true);
+
+      if (!('BarcodeDetector' in window)) {
+        setQrStatus('Cámara activa, pero este navegador no decodifica QR. Pegá el código abajo.');
+        return;
+      }
+      const detector = new window.BarcodeDetector({ formats: ['qr_code'] });
+      const tick = async () => {
+        if (!document.getElementById('gremami-qr-video')) { stopQrCamera(); return; }
+        try {
+          const codes = await detector.detect(video);
+          if (codes && codes.length) {
+            applyQrPayload(codes[0].rawValue);
+            stopQrCamera();
+            return;
+          }
+        } catch (e) {}
+        requestAnimationFrame(tick);
+      };
+      tick();
+    } catch (e) {
+      setQrStatus('No pudimos abrir la cámara. Pegá el código abajo.');
+    }
+  };
   const [sendAmount, setSendAmount] = useState('');
   const [isSending, setIsSending] = useState(false);
 
@@ -1136,6 +1200,65 @@ export default function WalletScreen() {
                     isDark ? 'bg-[#070C1E] border-[#1F2D48] text-[#F0B90B]' : 'bg-white border-slate-300 text-slate-800'
                   }`}
                 />
+              </div>
+
+              {/* (S14e) Lector de QR: cámara + respaldo manual */}
+              <div className="text-left">
+                <button
+                  type="button"
+                  onClick={() => { setShowQrScanner((v) => !v); if (showQrScanner) stopQrCamera(); }}
+                  className="min-h-touch w-full rounded-control border border-line bg-card text-ink2 text-xs font-semibold flex items-center justify-center gap-2"
+                >
+                  <QrCode className="w-4 h-4 text-accent" strokeWidth={1.75} />
+                  {showQrScanner ? 'Cerrar lector de QR' : 'Escanear QR de GREMAMI'}
+                </button>
+
+                {showQrScanner && (
+                  <div className="mt-2 rounded-card border border-line bg-card p-3 space-y-2">
+                    <video
+                      id="gremami-qr-video"
+                      playsInline
+                      muted
+                      className="w-full h-40 rounded-control bg-app object-cover"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={startQrCamera}
+                        disabled={qrScanning}
+                        className="min-h-touch flex-1 rounded-control bg-accent text-slate-950 text-xs font-semibold"
+                      >
+                        {qrScanning ? 'Escaneando…' : 'Activar cámara'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={stopQrCamera}
+                        className="min-h-touch px-3 rounded-control border border-line bg-elev text-ink2 text-xs font-semibold"
+                      >
+                        Detener
+                      </button>
+                    </div>
+                    <label htmlFor="qr-manual" className="block text-[11px] font-semibold text-ink3">
+                      O pegá el código (respaldo sin cámara):
+                    </label>
+                    <input
+                      id="qr-manual"
+                      type="text"
+                      value={qrManual}
+                      onChange={(e) => setQrManual(e.target.value)}
+                      placeholder="valens:DIRECCION?amount=1"
+                      className="w-full min-h-touch rounded-control px-3 bg-app border border-line text-xs text-ink1 font-mono"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => applyQrPayload(qrManual)}
+                      className="min-h-touch w-full rounded-control border border-line bg-elev text-ink1 text-xs font-semibold"
+                    >
+                      Usar este código
+                    </button>
+                    {qrStatus && <p className="text-[11px] font-semibold text-accent">{qrStatus}</p>}
+                  </div>
+                )}
               </div>
 
               {/* Monto en VAL */}
