@@ -105,6 +105,8 @@ export default function ChatScreen() {
   const [postPinStep, setPostPinStep] = useState(null);
   const [reviewStars, setReviewStars] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
+  // (S36) Marca de qué orden ya mostró el cierre guiado (evita repetirlo).
+  const [postPinHandledFor, setPostPinHandledFor] = useState(null);
   const [calculatorFee, setCalculatorFee] = useState(3500);
 
   const messagesEndRef = useRef(null);
@@ -132,6 +134,17 @@ export default function ChatScreen() {
   const valCostForPeer = getValCostForCategory(
     activeOrder?.category || activeOrder?.mobility || 'caminando'
   );
+
+  // (S36) Disparo único: cuando el PIN queda verificado (venga del handler del
+  // cadete o de "Simular Entrega"), se abre el cierre guiado una sola vez.
+  useEffect(() => {
+    if (pinStatus !== 'verified') return;
+    const key = activeOrder?.id || currentPeer?.id;
+    if (!key || postPinHandledFor === key) return;
+    setPostPinHandledFor(key);
+    setPostPinStep('send-val');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pinStatus, activeOrder?.id, currentPeer?.id, postPinHandledFor]);
   const chatMessages = messages[currentPeer?.id] || [];
 
   const isBlocked = currentPeer ? isUserBlocked(currentPeer.id) : false;
