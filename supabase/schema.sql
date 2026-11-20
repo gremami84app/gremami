@@ -551,17 +551,20 @@ $$;
 -- ====================================================================
 -- 13. FUNCIÓN RPC: LIBERACIÓN POR PIN CON CONTROL DE INTENTOS
 -- ====================================================================
--- (S15) Anti-salto del PIN: una orden solo puede pasar a 'completado' desde
--- release_reward_by_pin, que marca la transacción con app.release_pin=on.
+-- (S15, certificado en vivo) Anti-salto del PIN.
+-- IMPORTANTE: esta función NO debe ser SECURITY DEFINER. Con DEFINER,
+-- current_user pasa a ser el dueño de la función y el chequeo nunca se
+-- cumpliría (la orden se completaría sin PIN). Con invoker rights:
+--   · PATCH del cliente  -> current_user = 'authenticated' -> bloquea (42501)
+--   · release_reward_by_pin (DEFINER, dueño postgres) -> current_user = 'postgres' -> permite
 CREATE OR REPLACE FUNCTION public.guard_order_completion()
 RETURNS TRIGGER
 LANGUAGE plpgsql
-SECURITY DEFINER
 SET search_path = public, extensions
 AS $$
 BEGIN
   IF NEW.status = 'completado' AND OLD.status IS DISTINCT FROM 'completado' THEN
-    IF current_setting('app.release_pin', true) IS DISTINCT FROM 'on' THEN
+    IF current_user = 'authenticated' THEN
       RAISE EXCEPTION 'La orden solo puede completarse validando el PIN'
         USING ERRCODE = '42501';
     END IF;
