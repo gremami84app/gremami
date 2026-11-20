@@ -14,6 +14,10 @@ import {
   MOCK_COMMUNITY_USERS
 } from '../data/mockData';
 import { playP2PAlertChime, playCelebrationSound } from '../utils/audioAlert';
+
+// (S34) Saldo mínimo en VAL para que un cadete pueda tomar/cotizar servicios.
+// Es la misma regla operativa que el DEX anuncia para la visibilidad en el radar.
+const MIN_VAL_TO_OPERATE = 1;
 import {
   saveBidToSupabase,
   recordDeliveryTransactionInSupabase,
@@ -1608,6 +1612,17 @@ export function AppProvider({ children }) {
     const uid = isUuid(currentUser?.id) ? currentUser.id : null;
     if (!uid) return { success: false, reason: 'no-session' };
     if (!orderId) return { success: false, reason: 'invalid-order' };
+    // (S34) Regla operativa: para tomar/cotizar un servicio el cadete necesita al
+    // menos 1 VAL en su billetera. El exchange (DEX) NO pasa por acá, así que un
+    // cadete sin saldo puede seguir entrando a comprar/donar tokens.
+    const saldoActual = Math.floor(Number(balance) || 0);
+    if (saldoActual < MIN_VAL_TO_OPERATE) {
+      showToast(
+        `Necesitás al menos ${MIN_VAL_TO_OPERATE} VAL para cotizar servicios. Podés conseguirlos en el Mercado DEX.`,
+        'warning'
+      );
+      return { success: false, reason: 'insufficient-val', balance: saldoActual };
+    }
     try {
       return await offerService.submitOffer({
         order_id: orderId,
