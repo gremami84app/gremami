@@ -49,6 +49,8 @@ export default function ChatScreen() {
     agreeCashPayment,
     sendValensTip,
     balance,
+    // (S35) Tarifa VAL por categoría para el cierre del servicio
+    getValCostForCategory,
     requestFaucet,
     showToast,
     // (S14a-2) Gate de escritura sin sesión
