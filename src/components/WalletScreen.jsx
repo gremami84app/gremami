@@ -1217,8 +1217,10 @@ export default function WalletScreen() {
       {/* ── MODAL: ENVIAR VALENSCOIN (VAL) ─────────────────────────────── */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {showSendModal && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
-          <div className={`border rounded-2xl max-w-sm w-full p-5 shadow-2xl relative ${
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fadeIn">
+          {/* (S17) Encuadre móvil: alto acotado y scroll interno para que se vean
+              cámara, código y botón de envío sin estirar la pantalla. */}
+          <div className={`border rounded-t-2xl sm:rounded-2xl max-w-sm w-full max-h-[88dvh] overflow-y-auto overscroll-contain p-5 pb-8 sm:pb-5 shadow-2xl relative ${
             isDark ? 'bg-[#121B2D] border-[#1F2D48] text-white' : 'bg-white border-slate-300 text-slate-900'
           }`}>
             <button
@@ -1287,20 +1289,33 @@ export default function WalletScreen() {
 
                 {showQrScanner && (
                   <div className="mt-2 rounded-card border border-line bg-card p-3 space-y-2">
-                    <video
-                      id="gremami-qr-video"
-                      playsInline
-                      muted
-                      className="w-full h-40 rounded-control bg-app object-cover"
-                    />
+                    {/* (S17) Visor más bajo en móvil (h-32) y marco guía visible */}
+                    <div className="relative w-full h-32 sm:h-40 rounded-control overflow-hidden bg-app border border-line">
+                      <video
+                        id="gremami-qr-video"
+                        playsInline
+                        muted
+                        className="w-full h-full object-cover"
+                      />
+                      {!qrScanning && (
+                        <div className="absolute inset-0 flex items-center justify-center text-[11px] text-ink3 px-4 text-center">
+                          Cámara apagada
+                        </div>
+                      )}
+                      {qrScanning && (
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <div className="w-28 h-28 rounded-xl border-2 border-accent/80" />
+                        </div>
+                      )}
+                    </div>
                     <div className="flex gap-2">
                       <button
                         type="button"
-                        onClick={startQrCamera}
+                        onClick={() => { setQrStatus('Apuntá la cámara al QR de GREMAMI…'); startQrCamera(); }}
                         disabled={qrScanning}
                         className="min-h-touch flex-1 rounded-control bg-accent text-slate-950 text-xs font-semibold"
                       >
-                        {qrScanning ? 'Escaneando…' : 'Activar cámara'}
+                        {qrScanning ? 'Buscando QR…' : 'Activar cámara'}
                       </button>
                       <button
                         type="button"
@@ -1317,7 +1332,7 @@ export default function WalletScreen() {
                       id="qr-manual"
                       type="text"
                       value={qrManual}
-                      onChange={(e) => setQrManual(e.target.value)}
+                      onChange={(e) => { setQrManual(e.target.value); setQrStatus(''); }}
                       placeholder="valens:DIRECCION?amount=1"
                       className="w-full min-h-touch rounded-control px-3 bg-app border border-line text-xs text-ink1 font-mono"
                     />
@@ -1328,7 +1343,21 @@ export default function WalletScreen() {
                     >
                       Usar este código
                     </button>
-                    {qrStatus && <p className="text-[11px] font-semibold text-accent">{qrStatus}</p>}
+                    {qrStatus && (
+                      <p
+                        role="status"
+                        aria-live="polite"
+                        className={`text-[11px] font-semibold leading-snug rounded-control px-2 py-1.5 border ${
+                          qrStatus.startsWith('QR leído')
+                            ? 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10'
+                            : qrStatus.startsWith('Apuntá')
+                            ? 'text-ink2 border-line bg-elev'
+                            : 'text-accent border-accent/40 bg-accent/10'
+                        }`}
+                      >
+                        {qrStatus}
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
