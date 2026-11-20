@@ -148,6 +148,8 @@ export default function WalletScreen() {
   const [showAllTx, setShowAllTx] = useState(false);
   // (S31) Explorador: filtro por texto sobre los movimientos propios.
   const [txQuery, setTxQuery] = useState('');
+  // (S32) Detalle expandible por movimiento.
+  const [openTxId, setOpenTxId] = useState(null);
 
   // (S20) Devuelve true SOLO si el QR era de GREMAMI y se aplicó.
   // Un frame ilegible o ajeno NO apaga la cámara: se sigue escaneando.
@@ -861,10 +863,16 @@ export default function WalletScreen() {
                 .map((tx) => (
                 <div
                   key={tx.id}
-                  className={`p-3 rounded-xl border flex items-center justify-between text-xs transition-colors ${
+                  className={`rounded-xl border transition-colors ${
                     isDark ? 'bg-[#070C1E] border-[#1F2D48]' : 'bg-slate-50 border-slate-200'
                   }`}
                 >
+                  <button
+                    type="button"
+                    onClick={() => setOpenTxId((v) => (v === tx.id ? null : tx.id))}
+                    aria-expanded={openTxId === tx.id}
+                    className="w-full min-h-touch p-3 flex items-center justify-between text-xs text-left"
+                  >
                   <div className="flex items-center space-x-2.5 min-w-0 pr-2">
                     <div
                       className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
@@ -896,6 +904,20 @@ export default function WalletScreen() {
                     </p>
                     <span className={`text-xs ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>{tx.status}</span>
                   </div>
+                  </button>
+
+                  {/* (S32) Detalle del movimiento: referencia, tipo y descripción */}
+                  {openTxId === tx.id && (
+                    <div className={`mx-3 mb-3 p-2.5 rounded-xl border text-[11px] space-y-1 ${
+                      isDark ? 'bg-[#0F1626] border-[#1F2D48] text-[#8C9BB4]' : 'bg-white border-slate-200 text-slate-600'
+                    }`}>
+                      <p><span className="font-semibold">Tipo:</span> {tx.type || 'direct_transfer'}</p>
+                      <p><span className="font-semibold">Estado:</span> {tx.status}</p>
+                      <p className="break-all"><span className="font-semibold">Referencia:</span> <span className="font-mono">{tx.id}</span></p>
+                      {tx.note && <p><span className="font-semibold">Detalle:</span> {tx.note}</p>}
+                      <p><span className="font-semibold">Fecha:</span> {tx.date}</p>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

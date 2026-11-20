@@ -428,7 +428,8 @@ export function AppProvider({ children }) {
   };
 
   const applyWalletSnapshot = async (userId) => {
-    if (!userId) return null;
+    // (S32) Sin UUID válido no se consulta: evita 400 de PostgREST en invitado.
+    if (!userId || !isUuid(userId)) return null;
     const snapshot = await valensService.getWalletSnapshot(userId);
     if (snapshot) {
       if (typeof snapshot.balance === 'number') {
