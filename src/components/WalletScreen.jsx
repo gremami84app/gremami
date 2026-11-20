@@ -199,6 +199,19 @@ export default function WalletScreen() {
     if (!showSendModal && !showQrScanner) stopQrCamera();
   }, [showSendModal, showQrScanner]);
 
+  // (S23) Auto-iniciar la cámara al abrir el lector. Se espera un tick para que
+  // el <video> exista en el DOM. Si el navegador bloquea el arranque automático
+  // (o falta permiso), startQrCamera deja el mensaje y el botón manual sigue ahí.
+  useEffect(() => {
+    if (!showQrScanner) return undefined;
+    const timer = setTimeout(() => {
+      const video = document.getElementById('gremami-qr-video');
+      if (video && !video.srcObject) startQrCamera();
+    }, 250);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showQrScanner]);
+
   const startQrCamera = async () => {
     setQrStatus('');
     if (!navigator.mediaDevices?.getUserMedia) {
