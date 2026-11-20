@@ -2460,6 +2460,8 @@ export function AppProvider({ children }) {
         schoolRewardClaimed,
         userName,
         setUserName,
+    // (S31) AuthModal necesita actualizar el perfil desde el login por email.
+    setUserProfile,
         currentUser,
         user: currentUser,
         setCurrentUser,

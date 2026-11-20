@@ -146,6 +146,8 @@ export default function WalletScreen() {
   const [qrScanning, setQrScanning] = useState(false);
   // (S30) Historial: por defecto 4 filas, expandible a todas.
   const [showAllTx, setShowAllTx] = useState(false);
+  // (S31) Explorador: filtro por texto sobre los movimientos propios.
+  const [txQuery, setTxQuery] = useState('');
 
   // (S20) Devuelve true SOLO si el QR era de GREMAMI y se aplicó.
   // Un frame ilegible o ajeno NO apaga la cámara: se sigue escaneando.
@@ -821,6 +823,20 @@ export default function WalletScreen() {
               </span>
             </div>
 
+            {/* (S31) Explorador: buscar dentro de mis propios movimientos */}
+            {transactions.length > 0 && (
+              <input
+                type="search"
+                value={txQuery}
+                onChange={(e) => setTxQuery(e.target.value)}
+                placeholder="Buscar por tipo, descripción o ID…"
+                aria-label="Buscar movimientos"
+                className={`mb-2 w-full min-h-touch rounded-control px-3 text-xs border ${
+                  isDark ? 'bg-[#070C1E] border-[#1F2D48] text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
+                }`}
+              />
+            )}
+
             <div className="space-y-2">
               {/* (S29) Estado vacío explícito: sin movimientos no queda un bloque mudo */}
               {transactions.length === 0 && (
@@ -831,7 +847,18 @@ export default function WalletScreen() {
                 </p>
               )}
 
-              {transactions.slice(0, showAllTx ? transactions.length : 4).map((tx) => (
+              {transactions
+                .filter((tx) => {
+                  const q = txQuery.trim().toLowerCase();
+                  if (!q) return true;
+                  return [tx.title, tx.note, tx.type, tx.status, tx.id]
+                    .filter(Boolean)
+                    .join(' ')
+                    .toLowerCase()
+                    .includes(q);
+                })
+                .slice(0, showAllTx ? transactions.length : 4)
+                .map((tx) => (
                 <div
                   key={tx.id}
                   className={`p-3 rounded-xl border flex items-center justify-between text-xs transition-colors ${
