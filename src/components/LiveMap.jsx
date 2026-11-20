@@ -55,8 +55,9 @@ export const createPickerPinIcon = ({ isDark = true, label = 'Punto Seleccionado
           </svg>
         </div>
         <!-- Tooltip -->
-        <div style="margin-top:-2px; background:${isDark ? '#0B132B' : '#FFFFFF'}; color:${isDark ? '#FDE68A' : '#B45309'}; border:1px solid #F59E0B; border-radius:6px; padding:2px 8px; font-size:9.5px; font-weight:800; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.3);">
-          📍 ${label}
+        <div style="margin-top:-2px; background:${isDark ? '#0B132B' : '#FFFFFF'}; color:${isDark ? '#FDE68A' : '#B45309'}; border:1px solid #F59E0B; border-radius:6px; padding:2px 8px; font-size:9.5px; font-weight:800; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.3); display:inline-flex; align-items:center; gap:4px;">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>${label}</span>
         </div>
       </div>
     `,
@@ -66,19 +67,30 @@ export const createPickerPinIcon = ({ isDark = true, label = 'Punto Seleccionado
 };
 
 // Generador de Icono para Cadetes / Nodos en Red
+// (S38) Glifos vectoriales por tipo de vehículo: reemplazan los emojis del divIcon.
+// Trazo 1.75 sobre currentColor, igual que los pines del mapa principal.
+const vehicleGlyph = (type) => {
+  const stroke = 'fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"';
+  const paths = {
+    bicicleta: '<circle cx="5.5" cy="17" r="3.5"/><circle cx="18.5" cy="17" r="3.5"/><path d="M15 6h3l-3.5 11"/><path d="M5.5 17 9 9h4l3 8"/>',
+    caminando: '<circle cx="13" cy="4" r="2"/><path d="m9 20 1-5 3-3 3 2 1 6"/><path d="m13 9-3 2-3 3"/>',
+    auto: '<path d="M5 17h14"/><path d="M6.5 17v2.5"/><path d="M17.5 17v2.5"/><path d="M4 17v-4l2-4h12l2 4v4"/><path d="M6 13h12"/>',
+    flete: '<path d="M2 16V7h11v9"/><path d="M13 10h4l4 4v2h-8"/><circle cx="6" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/>',
+    moto: '<circle cx="5" cy="17" r="3"/><circle cx="19" cy="17" r="3"/><path d="M8 17h6l3-6"/><path d="M12 11h4"/><path d="m14 8 2-2"/>'
+  };
+  return paths[type] || paths.moto;
+};
+
 export const createPeerPinIcon = (peer, { isDark = true } = {}) => {
   const isOnline = peer.is_online ?? true;
-  const roleEmoji = peer.vehicle_type === 'bicicleta' ? '🚲' :
-    peer.vehicle_type === 'caminando' ? '🚶' :
-    peer.vehicle_type === 'auto' ? '🚗' :
-    peer.vehicle_type === 'flete' ? '🚚' : '🏍️';
+  const glyph = vehicleGlyph(peer.vehicle_type);
 
   return L.divIcon({
     className: 'gremami-peer-pin',
     html: `
       <div style="position:relative; display:flex; flex-direction:column; align-items:center; transform:translate(-50%, -50%); cursor:pointer;">
-        <div style="background:${isDark ? '#0F172A' : '#FFFFFF'}; border:2px solid ${isOnline ? '#10B981' : '#64748B'}; border-radius:12px; padding:3px 6px; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(0,0,0,0.35); font-size:14px;">
-          ${roleEmoji}
+        <div style="background:${isDark ? '#0F172A' : '#FFFFFF'}; border:2px solid ${isOnline ? '#10B981' : '#64748B'}; border-radius:12px; padding:3px 6px; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(0,0,0,0.35); color:${isOnline ? '#10B981' : '#94A3B8'};">
+          <svg width="16" height="16" viewBox="0 0 24 24" ${'fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"'}>${glyph}</svg>
         </div>
         <div style="margin-top:2px; background:${isDark ? '#070C1E' : '#FFFFFF'}; color:${isDark ? '#E2E8F0' : '#1E293B'}; border:1px solid ${isOnline ? '#10B981' : '#94A3B8'}; border-radius:6px; padding:1px 5px; font-size:8.5px; font-weight:800; white-space:nowrap; box-shadow:0 2px 6px rgba(0,0,0,0.25);">
           ${peer.full_name || peer.name || 'Cadete'}
