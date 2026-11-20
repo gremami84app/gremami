@@ -20,8 +20,7 @@ import {
   X,
   MessageSquare,
   HelpCircle,
-  ExternalLink,
-  DollarSign
+  ExternalLink
 } from 'lucide-react';
 
 export default function DexScreen() {
@@ -76,7 +75,7 @@ export default function DexScreen() {
     createDexOrder({
       type: orderType,
       amountValens: orderAmount,
-      unitPriceArs: orderType === 'donation_request' ? 0 : orderUnitPrice,
+      // (S14b-1b) DEX solo en VAL: se eliminó el precio unitario en ARS.
       paymentMethod: orderPaymentMethod,
       description: orderDescription
     });
@@ -500,20 +499,14 @@ export default function DexScreen() {
               {/* Precio unitario (si no es donación) */}
               {orderType !== 'donation_request' && (
                 <div>
-                  <label className="block text-[11px] font-bold mb-1 text-slate-400">Precio unitario en Efectivo ($ ARS c/u):</label>
-                  <input
-                    type="number"
-                    min="100"
-                    step="50"
-                    required
-                    value={orderUnitPrice}
-                    onChange={(e) => setOrderUnitPrice(Number(e.target.value))}
-                    className={`w-full border rounded-xl px-3 py-2 text-xs font-mono font-bold ${
-                      isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
-                    }`}
-                  />
-                  <span className="text-[10px] text-slate-500 mt-0.5 block font-mono">
-                    Total: ${(orderAmount * orderUnitPrice).toLocaleString('es-AR')} ARS
+                  <label className="block text-[11px] font-bold mb-1 text-slate-400">Cantidad de VAL a intercambiar:</label>
+                  <div className={`w-full border rounded-xl px-3 py-2 text-xs font-mono font-bold ${
+                    isDark ? 'bg-app border-slate-700 text-ink1' : 'bg-slate-100 border-slate-300 text-slate-900'
+                  }`}>
+                    {Number(orderAmount || 0)} VAL
+                  </div>
+                  <span className="text-[10px] text-slate-500 mt-0.5 block">
+                    El DEX opera únicamente en VAL · sin cotización en pesos
                   </span>
                 </div>
               )}
