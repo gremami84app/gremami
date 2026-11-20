@@ -99,6 +99,10 @@ export default function ChatScreen() {
   const [reportChatReason, setReportChatReason] = useState('Cobro engañoso / Sobreprecio indebido');
   const [cashNote, setCashNote] = useState('Sobre de documentos y llaves en Alta Gracia');
   const [cadetePinInput, setCadetePinInput] = useState('');
+  // (S35) Cierre guiado post-PIN: 'send-val' → 'review'
+  const [postPinStep, setPostPinStep] = useState(null);
+  const [reviewStars, setReviewStars] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
   const [calculatorFee, setCalculatorFee] = useState(3500);
 
   const messagesEndRef = useRef(null);
@@ -122,6 +126,10 @@ export default function ChatScreen() {
   }, [myOrders, currentPeer]);
 
   const activePin = activeOrder ? getOrderPin(activeOrder.id) : orderPin;
+  // (S35) VAL que corresponde al agradecimiento según la categoría del servicio.
+  const valCostForPeer = getValCostForCategory(
+    activeOrder?.category || activeOrder?.mobility || 'caminando'
+  );
   const chatMessages = messages[currentPeer?.id] || [];
 
   const isBlocked = currentPeer ? isUserBlocked(currentPeer.id) : false;
@@ -175,6 +183,8 @@ export default function ChatScreen() {
       const res = await completeDeliveryWithPin(cadetePinInput, currentPeer.id, 1.0);
       if (res?.success) {
         setCadetePinInput('');
+        // (S35) Encadenar: enviar el VAL del agradecimiento y luego reseñar.
+        setPostPinStep('send-val');
       }
     } catch (err) {
       console.error('[S08] Error al validar el PIN:', err);
@@ -1399,6 +1409,117 @@ export default function ChatScreen() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* (S35) Cierre guiado: PIN validado → enviar VAL → dejar reseña */}
+      {postPinStep && (
+        <div className="fixed inset-x-0 bottom-0 z-[1500] p-3 animate-fadeIn">
+          <div className="mx-auto max-w-sm rounded-t-2xl sm:rounded-2xl border border-line bg-card p-4 shadow-elev3">
+            {postPinStep === 'send-val' && (
+              <div className="space-y-2">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-500">
+                  PIN validado · 1 de 2
+                </p>
+                <h4 className="text-sm font-semibold text-ink1">
+                  Enviá {valCostForPeer} VAL a {currentPeer?.name || 'tu contraparte'}
+                </h4>
+                <p className="text-xs leading-relaxed text-ink2">
+                  Es el agradecimiento del servicio.
+                  {Math.floor(Number(balance) || 0) < valCostForPeer
+                    ? ' No te alcanza el saldo: pedí una donación en el Mercado DEX y volvé.'
+                    : ' Se transfiere desde tu billetera a la de tu contraparte.'}
+                </p>
+                <div className="flex gap-2 pt-1">
+                  {Math.floor(Number(balance) || 0) >= valCostForPeer ? (
+                    <button
+                      type="button"
+                      onClick={() => { setActiveTab('wallet'); setPostPinStep('review'); }}
+                      className="min-h-touch flex-1 rounded-control bg-accent text-slate-950 text-xs font-semibold"
+                    >
+                      Ir a enviar VAL
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => { setActiveTab('dex'); }}
+                      className="min-h-touch flex-1 rounded-control bg-accent text-slate-950 text-xs font-semibold"
+                    >
+                      Conseguir VAL en el DEX
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setPostPinStep('review')}
+                    className="min-h-touch px-3 rounded-control border border-line bg-elev text-ink2 text-xs font-semibold"
+                  >
+                    Después
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {postPinStep === 'review' && (
+              <div className="space-y-2">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-accent">
+                  Paso 2 de 2
+                </p>
+                <h4 className="text-sm font-semibold text-ink1">
+                  ¿Cómo fue el servicio con {currentPeer?.name || 'tu contraparte'}?
+                </h4>
+                <div className="flex items-center gap-1.5 pt-1">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setReviewStars(n)}
+                      aria-label={`${n} estrella${n > 1 ? 's' : ''}`}
+                      className={`min-h-touch w-11 rounded-control border text-sm font-semibold ${
+                        reviewStars >= n
+                          ? 'border-accent bg-accent/15 text-accent'
+                          : 'border-line bg-elev text-ink3'
+                      }`}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
+                <input
+                  type="text"
+                  value={reviewComment}
+                  onChange={(e) => setReviewComment(e.target.value)}
+                  placeholder="Comentario (opcional)"
+                  className="w-full min-h-touch rounded-control px-3 bg-app border border-line text-xs text-ink1"
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (reviewStars < 1) {
+                        showToast('Elegí al menos una estrella', 'warning');
+                        return;
+                      }
+                      recommendPeer(currentPeer.id);
+                      showToast(`Reseña de ${reviewStars}★ enviada. Ciclo cerrado.`, 'success');
+                      setPostPinStep(null);
+                      setReviewStars(5);
+                      setReviewComment('');
+                    }}
+                    className="min-h-touch flex-1 rounded-control bg-accent text-slate-950 text-xs font-semibold"
+                  >
+                    Enviar reseña
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPostPinStep(null)}
+                    className="min-h-touch px-3 rounded-control border border-line bg-elev text-ink2 text-xs font-semibold"
+                  >
+                    Omitir
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
