@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
+import jsQR from 'jsqr';
 import { useApp } from '../context/AppContext';
 import { CRYPTO_SCHOOL_MODULES, ARGENTINE_FIAT_PROVIDERS } from '../data/mockData';
 import {
@@ -161,10 +162,24 @@ export default function WalletScreen() {
   const stopQrCamera = () => {
     const video = document.getElementById('gremami-qr-video');
     const stream = video && video.srcObject;
-    if (stream && stream.getTracks) stream.getTracks().forEach((t) => t.stop());
-    if (video) video.srcObject = null;
+    // (S16) Detener SIEMPRE todos los tracks, incluso si el video ya no existe.
+    if (stream && typeof stream.getTracks === 'function') {
+      stream.getTracks().forEach((t) => {
+        try { t.stop(); } catch (e) { /* noop */ }
+      });
+    }
+    if (video) {
+      try { video.pause(); } catch (e) { /* noop */ }
+      video.srcObject = null;
+    }
     setQrScanning(false);
   };
+
+  // (S16) Al desmontar o cerrar el modal, liberar la cámara sin excepciones.
+  useEffect(() => () => stopQrCamera(), []);
+  useEffect(() => {
+    if (!showSendModal && !showQrScanner) stopQrCamera();
+  }, [showSendModal, showQrScanner]);
 
   const startQrCamera = async () => {
     setQrStatus('');
@@ -172,35 +187,92 @@ export default function WalletScreen() {
       setQrStatus('Este dispositivo no permite cámara. Pegá el código abajo.');
       return;
     }
+    let stream = null;
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-      const video = document.getElementById('gremami-qr-video');
-      if (!video) { stream.getTracks().forEach((t) => t.stop()); return; }
-      video.srcObject = stream;
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' } },
+        audio: false
+      });
+    } catch (err) {
+      const denied = err && (err.name === 'NotAllowedError' || err.name === 'SecurityError');
+      setQrStatus(
+        denied
+          ? 'Permiso de cámara denegado. Pegá el código abajo.'
+          : 'No pudimos abrir la cámara. Pegá el código abajo.'
+      );
+      return;
+    }
+
+    const video = document.getElementById('gremami-qr-video');
+    if (!video) { stream.getTracks().forEach((t) => t.stop()); return; }
+
+    video.setAttribute('playsinline', 'true');
+    video.muted = true;
+    video.srcObject = stream;
+
+    try {
       await video.play();
       setQrScanning(true);
+    } catch (e) {
+      // Algunos móviles tardan en emitir el primer frame: no abortamos.
+      setQrScanning(true);
+    }
 
-      if (!('BarcodeDetector' in window)) {
-        setQrStatus('Cámara activa, pero este navegador no decodifica QR. Pegá el código abajo.');
+    // (S16) Si el sistema corta la cámara (llamada, app en segundo plano), avisamos.
+    stream.getVideoTracks().forEach((track) => {
+      track.addEventListener('ended', () => {
+        stopQrCamera();
+        setQrStatus('La cámara se detuvo. Podés reactivarla o pegar el código.');
+      });
+    });
+
+    // Camino 1: BarcodeDetector nativo (Chrome/Android).
+    if ('BarcodeDetector' in window) {
+      try {
+        const detector = new window.BarcodeDetector({ formats: ['qr_code'] });
+        const tick = async () => {
+          if (!document.getElementById('gremami-qr-video')) { stopQrCamera(); return; }
+          try {
+            const codes = await detector.detect(video);
+            if (codes && codes.length && codes[0].rawValue) {
+              applyQrPayload(codes[0].rawValue);
+              stopQrCamera();
+              return;
+            }
+          } catch (e) { /* seguir intentando */ }
+          requestAnimationFrame(tick);
+        };
+        tick();
         return;
-      }
-      const detector = new window.BarcodeDetector({ formats: ['qr_code'] });
-      const tick = async () => {
-        if (!document.getElementById('gremami-qr-video')) { stopQrCamera(); return; }
+      } catch (e) { /* cae al respaldo jsQR */ }
+    }
+
+    // Camino 2 (S16): respaldo jsQR sobre canvas — iOS/Safari y Firefox.
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    let lastScan = 0;
+    const scanFallback = (now) => {
+      if (!document.getElementById('gremami-qr-video')) { stopQrCamera(); return; }
+      if (now - lastScan > 220 && video.videoWidth > 0) {
+        lastScan = now;
         try {
-          const codes = await detector.detect(video);
-          if (codes && codes.length) {
-            applyQrPayload(codes[0].rawValue);
+          const w = Math.min(video.videoWidth, 640);
+          const h = Math.round((video.videoHeight / video.videoWidth) * w);
+          canvas.width = w;
+          canvas.height = h;
+          ctx.drawImage(video, 0, 0, w, h);
+          const img = ctx.getImageData(0, 0, w, h);
+          const found = jsQR(img.data, w, h, { inversionAttempts: 'dontInvert' });
+          if (found && found.data) {
+            applyQrPayload(found.data);
             stopQrCamera();
             return;
           }
-        } catch (e) {}
-        requestAnimationFrame(tick);
-      };
-      tick();
-    } catch (e) {
-      setQrStatus('No pudimos abrir la cámara. Pegá el código abajo.');
-    }
+        } catch (e) { /* frame no legible: seguir */ }
+      }
+      requestAnimationFrame(scanFallback);
+    };
+    requestAnimationFrame(scanFallback);
   };
   const [sendAmount, setSendAmount] = useState('');
   const [isSending, setIsSending] = useState(false);
