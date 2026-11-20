@@ -855,34 +855,19 @@ export default function WalletScreen() {
                         </ul>
                       </div>
 
-                      {/* Botón interactivo para marcar módulo como completado */}
-                      <div className="pt-2 flex items-center justify-between border-t border-slate-700/30">
-                        <span className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                          {isCompleted ? 'Módulo verificado' : 'Completa la lectura'}
+                      {/* (S14b-3) Sin botón de "marcar como leído": los VAL solo
+                          se acreditan aprobando el quiz (≥ 4/5) con sesión. */}
+                      <div className="pt-2 flex items-center justify-between border-t border-line">
+                        <span className={`text-xs ${isDark ? 'text-ink3' : 'text-slate-500'}`}>
+                          Comprensión verificada en el quiz
                         </span>
-                        <button
-                          type="button"
-                          onClick={() => toggleModuleCompletion(module.id)}
-                          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 ${
-                            isCompleted
-                              ? 'bg-emerald-500 text-black shadow-sm font-black'
-                              : isDark
-                              ? 'bg-[#1A253D] hover:bg-[#223254] text-amber-400 border border-amber-500/40'
-                              : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'
-                          }`}
-                        >
-                          {isCompleted ? (
-                            <>
-                              <Check className="w-3.5 h-3.5 stroke-[3]" />
-                              <span>✓ Módulo Aprobado</span>
-                            </>
-                          ) : (
-                            <>
-                              <Award className="w-3.5 h-3.5 text-[#F7931A]" />
-                              <span>Marcar como Leído y Aprobado</span>
-                            </>
-                          )}
-                        </button>
+                        <span className={`px-3 py-2 rounded-control text-xs font-semibold ${
+                          isCompleted
+                            ? 'bg-emerald-500 text-black'
+                            : 'bg-elev text-ink3 border border-line'
+                        }`}>
+                          {isCompleted ? '✓ Módulo verificado' : 'Pendiente'}
+                        </span>
                       </div>
                     </div>
                   )}
