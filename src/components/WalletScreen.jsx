@@ -232,11 +232,12 @@ export default function WalletScreen() {
       });
     } catch (err) {
       const denied = err && (err.name === 'NotAllowedError' || err.name === 'SecurityError');
-      setQrStatus(
+      // (S42) No pisar un mensaje más relevante (p. ej. un QR ya leído o rechazado).
+      setQrStatus((prev) => prev || (
         denied
           ? 'Permiso de cámara denegado. Pegá el código abajo.'
           : 'No pudimos abrir la cámara. Pegá el código abajo.'
-      );
+      ));
       return;
     }
 

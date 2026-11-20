@@ -17,7 +17,12 @@ const hasCreds = Boolean(CLIENT.email && CLIENT.password && CADET.email && CADET
 
 async function login(page, { email, password }) {
   await page.goto('/');
-  await page.getByRole('button', { name: /ingresar/i }).first().click();
+
+  // El onboarding puede aparecer la primera vez en un contexto limpio.
+  const skip = page.getByRole('button', { name: /saltar/i });
+  if (await skip.isVisible().catch(() => false)) await skip.click();
+
+  await page.getByRole('button', { name: /^ingresar$/i }).first().click();
 
   const emailInput = page.locator('input[type="email"]').first();
   await expect(emailInput).toBeVisible({ timeout: 15_000 });
@@ -26,13 +31,11 @@ async function login(page, { email, password }) {
   const passInput = page.locator('input[type="password"]').first();
   await passInput.fill(password);
 
-  const submit = page
-    .getByRole('button', { name: /ingresar|entrar|iniciar sesi[oó]n/i })
-    .last();
-  await submit.click();
+  // (S42) El submit del modal se llama exactamente "Iniciar Sesión".
+  await page.getByRole('button', { name: /iniciar sesi[oó]n/i }).last().click();
 
-  // La sesión se refleja cuando desaparece el botón "Ingresar" del header.
-  await expect(page.getByRole('button', { name: /ingresar/i })).toHaveCount(0, { timeout: 60_000 });
+  // La sesión se refleja cuando el botón "Ingresar" del header desaparece.
+  await expect(page.getByRole('button', { name: /^ingresar$/i })).toHaveCount(0, { timeout: 60_000 });
 }
 
 test.describe('S10 · Sol (cliente) ↔ Leo (cadete)', () => {
@@ -71,9 +74,10 @@ test.describe('S10 · Sol (cliente) ↔ Leo (cadete)', () => {
       await dialog.getByRole('button', { name: /publicar subasta|confirmar pedido/i }).click();
       await expect(dialog).toBeHidden({ timeout: 20_000 });
 
-      // 3. Leo cambia a Modo Cadete y ve la bolsa
-      await leo.getByRole('button', { name: /^cadete$/i }).click();
-      await expect(leo.getByText(/en l[ií]nea en el radar/i)).toBeVisible();
+      // 3. Leo cambia a Modo Cadete y ve la bolsa (S42: el botón real se llama
+      //    "Cadete (Trabajar)" desde S12b).
+      await leo.getByRole('button', { name: /cadete \(trabajar\)/i }).click();
+      await expect(leo.getByText(/en l[ií]nea en el radar/i)).toBeVisible({ timeout: 30_000 });
 
       // 4. (Opcional, depende de timing realtime) cotizar si el pedido aparece
       const quoteBtn = leo.getByRole('button', { name: /cotizar|postularse/i }).first();
