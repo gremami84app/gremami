@@ -551,6 +551,30 @@ $$;
 -- ====================================================================
 -- 13. FUNCIÓN RPC: LIBERACIÓN POR PIN CON CONTROL DE INTENTOS
 -- ====================================================================
+-- (S15) Anti-salto del PIN: una orden solo puede pasar a 'completado' desde
+-- release_reward_by_pin, que marca la transacción con app.release_pin=on.
+CREATE OR REPLACE FUNCTION public.guard_order_completion()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, extensions
+AS $$
+BEGIN
+  IF NEW.status = 'completado' AND OLD.status IS DISTINCT FROM 'completado' THEN
+    IF current_setting('app.release_pin', true) IS DISTINCT FROM 'on' THEN
+      RAISE EXCEPTION 'La orden solo puede completarse validando el PIN'
+        USING ERRCODE = '42501';
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_guard_order_completion ON public.orders;
+CREATE TRIGGER trg_guard_order_completion
+BEFORE UPDATE ON public.orders
+FOR EACH ROW EXECUTE FUNCTION public.guard_order_completion();
+
 CREATE OR REPLACE FUNCTION public.release_reward_by_pin(
   p_order_id UUID,
   p_pin TEXT,
@@ -619,6 +643,9 @@ BEGIN
 
   v_ars := COALESCE(v_order.price_ars, v_order.base_price_ars, 0);
   v_val := COALESCE(v_order.reward_val, v_order.val_incentive, 1.0);
+
+  -- (S15) Habilita la transición a 'completado' SOLO dentro de esta transacción.
+  PERFORM set_config('app.release_pin', 'on', true);
 
   -- 4. Marcar orden como completada
   UPDATE public.orders
