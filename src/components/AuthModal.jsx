@@ -114,8 +114,12 @@ export default function AuthModal({ isOpen, onClose }) {
           avatar: profile?.avatar_url || sessionUser.user_metadata?.avatar_url || sessionUser.user_metadata?.picture || prev.avatar
         }));
 
-        if (wallet && typeof wallet.valens_balance === 'number') {
-          setBalance(wallet.valens_balance);
+        // (S28) balance_valens es la fuente de verdad; valens_balance es legado.
+        const canonicalBalance = wallet
+          ? Number(wallet.balance_valens ?? wallet.balance_val ?? wallet.valens_balance)
+          : NaN;
+        if (Number.isFinite(canonicalBalance)) {
+          setBalance(canonicalBalance);
         }
 
         if (userCoords && sessionUser.id) {
