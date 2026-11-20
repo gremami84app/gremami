@@ -291,7 +291,7 @@ export default function DexScreen() {
                         </span>
                       ) : (
                         <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full border shadow-xs flex items-center gap-1 bg-blue-500/20 text-blue-400 border-blue-500/60 ring-1 ring-blue-500/30">
-                          <span>🔵 Intercambio por Dinero Local (ARS)</span>
+                          <span>🔵 Intercambio en VAL</span>
                         </span>
                       )}
 
@@ -358,9 +358,11 @@ export default function DexScreen() {
                           Gratis (Solidaridad entre Pares)
                         </span>
                       ) : (
+                        {/* (S14b-1) DEX expresado solo en VAL */}
                         <div className="font-mono text-[11px]">
-                          <span>Precio: <strong>${order.unitPriceArs?.toLocaleString('es-AR')} ARS/VAL</strong></span>
-                          <span className="block text-[10px] text-slate-400">Total: ${order.priceArs?.toLocaleString('es-AR')} ARS</span>
+                          <span className="font-semibold text-ink2">
+                            {Number(order.amountValens || order.amount_val || 0)} VAL
+                          </span>
                         </div>
                       )}
                       <span className="text-[10px] block text-slate-500 mt-0.5">
@@ -649,7 +651,7 @@ export default function DexScreen() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Precio total:</span>
-                <span className="font-mono font-bold text-emerald-400">${showTradeModal.priceArs?.toLocaleString('es-AR')} ARS</span>
+                <span className="font-mono font-bold text-emerald-400">{Number(showTradeModal.amountValens || showTradeModal.amount_val || 0)} VAL</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Pago acordado:</span>
