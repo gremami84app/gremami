@@ -24,7 +24,8 @@ const FIANZA_MINIMA = 1;
 
 export default function CadetePanel() {
   const { isDark, isOnline, toggleOnlineStatus, balance, submitOfferReal, showToast, currentUser } = useApp();
-  const { orders, loading, refresh } = useOpenOrders({ enabled: true });
+  // (S15) Sin sesión no se consultan pedidos: evita los 401 en consola.
+  const { orders, loading, refresh } = useOpenOrders({ enabled: Boolean(currentUser?.id) });
 
   const [tab, setTab] = useState('urgent'); // 'urgent' | 'scheduled'
   const [category, setCategory] = useState('all');
