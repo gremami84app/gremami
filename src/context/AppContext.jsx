@@ -1561,7 +1561,10 @@ export function AppProvider({ children }) {
   const refreshMyOrders = async () => {
     const uid = isUuid(currentUser?.id) ? currentUser.id : null;
     if (!uid || !isSupabaseConfigured) {
-      setMyOrders([]);
+      // (S14e) Sin sesión: devolver la MISMA referencia si ya estaba vacío.
+      // Con un array nuevo en cada llamada, el efecto de ClientOrdersPanel
+      // re-disparaba setState y producía "Maximum update depth exceeded".
+      setMyOrders((prev) => (prev.length === 0 ? prev : []));
       return [];
     }
     try {
