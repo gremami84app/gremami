@@ -820,6 +820,15 @@ export default function WalletScreen() {
             </div>
 
             <div className="space-y-2">
+              {/* (S29) Estado vacío explícito: sin movimientos no queda un bloque mudo */}
+              {transactions.length === 0 && (
+                <p className={`p-3 rounded-xl border text-xs leading-relaxed ${
+                  isDark ? 'bg-[#070C1E] border-[#1F2D48] text-[#8C9BB4]' : 'bg-slate-50 border-slate-200 text-slate-500'
+                }`}>
+                  Todavía no tenés movimientos. Cada servicio completado con PIN suma VAL acá.
+                </p>
+              )}
+
               {transactions.map((tx) => (
                 <div
                   key={tx.id}
