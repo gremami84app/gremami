@@ -282,11 +282,16 @@ const createAuctionMarkerIcon = (req, isSelected, isDark) => {
   const locality = req.locality ? String(req.locality).slice(0, 14) : '';
   const fee = Number(req.estimatedFeeArs || 0).toLocaleString('es-AR');
   const distance = req.distanceKm || '0.5 km';
+  // (S45) Etiqueta accesible: el pin es inyectado como HTML por Leaflet, así que
+  // el aria-label viaja en el propio markup (accesibilidad + testabilidad).
+  const reqTitle = String(req.title || req.description || 'Solicitud de envío').slice(0, 48);
+  const reqCategoryLabel = String(req.category || req.categoryLabel || 'servicio');
+  const markerLabel = `Solicitud ${reqTitle} · ${reqCategoryLabel} · $${fee} · ${distance}${offersCount > 0 ? ` · ${offersCount} cotizaciones` : ''}`;
 
   return L.divIcon({
     className: 'custom-auction-marker',
     html: `
-      <div style="display:flex; flex-direction:column; align-items:center; cursor:pointer; ${scaleStyle}">
+      <div role="button" tabindex="0" aria-label="${markerLabel}" style="display:flex; flex-direction:column; align-items:center; cursor:pointer; ${scaleStyle}">
         <div style="position:relative; display:flex; align-items:center; justify-content:center;">
           <!-- Pulso de radar ámbar animado -->
           <div style="position:absolute; width:36px; height:36px; border-radius:9999px; background:rgba(245,158,11,0.35); animation:ping 2s cubic-bezier(0,0,0.2,1) infinite;"></div>
