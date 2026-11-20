@@ -915,8 +915,9 @@ export default function MapaP2P(props) {
     setShowQuoteSubmitModal(false);
   };
 
-  const handleAwardOffer = (requestId, offerId) => {
-    awardAuctionOffer(requestId, offerId);
+  const handleAwardOffer = async (requestId, offerId) => {
+    // (S48) awardAuctionOffer ahora intenta settle_auction en el servidor.
+    await awardAuctionOffer(requestId, offerId);
   };
 
   // Fuente activa para los contadores superiores según el Modo Activo, filtrada por el radio de proximidad cercano

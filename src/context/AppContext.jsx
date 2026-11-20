@@ -2039,6 +2039,28 @@ export function AppProvider({ children }) {
       return { success: false, reason: 'insufficient-val', required: stakeVal, balance: saldoActual };
     }
     const cadeteReference = peers.find((p) => p.id === 'cadete-moto-1') || peers[0];
+
+    // (S48) Camino servidor: la RPC debita el compromiso de forma atómica.
+    // Si la función aún no está aplicada en la base, se cae al comportamiento local.
+    let rpcStake = null;
+    if (isSupabaseConfigured && isUuid(currentUser?.id) && isUuid(requestId)) {
+      try {
+        const { data, error } = await supabase.rpc('submit_bid_with_stake', {
+          p_order_id: requestId,
+          p_amount_ars: fee,
+          p_note: note?.trim() || null
+        });
+        if (!error && data?.success) {
+          rpcStake = data;
+        } else if (!error && data && data.success === false) {
+          showToast(`⚠️ ${data.error || 'No se pudo registrar la postulación'}`, 'warning');
+          return { success: false, reason: 'rpc-refused', detail: data };
+        }
+      } catch (e) {
+        // RPC inexistente o error de red: continúa con el flujo local.
+        console.warn('submit_bid_with_stake no disponible, usando flujo local:', e?.message || e);
+      }
+    }
     // (S07) bids.cadet_id es FK a profiles.id: con sesión se usa el UUID real;
     // sin sesión se conserva el id local (la cotización queda solo en memoria/localStorage).
     const cadetId = isUuid(currentUser?.id) ? currentUser.id : CURRENT_CADET_ID;
@@ -2074,20 +2096,30 @@ export function AppProvider({ children }) {
     };
 
     // Se reserva el VAL del postulante al cotizar (si no gana, se devuelve).
-    setBalance((prev) => Math.max(0, Math.floor(Number(prev) || 0) - stakeVal));
-    setTransactions((prev) => [
-      {
-        id: `tx-stake-${Date.now()}`,
-        type: 'stake_val',
-        amount: -stakeVal,
-        title: 'Reserva VAL · subasta',
-        date: 'Recién',
-        hash: `0x${String(Date.now()).slice(-12)}`,
-        status: 'Comprometido',
-        note: `Compromiso de ${stakeVal} VAL al postularte`
-      },
-      ...prev
-    ]);
+    // (S48) Si la RPC ya debitó en el servidor, no se descuenta dos veces:
+    // solo se sincroniza el saldo real desde Supabase.
+    if (rpcStake) {
+      await applyWalletSnapshot(currentUser.id);
+      showToast(
+        `🔒 Compromiso de ${rpcStake.stake} VAL retenido. Se devuelve si no ganás la subasta.`,
+        'success'
+      );
+    } else {
+      setBalance((prev) => Math.max(0, Math.floor(Number(prev) || 0) - stakeVal));
+      setTransactions((prev) => [
+        {
+          id: `tx-stake-${Date.now()}`,
+          type: 'stake_val',
+          amount: -stakeVal,
+          title: 'Reserva VAL · subasta',
+          date: 'Recién',
+          hash: `0x${String(Date.now()).slice(-12)}`,
+          status: 'Comprometido',
+          note: `Compromiso de ${stakeVal} VAL al postularte`
+        },
+        ...prev
+      ]);
+    }
 
     let isEdit = false;
     setLiveRequests((prev) =>
@@ -2124,9 +2156,39 @@ export function AppProvider({ children }) {
     return newOffer;
   };
 
-  const awardAuctionOffer = (requestId, offerId) => {
+  const awardAuctionOffer = async (requestId, offerId) => {
     let chosenOffer = null;
     let chosenRequest = null;
+
+    // (S48) Camino servidor: settle_auction reintegra a los no ganadores y
+    // acredita el compromiso al creador de forma atómica.
+    let settled = null;
+    if (isSupabaseConfigured && isUuid(currentUser?.id) && isUuid(requestId) && isUuid(offerId)) {
+      try {
+        const { data, error } = await supabase.rpc('settle_auction', {
+          p_order_id: requestId,
+          p_winning_bid_id: offerId
+        });
+        if (!error && data?.success) {
+          settled = data;
+        } else if (!error && data && data.success === false) {
+          console.warn('settle_auction rechazó la adjudicación:', data.error);
+        }
+      } catch (e) {
+        console.warn('settle_auction no disponible, usando liquidación local:', e?.message || e);
+      }
+    }
+
+    if (settled) {
+      // El servidor ya movió los saldos: se sincroniza en vez de calcular local.
+      await applyWalletSnapshot(currentUser.id);
+      if (settled.captured > 0) {
+        showToast(`✅ Subasta adjudicada. Compromiso de ${settled.captured} VAL acreditado.`, 'success');
+      }
+      if (settled.refunded_total > 0) {
+        showToast(`↩️ ${settled.refunded_total} VAL reintegrados a los postulantes que no ganaron.`, 'success');
+      }
+    }
 
     // (S43) Liquidación de los VAL comprometidos, resuelta de forma síncrona
     // sobre el estado actual (no dentro del updater de React).
@@ -2136,7 +2198,8 @@ export function AppProvider({ children }) {
       requestNow?.clientId && currentUser?.id && requestNow.clientId === currentUser.id
     );
 
-    if (requestNow) {
+    // (S48) Solo se liquida localmente si el servidor NO lo hizo.
+    if (requestNow && !settled) {
       const myOwnOffer = (requestNow.offers || []).find((o) => o.isOwnOffer && o.stakeVal);
       const loserStake = myOwnOffer && myOwnOffer.id !== offerId ? Number(myOwnOffer.stakeVal) || 0 : 0;
       const winnerStake = Number(winnerNow?.stakeVal) || 0;
