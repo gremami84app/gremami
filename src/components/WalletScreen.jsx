@@ -144,6 +144,8 @@ export default function WalletScreen() {
   const [qrManual, setQrManual] = useState('');
   const [qrStatus, setQrStatus] = useState('');
   const [qrScanning, setQrScanning] = useState(false);
+  // (S30) Historial: por defecto 4 filas, expandible a todas.
+  const [showAllTx, setShowAllTx] = useState(false);
 
   // (S20) Devuelve true SOLO si el QR era de GREMAMI y se aplicó.
   // Un frame ilegible o ajeno NO apaga la cámara: se sigue escaneando.
@@ -829,7 +831,7 @@ export default function WalletScreen() {
                 </p>
               )}
 
-              {transactions.map((tx) => (
+              {transactions.slice(0, showAllTx ? transactions.length : 4).map((tx) => (
                 <div
                   key={tx.id}
                   className={`p-3 rounded-xl border flex items-center justify-between text-xs transition-colors ${
@@ -853,7 +855,7 @@ export default function WalletScreen() {
                     <div className="min-w-0">
                       <p className={`font-semibold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>{tx.title}</p>
                       <p className={`text-xs font-mono truncate ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
-                        {tx.date} • {tx.hash}
+                        {tx.date} • {tx.note || tx.hash}
                       </p>
                     </div>
                   </div>
@@ -870,6 +872,19 @@ export default function WalletScreen() {
                 </div>
               ))}
             </div>
+
+            {/* (S30) Ver historial completo sin que quede cortado */}
+            {transactions.length > 4 && (
+              <button
+                type="button"
+                onClick={() => setShowAllTx((v) => !v)}
+                className="mt-3 min-h-touch w-full rounded-control border border-line bg-card text-ink2 text-xs font-semibold"
+              >
+                {showAllTx
+                  ? 'Mostrar menos'
+                  : `Ver los ${transactions.length} movimientos`}
+              </button>
+            )}
           </div>
         </div>
       )}

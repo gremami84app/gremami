@@ -467,6 +467,7 @@ export const isValensAddress = (value) =>
 
 const TX_TITLES = {
   direct_transfer: 'Transferencia P2P',
+  p2p_transfer: 'Transferencia P2P',
   faucet: 'Grifo / Recompensa VAL',
   recompensa_pin: 'Recompensa por entrega',
   reward_release: 'Recompensa por entrega',
