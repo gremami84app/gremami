@@ -358,7 +358,6 @@ export default function DexScreen() {
                           Gratis (Solidaridad entre Pares)
                         </span>
                       ) : (
-                        {/* (S14b-1) DEX expresado solo en VAL */}
                         <div className="font-mono text-[11px]">
                           <span className="font-semibold text-ink2">
                             {Number(order.amountValens || order.amount_val || 0)} VAL
