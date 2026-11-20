@@ -69,8 +69,24 @@ export const createPickerPinIcon = ({ isDark = true, label = 'Punto Seleccionado
 // Generador de Icono para Cadetes / Nodos en Red
 // (S38) Glifos vectoriales por tipo de vehículo: reemplazan los emojis del divIcon.
 // Trazo 1.75 sobre currentColor, igual que los pines del mapa principal.
+// (S39) Normaliza variantes de vehículo antes de elegir el glifo, así
+// 'motocicleta'/'automóvil'/'camioneta' no caen por defecto en moto.
+const normalizeVehicle = (type) => {
+  const t = String(type || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+  if (!t) return 'moto';
+  if (t.includes('bici')) return 'bicicleta';
+  if (t.includes('camin') || t.includes('pie') || t.includes('peaton') || t.includes('mochila')) return 'caminando';
+  if (t.includes('flete') || t.includes('carga') || t.includes('camion') || t.includes('camioneta') || t.includes('utilitario') || t.includes('pick')) return 'flete';
+  if (t.includes('auto') || t.includes('car') || t.includes('remis') || t.includes('taxi') || t.includes('sedan') || t.includes('vehiculo')) return 'auto';
+  if (t.includes('moto')) return 'moto';
+  return 'moto';
+};
+
 const vehicleGlyph = (type) => {
-  const stroke = 'fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"';
+  const key = normalizeVehicle(type);
   const paths = {
     bicicleta: '<circle cx="5.5" cy="17" r="3.5"/><circle cx="18.5" cy="17" r="3.5"/><path d="M15 6h3l-3.5 11"/><path d="M5.5 17 9 9h4l3 8"/>',
     caminando: '<circle cx="13" cy="4" r="2"/><path d="m9 20 1-5 3-3 3 2 1 6"/><path d="m13 9-3 2-3 3"/>',
@@ -78,7 +94,7 @@ const vehicleGlyph = (type) => {
     flete: '<path d="M2 16V7h11v9"/><path d="M13 10h4l4 4v2h-8"/><circle cx="6" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/>',
     moto: '<circle cx="5" cy="17" r="3"/><circle cx="19" cy="17" r="3"/><path d="M8 17h6l3-6"/><path d="M12 11h4"/><path d="m14 8 2-2"/>'
   };
-  return paths[type] || paths.moto;
+  return paths[key] || paths.moto;
 };
 
 export const createPeerPinIcon = (peer, { isDark = true } = {}) => {
