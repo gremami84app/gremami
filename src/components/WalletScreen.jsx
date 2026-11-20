@@ -1412,11 +1412,7 @@ export default function WalletScreen() {
                     isDark ? 'bg-[#070C1E] border-[#1F2D48] text-white' : 'bg-white border-slate-300 text-slate-900'
                   }`}
                 />
-                {sendAmount && parseInt(sendAmount) > 0 && (
-                  <p className={`text-xs mt-1 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>
-                    ≈ ${(parseInt(sendAmount) * 2).toFixed(0)} USD • ${(parseInt(sendAmount) * 2500).toLocaleString('es-AR')} ARS
-                  </p>
-                )}
+                {/* (S19) Sin cotización fiat: VAL se transfiere en VAL, sin USD/ARS. */}
               </div>
 
               {/* Alerta de seguridad */}
