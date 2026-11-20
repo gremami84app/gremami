@@ -195,7 +195,7 @@ export default function PublicProfileModal({ user, isOpen, onClose }) {
 
           {/* Billetera ValensCoin L1 */}
           <div className={`p-3 rounded-xl border flex items-center justify-between gap-2 ${
-            isDark ? 'bg-[#121B2D] border-[#1F2D48]' : 'bg-amber-50/70 border-amber-200/80'
+            isDark ? 'bg-[#121B2D] border-[#1F2D48]' : 'bg-accent/70 border-accent/80'
           }`}>
             <div className="min-w-0">
               <div className="flex items-center space-x-1.5 mb-0.5">
@@ -241,7 +241,7 @@ export default function PublicProfileModal({ user, isOpen, onClose }) {
           {/* Subpanel de Transferencia Rápida */}
           {showTransferBox && (
             <div className={`p-3.5 rounded-xl border space-y-2.5 animate-fadeIn ${
-              isDark ? 'bg-[#070C1E] border-[#F7931A]/40' : 'bg-amber-50 border-amber-300'
+              isDark ? 'bg-[#070C1E] border-[#F7931A]/40' : 'bg-accent/15 border-accent/40'
             }`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-1.5 text-xs font-bold text-[#F7931A]">
@@ -280,7 +280,7 @@ export default function PublicProfileModal({ user, isOpen, onClose }) {
                         type="button"
                         onClick={() => setTransferAmount(String(amt))}
                         className={`text-[10px] px-2 py-2 rounded-xl border font-mono font-bold active:scale-95 ${
-                          isDark ? 'bg-[#1A253D] border-[#2D3E61] text-[#F0B90B]' : 'bg-white border-slate-300 text-amber-800'
+                          isDark ? 'bg-[#1A253D] border-[#2D3E61] text-[#F0B90B]' : 'bg-white border-slate-300 text-accent'
                         }`}
                       >
                         +{amt}
@@ -334,7 +334,7 @@ export default function PublicProfileModal({ user, isOpen, onClose }) {
                       <img
                         src={rev.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80'}
                         alt={rev.author}
-                        className="w-5 h-5 rounded-full object-cover border border-amber-400/40"
+                        className="w-5 h-5 rounded-full object-cover border border-accent/40"
                       />
                       <span className="text-xs font-bold">{rev.author}</span>
                     </div>

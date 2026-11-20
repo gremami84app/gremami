@@ -248,7 +248,7 @@ export default function Header() {
             className={`transition-all ${
               isDark
                 ? 'bg-[#1A253D] text-[#F0B90B] border-[#2D3E61] hover:border-[#F7931A] hover:bg-[#22304E]'
-                : 'bg-amber-100 text-amber-700 border-amber-300 hover:bg-amber-200 shadow-sm'
+                : 'bg-accent/15 text-accent border-accent/40 hover:bg-accent/15 shadow-sm'
             }`}
           >
             {isDark ? (
@@ -385,7 +385,7 @@ export default function Header() {
                     />
                   ) : (
                     <div className={`w-9 h-9 rounded-xl border flex items-center justify-center text-sm font-bold text-[#F7931A] ${
-                      isDark ? 'bg-[#0A1128] border-[#F7931A]/40' : 'bg-amber-100 border-amber-300'
+                      isDark ? 'bg-[#0A1128] border-[#F7931A]/40' : 'bg-accent/15 border-accent/40'
                     }`}>
                       ₿
                     </div>
@@ -457,7 +457,7 @@ export default function Header() {
               className={`w-full mb-3 p-2.5 rounded-xl border flex items-center justify-between transition-all active:scale-[0.99] ${
                 isDark
                   ? 'border-[#F7931A]/40 bg-gradient-to-r from-[#F7931A]/10 to-[#F0B90B]/10 hover:from-[#F7931A]/20 hover:to-[#F0B90B]/20 text-slate-100'
-                  : 'border-[#F7931A]/40 bg-amber-50 hover:bg-amber-100 text-slate-800'
+                  : 'border-[#F7931A]/40 bg-accent/15 hover:bg-accent/15 text-slate-800'
               }`}
             >
               <div className="flex items-center space-x-2.5">
@@ -537,7 +537,7 @@ export default function Header() {
                             ? 'bg-black text-white'
                             : isDark
                             ? 'bg-[#1A253D] text-[#F0B90B] border border-[#2D3E61]'
-                            : 'bg-amber-100 text-amber-800 border border-amber-300'
+                            : 'bg-accent/15 text-accent border border-accent/40'
                         }`}
                       >
                         {item.badge}
@@ -611,7 +611,7 @@ export default function Header() {
               >
                 <div className="flex items-center space-x-2.5">
                   <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
-                    isDark ? 'bg-amber-500/20 text-[#F0B90B]' : 'bg-amber-100 text-amber-700'
+                    isDark ? 'bg-accent/20 text-[#F0B90B]' : 'bg-accent/15 text-accent'
                   }`}>
                     {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                   </div>

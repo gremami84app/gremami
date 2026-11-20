@@ -267,7 +267,7 @@ export default function ChatScreen() {
                 isBlocked
                   ? 'bg-rose-500'
                   : getPeerReputation(currentPeer.id) === 'reported'
-                  ? 'bg-amber-400'
+                  ? 'bg-accent/15'
                   : 'bg-emerald-500'
               } ${isDark ? 'border-[#121B2D]' : 'border-white'}`} />
             </div>
@@ -297,10 +297,10 @@ export default function ChatScreen() {
 
         {/* Right Header Actions: Rating, Recommend, Report & Block */}
         <div className="flex items-center space-x-1.5 flex-shrink-0">
-          <div className={`flex items-center text-amber-500 font-mono text-[11px] px-2 py-1 rounded-xl border ${
-            isDark ? 'bg-app border-line' : 'bg-amber-50 border-amber-200'
+          <div className={`flex items-center text-accent font-mono text-[11px] px-2 py-1 rounded-xl border ${
+            isDark ? 'bg-app border-line' : 'bg-accent/15 border-accent/40'
           }`}>
-            <Star className="w-3.5 h-3.5 fill-amber-400 mr-1" />
+            <Star className="w-3.5 h-3.5 fill-accent mr-1" />
             <span className="font-bold">{currentPeer.rating}</span>
           </div>
 
@@ -317,7 +317,7 @@ export default function ChatScreen() {
           <button
             onClick={() => setShowReportChatModal(true)}
             title="Denunciar Usuario"
-            className="p-1.5 rounded-xl border text-amber-400 border-amber-500/30 hover:bg-amber-500/10 active:scale-95 transition-all flex items-center justify-center"
+            className="p-1.5 rounded-xl border text-accent border-accent/30 hover:bg-accent/10 active:scale-95 transition-all flex items-center justify-center"
           >
             <AlertTriangle className="w-3.5 h-3.5" />
           </button>
@@ -361,7 +361,7 @@ export default function ChatScreen() {
                   }}
                   className={`w-full flex items-center space-x-2.5 p-2 rounded-xl transition-all ${
                     peer.id === currentPeer.id
-                      ? isDark ? 'bg-[#18243C] border border-[#F7931A]' : 'bg-amber-100 border border-amber-400'
+                      ? isDark ? 'bg-[#18243C] border border-[#F7931A]' : 'bg-accent/15 border border-accent/40'
                       : isDark ? 'hover:bg-[#18243C]/60 text-slate-200' : 'hover:bg-slate-100 text-slate-800'
                   }`}
                 >
@@ -381,7 +381,7 @@ export default function ChatScreen() {
                     </div>
                     <div className="flex items-center justify-between text-[10px] text-slate-400 mt-0.5">
                       <span className="truncate">{peer.role || peer.category}</span>
-                      <span className={unlocked ? 'text-emerald-500 font-bold' : 'text-amber-500'}>
+                      <span className={unlocked ? 'text-emerald-500 font-bold' : 'text-accent'}>
                         {unlocked ? '✓ Conectado' : '🔒 Requiere Aceptar'}
                       </span>
                     </div>
@@ -416,7 +416,7 @@ export default function ChatScreen() {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {/* Card de Aviso de Seguridad */}
           <div className={`p-3.5 rounded-2xl border text-center ${
-            isDark ? 'bg-card border-amber-500/40 text-amber-300' : 'bg-amber-50 border-amber-300 text-amber-950'
+            isDark ? 'bg-card border-accent/40 text-accent' : 'bg-accent/15 border-accent/40 text-accent'
           }`}>
             <div className="flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider mb-1">
               <Lock size={14} className="text-accent" />
@@ -444,7 +444,7 @@ export default function ChatScreen() {
                   {currentPeer.serviceModality && (
                     <span className={`text-[10px] font-extrabold px-2 py-0.2 rounded-full border shadow-xs ${
                       currentPeer.serviceModality === 'pasajeros'
-                        ? 'bg-amber-500/20 text-accent border-amber-500/40'
+                        ? 'bg-accent/20 text-accent border-accent/40'
                         : currentPeer.serviceModality === 'envios'
                         ? 'bg-blue-500/20 text-blue-400 border-blue-500/40'
                         : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
@@ -454,8 +454,8 @@ export default function ChatScreen() {
                   )}
                 </div>
                 <div className="flex items-center gap-2 text-xs mt-1 text-slate-400">
-                  <span className="flex items-center gap-1 text-amber-500 font-bold">
-                    <Star size={13} className="fill-amber-400 text-amber-500" />
+                  <span className="flex items-center gap-1 text-accent font-bold">
+                    <Star size={13} className="fill-accent text-accent" />
                     {currentPeer.rating} ({currentPeer.reviewsCount || 45} reseñas)
                   </span>
                   <span>•</span>
@@ -496,7 +496,7 @@ export default function ChatScreen() {
                   >
                     <div className="flex items-center justify-between font-bold mb-0.5">
                       <span>{rev.author}</span>
-                      <span className="text-amber-500">★★★★★</span>
+                      <span className="text-accent">★★★★★</span>
                     </div>
                     <p className="italic">"{rev.comment}"</p>
                   </div>
@@ -542,8 +542,8 @@ export default function ChatScreen() {
               type="button"
               className={`flex items-center justify-center space-x-1 py-1.5 px-2.5 rounded-xl border text-xs font-bold transition-all shadow-xs active:scale-[0.98] ${
                 isDark
-                  ? 'bg-card border-amber-500/40 text-accent hover:bg-amber-500/10'
-                  : 'bg-white border-amber-400 text-amber-700 hover:bg-amber-50'
+                  ? 'bg-card border-accent/40 text-accent hover:bg-accent/10'
+                  : 'bg-white border-accent/40 text-accent hover:bg-accent/15'
               }`}
               title="Ver comparativa de ahorro vs apps tradicionales"
             >
@@ -587,7 +587,7 @@ export default function ChatScreen() {
 
           {/* 3. SISTEMA DE CONFIRMACIÓN ANTIFRAUDE Y PAGO FÍSICO CON PIN P2P */}
           <div className={`p-3 border-b transition-colors flex-shrink-0 ${
-            isDark ? 'bg-[#080E24] border-line' : 'bg-amber-50/90 border-amber-200'
+            isDark ? 'bg-[#080E24] border-line' : 'bg-accent/90 border-accent/40'
           }`}>
             <div className="max-w-md mx-auto">
               {!isCadete ? (
@@ -603,7 +603,7 @@ export default function ChatScreen() {
                           <span className={`text-[11px] font-bold ${isDark ? 'text-ink1' : 'text-slate-900'}`}>
                             Tu PIN Antifraude:
                           </span>
-                          <span className="font-mono text-base font-black text-accent tracking-widest px-2.5 py-0.5 rounded-lg bg-black/40 border border-amber-500/50 shadow-inner">
+                          <span className="font-mono text-base font-black text-accent tracking-widest px-2.5 py-0.5 rounded-lg bg-black/40 border border-accent/50 shadow-inner">
                             {activePin}
                           </span>
                         </div>
@@ -623,7 +623,7 @@ export default function ChatScreen() {
                         <button
                           onClick={generateNewPin}
                           title="Regenerar PIN aleatorio"
-                          className="p-1.5 text-xs text-accent hover:bg-amber-500/10 rounded-lg border border-amber-500/30 active:scale-95 flex items-center gap-1 transition-all"
+                          className="p-1.5 text-xs text-accent hover:bg-accent/10 rounded-lg border border-accent/30 active:scale-95 flex items-center gap-1 transition-all"
                         >
                           <RefreshCw className="w-3 h-3" />
                           <span className="text-[10px] font-semibold">Nuevo</span>
@@ -650,7 +650,7 @@ export default function ChatScreen() {
                     <button
                       onClick={() => resendPinViaChat(currentPeer.id)}
                       className={`px-2 py-1 rounded-lg border flex items-center gap-1 transition-all ${
-                        isDark ? 'bg-card border-slate-700 text-accent hover:bg-slate-800' : 'bg-white border-amber-300 text-amber-700 hover:bg-amber-50'
+                        isDark ? 'bg-card border-slate-700 text-accent hover:bg-slate-800' : 'bg-white border-accent/40 text-accent hover:bg-accent/15'
                       }`}
                       title="Enviar código al chat"
                     >
@@ -828,7 +828,7 @@ export default function ChatScreen() {
                 return (
                   <div key={msg.id} className="flex justify-center my-2">
                     <div className={`border-2 rounded-2xl p-3.5 max-w-xs w-full shadow-xl ${
-                      isDark ? 'bg-[#241A0B] border-[#F7931A]/70' : 'bg-amber-50 border-amber-400'
+                      isDark ? 'bg-[#241A0B] border-[#F7931A]/70' : 'bg-accent/15 border-accent/40'
                     }`}>
                       <div className="flex items-center space-x-2 text-accent mb-1.5">
                         <Zap className="w-4 h-4 fill-[#F7931A]" />
@@ -887,7 +887,7 @@ export default function ChatScreen() {
                 return (
                   <div key={msg.id} className="flex justify-center my-2 animate-fadeIn">
                     <div className={`border rounded-2xl p-3 max-w-xs w-full text-center ${
-                      isDark ? 'bg-[#1F180B] border-amber-500/60 text-amber-300' : 'bg-amber-50 border-amber-300 text-amber-950'
+                      isDark ? 'bg-[#1F180B] border-accent/60 text-accent' : 'bg-accent/15 border-accent/40 text-accent'
                     }`}>
                       <div className="flex items-center justify-center gap-1.5 font-bold text-xs text-accent mb-1">
                         <Key size={14} />
@@ -1209,7 +1209,7 @@ export default function ChatScreen() {
                 </div>
                 <div className="flex justify-between items-center text-[11px] mt-1">
                   <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>Seguridad:</span>
-                  <span className="text-amber-500 font-bold font-mono">PIN {activePin} en mano</span>
+                  <span className="text-accent font-bold font-mono">PIN {activePin} en mano</span>
                 </div>
               </div>
 
@@ -1357,7 +1357,7 @@ export default function ChatScreen() {
       {showReportChatModal && (
         <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-amber-300 text-slate-900'
+            isDark ? 'bg-card border-accent/50 text-ink1' : 'bg-white border-accent/40 text-slate-900'
           }`}>
             <button
               onClick={() => setShowReportChatModal(false)}
@@ -1376,7 +1376,7 @@ export default function ChatScreen() {
               <span>Volver</span>
             </button>
 
-            <div className="flex items-center gap-2 text-amber-400 mb-2">
+            <div className="flex items-center gap-2 text-accent mb-2">
               <AlertTriangle size={20} />
               <h3 className="text-sm font-bold">Denunciar a {currentPeer.name}</h3>
             </div>
@@ -1418,7 +1418,7 @@ export default function ChatScreen() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 min-h-[44px] py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-red-500 text-slate-950 font-bold text-xs shadow-md active:scale-95"
+                  className="flex-1 min-h-[44px] py-2.5 rounded-xl bg-gradient-to-r from-accent to-red-500 text-slate-950 font-bold text-xs shadow-md active:scale-95"
                 >
                   Confirmar Denuncia (🟡)
                 </button>

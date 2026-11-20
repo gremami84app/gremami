@@ -1016,7 +1016,7 @@ export default function MapaP2P(props) {
                   className={`px-2.5 py-1 rounded-lg text-[10.5px] font-bold whitespace-nowrap transition-all border ${
                     isModSelected
                       ? mod.id === 'pasajeros'
-                        ? 'bg-amber-500/25 text-accent border-accent shadow-xs'
+                        ? 'bg-accent/25 text-accent border-accent shadow-xs'
                         : mod.id === 'envios'
                         ? 'bg-blue-500/25 text-blue-400 border-blue-500 shadow-xs'
                         : mod.id === 'mixto'
@@ -1073,8 +1073,8 @@ export default function MapaP2P(props) {
                 <span>🟢 {recommendedCount} Recomendados</span>
               </span>
               <span className="text-slate-500">•</span>
-              <span className="flex items-center gap-1 text-amber-500 font-bold">
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-glow-gold" />
+              <span className="flex items-center gap-1 text-accent font-bold">
+                <span className="w-2.5 h-2.5 rounded-full bg-accent/15 shadow-glow-gold" />
                 <span>🟡 {reportedCount} Denunciados</span>
               </span>
               {blockedCount > 0 && (
@@ -1121,7 +1121,7 @@ export default function MapaP2P(props) {
                 className={`px-2.5 py-1 rounded-xl border font-bold text-[11px] flex items-center gap-1 active:scale-95 transition-all ${
                   isDark
                     ? 'bg-card border-accent/50 text-accent hover:bg-[#1A253D]'
-                    : 'bg-amber-50 border-accent/60 text-amber-800 hover:bg-accent/15'
+                    : 'bg-accent/15 border-accent/60 text-accent hover:bg-accent/15'
                 }`}
                 title="Pedir un envío ahora mismo (alerta a los cadetes cercanos)"
               >
@@ -1134,7 +1134,7 @@ export default function MapaP2P(props) {
                 onClick={() => setShowAuctionQuotesModal(true)}
                 className={`px-2.5 py-1 rounded-xl border font-bold text-[11px] flex items-center gap-1.5 active:scale-95 transition-all relative ${
                   totalOffersCount > 0
-                    ? 'bg-amber-500/20 border-accent text-accent'
+                    ? 'bg-accent/20 border-accent text-accent'
                     : isDark ? 'bg-card border-slate-700 text-slate-300' : 'bg-slate-100 border-slate-300 text-slate-700'
                 }`}
                 title="Ver cotizaciones de cadetes recibidas para adjudicar"
@@ -1196,7 +1196,7 @@ export default function MapaP2P(props) {
         {isCategoryEmpty && (
           <div className={`absolute top-14 left-1/2 -translate-x-1/2 z-[1001] flex items-center gap-2 px-4 py-2.5 rounded-full border shadow-lg text-[12px] font-bold whitespace-nowrap pointer-events-none ${
             isDark
-              ? 'bg-card/95 text-amber-400 border-amber-500/40 backdrop-blur-sm'
+              ? 'bg-card/95 text-accent border-accent/40 backdrop-blur-sm'
               : 'bg-white/95 text-accent border-accent/40 backdrop-blur-sm'
           }`}>
             <AlertTriangle size={14} className="flex-shrink-0" />
@@ -1346,7 +1346,7 @@ export default function MapaP2P(props) {
                   🔴 Usuario Bloqueado por ti
                 </span>
               ) : getPeerReputation(selectedNode.id) === 'reported' ? (
-                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1">
+                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-accent/20 text-accent border border-accent/40 flex items-center gap-1">
                   🟡 Advertencia: {selectedNode.reportsCount || 1} denuncia(s) en la red
                 </span>
               ) : (
@@ -1389,7 +1389,7 @@ export default function MapaP2P(props) {
                   isUserBlocked(selectedNode.id)
                     ? 'border-rose-500 ring-2 ring-rose-500/40'
                     : getPeerReputation(selectedNode.id) === 'reported'
-                    ? 'border-accent/60 ring-2 ring-amber-400/40'
+                    ? 'border-accent/60 ring-2 ring-accent'
                     : 'border-emerald-500 ring-2 ring-emerald-500/40'
                 }`}
               />
@@ -1412,13 +1412,13 @@ export default function MapaP2P(props) {
                   <span>Redes Sociales Públicas Disponibles</span>
                   <span>🌐</span>
                 </span>
-                <span className="text-[10px] bg-amber-500/15 text-amber-500 px-2 py-0.5 rounded-full border border-amber-500/30 font-medium truncate">
+                <span className="text-[10px] bg-accent/15 text-accent px-2 py-0.5 rounded-full border border-accent/30 font-medium truncate">
                   {selectedNode.role || selectedNode.category}
                 </span>
                 {selectedNode.serviceModality && (
                   <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border shadow-xs flex items-center gap-1 ${
                     selectedNode.serviceModality === 'pasajeros'
-                      ? 'bg-amber-500/20 text-accent border-amber-500/40'
+                      ? 'bg-accent/20 text-accent border-accent/40'
                       : selectedNode.serviceModality === 'envios'
                       ? 'bg-blue-500/20 text-blue-400 border-blue-500/40'
                       : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
@@ -1437,8 +1437,8 @@ export default function MapaP2P(props) {
 
               {/* Métricas: Rating, Distancia y Contador de Operaciones Auditadas con PIN */}
               <div className={`flex flex-wrap items-center gap-2 text-xs mt-1.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                <span className="flex items-center gap-1 text-amber-500 font-semibold">
-                  <Star size={13} className="fill-amber-400 text-amber-500" />
+                <span className="flex items-center gap-1 text-accent font-semibold">
+                  <Star size={13} className="fill-accent text-accent" />
                   {selectedNode.rating} ({selectedNode.reviewsCount})
                 </span>
                 <span>•</span>
@@ -1462,7 +1462,7 @@ export default function MapaP2P(props) {
                   {selectedNode.baseFee || '$1.500 ARS'}
                 </span>
                 <span className={`flex items-center gap-1 font-mono text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                  <Wallet size={12} className="text-amber-500" />
+                  <Wallet size={12} className="text-accent" />
                   {selectedNode.valensBalance || 10.0} VALENS
                 </span>
               </div>
@@ -1529,7 +1529,7 @@ export default function MapaP2P(props) {
                   <span className={`text-[9.5px] px-2 py-0.5 rounded-full font-bold border ${
                     isAuth
                       ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30'
-                      : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                      : 'bg-accent/10 text-accent border-accent/30'
                   }`}>
                     {isAuth ? 'Canales Publicos' : 'Requiere sesion'}
                   </span>
@@ -1616,7 +1616,7 @@ export default function MapaP2P(props) {
                 ) : (
                   /* No autenticado: bloqueo con CTA de login */
                   <div className={`rounded-xl border p-4 flex flex-col items-center gap-3 text-center ${
-                    isDark ? 'bg-card/80 border-amber-500/30' : 'bg-amber-50/80 border-accent/40'
+                    isDark ? 'bg-card/80 border-accent/30' : 'bg-accent/80 border-accent/40'
                   }`}>
                     <div className="flex items-center gap-3 opacity-40 pointer-events-none">
                       <div className="w-9 h-9 rounded-xl bg-pink-500/20 flex items-center justify-center text-pink-400">
@@ -1686,9 +1686,9 @@ export default function MapaP2P(props) {
                   </button>
                 </div>
               ) : getDniVerificationStatus(selectedNode.id) === 'pending' ? (
-                <div className="flex items-center justify-between gap-2 p-2 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs">
+                <div className="flex items-center justify-between gap-2 p-2 rounded-xl bg-accent/15 border border-accent/40 text-accent text-xs">
                   <span className="font-bold flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                    <span className="w-2 h-2 rounded-full bg-accent/15 animate-ping" />
                     <span>Solicitud enviada • Esperando confirmación del prestador...</span>
                   </span>
                   <button
@@ -1696,7 +1696,7 @@ export default function MapaP2P(props) {
                       if (setActiveChatPeerId) setActiveChatPeerId(selectedNode.id);
                       setActiveTab('chat');
                     }}
-                    className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-bold text-[10.5px] active:scale-95"
+                    className="px-2.5 py-1 rounded-lg bg-accent/15 hover:bg-accent/15 text-black font-bold text-[10.5px] active:scale-95"
                   >
                     Abrir Chat 💬
                   </button>
@@ -1732,7 +1732,7 @@ export default function MapaP2P(props) {
             {/* b) Denunciar */}
             <button
               onClick={() => setShowReportModal(true)}
-              className="py-1.5 px-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-[11px] font-bold flex items-center justify-center gap-1 active:scale-95 transition-all"
+              className="py-1.5 px-2 rounded-xl bg-accent/15 hover:bg-accent/25 border border-accent/40 text-accent text-[11px] font-bold flex items-center justify-center gap-1 active:scale-95 transition-all"
               title="Abrir formulario de denuncia"
             >
               <AlertTriangle size={13} />
@@ -1758,7 +1758,7 @@ export default function MapaP2P(props) {
           <div className={`mt-2.5 px-3 py-2 rounded-2xl border flex items-center justify-between shadow-xs ${
             isDark
               ? 'bg-gradient-to-r from-[#1A1305] via-[#121B2D] to-[#1A1305] border-accent/50 text-[#F0B90B]'
-              : 'bg-amber-50 border-accent/40 text-amber-900'
+              : 'bg-accent/15 border-accent/40 text-accent'
           }`}>
             <div className="flex items-center space-x-2.5">
               <span className="text-lg">🪙</span>
@@ -1766,7 +1766,7 @@ export default function MapaP2P(props) {
                 <p className="text-xs font-black tracking-tight leading-none">
                   Premia tus envíos con ValensCoin 🪙
                 </p>
-                <p className={`text-[10px] mt-0.5 leading-tight ${isDark ? 'text-amber-200/80' : 'text-amber-800'}`}>
+                <p className={`text-[10px] mt-0.5 leading-tight ${isDark ? 'text-accent' : 'text-accent'}`}>
                   Recibe cashback/recompensa directa en tokens al validar tu entrega con PIN
                 </p>
               </div>
@@ -1785,7 +1785,7 @@ export default function MapaP2P(props) {
                 <span className="flex items-center gap-1">
                   <ShieldCheck size={12} /> Reseña verificada post-servicio
                 </span>
-                <span className="font-mono text-amber-400">⭐⭐⭐⭐⭐ 5.0</span>
+                <span className="font-mono text-accent">⭐⭐⭐⭐⭐ 5.0</span>
               </div>
               <p className="italic text-[11px]">
                 "{selectedNode.recentReviews[0].comment}" — <span className="font-semibold">{selectedNode.recentReviews[0].author}</span>
@@ -1802,7 +1802,7 @@ export default function MapaP2P(props) {
             ) : !isChatUnlocked(selectedNode.id) ? (
               <div className="space-y-2">
                 <div className={`p-2 rounded-xl border text-[11px] text-center ${
-                  isDark ? 'bg-amber-500/10 border-amber-500/30 text-amber-300' : 'bg-amber-50 border-accent/40 text-amber-900'
+                  isDark ? 'bg-accent/10 border-accent/30 text-accent' : 'bg-accent/15 border-accent/40 text-accent'
                 }`}>
                   🔒 <strong>Chat P2P Protegido:</strong> Revisa el perfil y calificaciones antes de conectar. Al presionar el botón habilitarás la sala privada.
                 </div>
@@ -1858,7 +1858,7 @@ export default function MapaP2P(props) {
                   <span>Volver</span>
                 </button>
 
-                <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-amber-500/20 text-accent border border-amber-500/40 flex items-center gap-1">
+                <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-accent/20 text-accent border border-accent/40 flex items-center gap-1">
                   Solicitud P2P
                 </span>
                 <span className="text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/30">
@@ -1885,13 +1885,13 @@ export default function MapaP2P(props) {
               <img
                 src={activeAuction.clientAvatar || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80"}
                 alt={activeAuction.clientName}
-                className="w-12 h-12 rounded-2xl object-cover border-2 border-amber-500/50 shadow-md flex-shrink-0"
+                className="w-12 h-12 rounded-2xl object-cover border-2 border-accent/50 shadow-md flex-shrink-0"
               />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
                   <h3 className="font-extrabold text-sm truncate">{activeAuction.clientName}</h3>
-                  <span className="flex items-center text-amber-400 text-xs font-bold">
-                    <Star size={11} className="fill-amber-400 mr-0.5" />
+                  <span className="flex items-center text-accent text-xs font-bold">
+                    <Star size={11} className="fill-accent mr-0.5" />
                     {activeAuction.clientRating || '5.0'}
                   </span>
                 </div>
@@ -1952,7 +1952,7 @@ export default function MapaP2P(props) {
                   <span className="text-xs font-black flex items-center gap-1.5 text-accent">
                     <span>📊 Cotizaciones de la Competencia</span>
                   </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-500/15 text-accent border border-amber-500/30">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-accent/15 text-accent border border-accent/30">
                     {offersList.length} cotización(es) recibida(s)
                   </span>
                 </div>
@@ -1976,7 +1976,7 @@ export default function MapaP2P(props) {
                           /* Identificación de Oferta Propia Resaltada */
                           <div
                             key={offer.id || `own-${idx}`}
-                            className="p-2.5 rounded-xl border-2 bg-gradient-to-r from-amber-500/15 via-[#1A1305] to-amber-500/15 border-accent shadow-md transition-all"
+                            className="p-2.5 rounded-xl border-2 bg-gradient-to-r from-accent via-[#1A1305] to-accent border-accent shadow-md transition-all"
                           >
                             <div className="flex items-center justify-between mb-1">
                               <div className="flex items-center gap-1.5">
@@ -1992,10 +1992,10 @@ export default function MapaP2P(props) {
                                 ${Number(offer.feeArs || 0).toLocaleString('es-AR')} ARS
                               </span>
                             </div>
-                            <p className={`text-[11px] italic font-medium ${isDark ? 'text-amber-200/90' : 'text-amber-900'}`}>
+                            <p className={`text-[11px] italic font-medium ${isDark ? 'text-accent' : 'text-accent'}`}>
                               "{offer.note || 'Sin nota aclaratoria.'}"
                             </p>
-                            <div className="flex items-center justify-between text-[9px] text-slate-400 mt-1.5 pt-1 border-t border-amber-500/20 font-mono">
+                            <div className="flex items-center justify-between text-[9px] text-slate-400 mt-1.5 pt-1 border-t border-accent/20 font-mono">
                               <span>Equivalente estimado: ~{((offer.feeArs || 0) / 2400).toFixed(1)} VALENS</span>
                               <span>{offer.timestamp || 'Recién'}</span>
                             </div>
@@ -2066,7 +2066,7 @@ export default function MapaP2P(props) {
       {showReportModal && selectedNode && (
         <div className="fixed inset-0 z-[2000] bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-accent/40 text-slate-900'
+            isDark ? 'bg-card border-accent/50 text-ink1' : 'bg-white border-accent/40 text-slate-900'
           }`}>
             <button
               onClick={() => setShowReportModal(false)}
@@ -2086,7 +2086,7 @@ export default function MapaP2P(props) {
               <span>Volver</span>
             </button>
 
-            <div className="flex items-center gap-2 text-amber-400 mb-2">
+            <div className="flex items-center gap-2 text-accent mb-2">
               <AlertTriangle size={20} />
               <h3 className="text-sm font-bold">Denunciar a {selectedNode.name}</h3>
             </div>
@@ -2135,7 +2135,7 @@ export default function MapaP2P(props) {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 min-h-[44px] py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-red-500 text-slate-950 font-bold text-xs shadow-md active:scale-95"
+                  className="flex-1 min-h-[44px] py-2.5 rounded-xl bg-gradient-to-r from-accent to-red-500 text-slate-950 font-bold text-xs shadow-md active:scale-95"
                 >
                   Registrar Denuncia (🟡)
                 </button>
@@ -2285,7 +2285,7 @@ export default function MapaP2P(props) {
       {showQuoteSubmitModal && quoteTargetAuction && (
         <div className="fixed inset-0 z-[2000] bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-accent/40 text-slate-900'
+            isDark ? 'bg-card border-accent/50 text-ink1' : 'bg-white border-accent/40 text-slate-900'
           }`}>
             <button
               onClick={() => setShowQuoteSubmitModal(false)}
@@ -2401,7 +2401,7 @@ export default function MapaP2P(props) {
       {showNewAuctionModal && (
         <div className="fixed inset-0 z-[2000] bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-md w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-accent/40 text-slate-900'
+            isDark ? 'bg-card border-accent/50 text-ink1' : 'bg-white border-accent/40 text-slate-900'
           }`}>
             <button
               onClick={() => setShowNewAuctionModal(false)}
@@ -2543,7 +2543,7 @@ export default function MapaP2P(props) {
       {showAuctionQuotesModal && (
         <div className="fixed inset-0 z-[2000] bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-lg w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-accent/40 text-slate-900'
+            isDark ? 'bg-card border-accent/50 text-ink1' : 'bg-white border-accent/40 text-slate-900'
           }`}>
             <button
               onClick={() => setShowAuctionQuotesModal(false)}
@@ -2595,7 +2595,7 @@ export default function MapaP2P(props) {
                             <span className="font-extrabold text-xs text-accent">
                               ⏰ {req.scheduledTime || 'Hoy'}
                             </span>
-                            <span className="text-[10px] px-1.5 py-0.2 rounded font-mono font-bold bg-amber-500/20 text-amber-300">
+                            <span className="text-[10px] px-1.5 py-0.2 rounded font-mono font-bold bg-accent/20 text-accent">
                               {req.categoryLabel || 'Transporte'}
                             </span>
                             {isAwarded ? (
@@ -2664,13 +2664,13 @@ export default function MapaP2P(props) {
                                     <img
                                       src={offer.cadeteAvatar}
                                       alt={offer.cadeteName}
-                                      className="w-10 h-10 rounded-xl object-cover border border-amber-500/40 flex-shrink-0"
+                                      className="w-10 h-10 rounded-xl object-cover border border-accent/40 flex-shrink-0"
                                     />
                                     <div>
                                       <div className="flex items-center gap-1.5">
                                         <h4 className="font-bold text-xs">{offer.cadeteName}</h4>
-                                        <span className="flex items-center text-amber-400 text-[10px] font-bold">
-                                          <Star size={10} className="fill-amber-400 mr-0.5" />
+                                        <span className="flex items-center text-accent text-[10px] font-bold">
+                                          <Star size={10} className="fill-accent mr-0.5" />
                                           {offer.cadeteRating || '4.9'}
                                         </span>
                                       </div>

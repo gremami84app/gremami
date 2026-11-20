@@ -511,7 +511,7 @@ export default function WalletScreen() {
         </button>
         <span className={`text-xs font-mono px-2 py-0.5 rounded-lg border ${
           walletSectionTab === 'wallet'
-            ? isDark ? 'text-[#F0B90B] bg-[#121B2D] border-[#1F2D48]' : 'text-amber-700 bg-amber-50 border-amber-200 font-bold'
+            ? isDark ? 'text-[#F0B90B] bg-[#121B2D] border-[#1F2D48]' : 'text-accent bg-accent/15 border-accent/40 font-bold'
             : isDark ? 'text-emerald-400 bg-[#064E3B]/40 border-emerald-500/40' : 'text-emerald-700 bg-emerald-50 border-emerald-300 font-bold'
         }`}>
           {walletSectionTab === 'wallet' ? 'Mi billetera' : 'Escuela Cripto'}
@@ -678,7 +678,7 @@ export default function WalletScreen() {
           <div className={`relative rounded-2xl border p-5 shadow-xl overflow-hidden transition-colors ${
             isDark
               ? 'bg-gradient-to-br from-[#121B2D] via-[#101726] to-[#070C1E] border-[#1F2D48]'
-              : 'bg-gradient-to-br from-white via-slate-50 to-amber-50/50 border-slate-200'
+              : 'bg-gradient-to-br from-white via-slate-50 to-accent border-slate-200'
           }`}>
             {/* (S09.7) Orbes de glow eliminados: profundidad por borde, no por blur */}
 
@@ -693,7 +693,7 @@ export default function WalletScreen() {
               </div>
               <div className="flex items-center space-x-1.5">
                 <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${
-                  isDark ? 'text-[#F0B90B] bg-[#F7931A]/10 border-[#F7931A]/30' : 'text-amber-800 bg-amber-100 border-amber-300 font-bold'
+                  isDark ? 'text-[#F0B90B] bg-[#F7931A]/10 border-[#F7931A]/30' : 'text-accent bg-accent/15 border-accent/40 font-bold'
                 }`}>
                   ValensCoin
                 </span>
@@ -966,7 +966,7 @@ export default function WalletScreen() {
               <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${
                 isAllCompleted 
                   ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' 
-                  : isDark ? 'bg-[#070C1E] text-amber-400 border-amber-500/30' : 'bg-amber-100 text-amber-900 border-amber-300'
+                  : isDark ? 'bg-[#070C1E] text-accent border-accent/30' : 'bg-accent/15 text-accent border-accent/40'
               }`}>
                 {completedModules.length}/{totalModules} Completados
               </span>
@@ -974,7 +974,7 @@ export default function WalletScreen() {
 
             {/* Barra de Progreso Interactiva */}
             <div className={`p-3.5 rounded-xl border ${
-              isDark ? 'bg-[#070C1E] border-[#1F2D48]' : 'bg-amber-50/50 border-amber-200'
+              isDark ? 'bg-[#070C1E] border-[#1F2D48]' : 'bg-accent/50 border-accent/40'
             }`}>
               <div className="flex items-center justify-between text-xs mb-1.5">
                 <span className={`font-bold flex items-center gap-1.5 ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
@@ -1070,7 +1070,7 @@ export default function WalletScreen() {
                       isDark ? 'bg-[#070C1E]/95 border-[#1F2D48] text-gray-300' : 'bg-slate-50/80 border-slate-200 text-slate-700'
                     }`}>
                       <div className={`p-3 rounded-xl border ${
-                        isDark ? 'text-white bg-[#121B2D] border-[#1F2D48]' : 'text-slate-900 bg-amber-50/70 border-amber-200'
+                        isDark ? 'text-white bg-[#121B2D] border-[#1F2D48]' : 'text-slate-900 bg-accent/70 border-accent/40'
                       }`}>
                         <p className="font-semibold text-xs flex items-start gap-1.5">
                           <span className="text-base">💡</span>
@@ -1117,12 +1117,12 @@ export default function WalletScreen() {
           <div className={`p-4 rounded-2xl border shadow-xl transition-all ${
             isDark
               ? 'bg-gradient-to-br from-[#121B2D] via-[#101726] to-[#0A1128] border-[#F7931A]/30'
-              : 'bg-gradient-to-br from-white via-amber-50/50 to-orange-50/40 border-amber-200'
+              : 'bg-gradient-to-br from-white via-accent to-orange-50/40 border-accent/40'
           }`}>
             <div className="flex items-center justify-between mb-2.5">
               <div className="flex items-center space-x-2 text-[#F0B90B]">
                 <HelpCircle className="w-4 h-4 text-[#F7931A]" />
-                <span className={`text-xs font-bold ${isDark ? 'text-[#F0B90B]' : 'text-amber-900'}`}>
+                <span className={`text-xs font-bold ${isDark ? 'text-[#F0B90B]' : 'text-accent'}`}>
                   Mini-Trivia de Seguridad Cripto
                 </span>
               </div>
@@ -1159,7 +1159,7 @@ export default function WalletScreen() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className={`text-xs font-mono font-bold uppercase tracking-wider ${
-                      isDark ? 'text-amber-400' : 'text-amber-700'
+                      isDark ? 'text-accent' : 'text-accent'
                     }`}>
                       {currentQ.title}
                     </span>
@@ -1177,7 +1177,7 @@ export default function WalletScreen() {
                       const isOptionSelected = selectedAnswer === idx;
                       let btnStyle = isDark
                         ? 'bg-[#070C1E] border-[#1F2D48] text-gray-300 hover:border-[#2D3E61]'
-                        : 'bg-white border-slate-200 text-slate-800 hover:border-amber-400';
+                        : 'bg-white border-slate-200 text-slate-800 hover:border-accent/40';
 
                       if (isAnswered) {
                         if (idx === currentQ.correctIndex) {
@@ -1248,7 +1248,7 @@ export default function WalletScreen() {
           <div className={`p-4 rounded-2xl border shadow-xl transition-colors ${
             schoolRewardClaimed
               ? isDark ? 'bg-[#0A1A22] border-emerald-500/40' : 'bg-emerald-50 border-emerald-300'
-              : isDark ? 'bg-[#121B2D] border-[#F7931A]/30' : 'bg-gradient-to-br from-white to-amber-50 border-amber-200'
+              : isDark ? 'bg-[#121B2D] border-[#F7931A]/30' : 'bg-gradient-to-br from-white to-accent border-accent/40'
           }`}>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
@@ -1349,7 +1349,7 @@ export default function WalletScreen() {
             <div className="space-y-3">
               {/* Saldo disponible */}
               <div className={`p-3 rounded-xl border text-center ${
-                isDark ? 'bg-[#070C1E] border-[#1F2D48]' : 'bg-amber-50 border-amber-200'
+                isDark ? 'bg-[#070C1E] border-[#1F2D48]' : 'bg-accent/15 border-accent/40'
               }`}>
                 <p className={`text-xs mb-0.5 ${isDark ? 'text-[#8C9BB4]' : 'text-slate-500'}`}>Saldo disponible</p>
                 <p className="text-2xl font-black text-[#F0B90B] font-mono">{Math.floor(balance)} VAL</p>
@@ -1465,7 +1465,7 @@ export default function WalletScreen() {
                         ? 'text-ink2 border-line bg-elev'
                         : isDark
                         ? 'text-accent border-accent/40 bg-accent/10'
-                        : 'text-amber-700 border-amber-300 bg-amber-50'
+                        : 'text-accent border-accent/40 bg-accent/15'
                     }`}
                   >
                     {qrStatus}
@@ -1496,7 +1496,7 @@ export default function WalletScreen() {
                       type="button"
                       onClick={() => setSendAmount(String(Math.floor(balance)))}
                       className={`text-xs px-1.5 py-0.5 rounded border font-mono font-bold transition-colors ${
-                        isDark ? 'bg-[#F7931A]/20 border-[#F7931A]/40 text-[#F0B90B]' : 'bg-amber-100 border-amber-300 text-amber-800'
+                        isDark ? 'bg-[#F7931A]/20 border-[#F7931A]/40 text-[#F0B90B]' : 'bg-accent/15 border-accent/40 text-accent'
                       }`}
                     >
                       Máx

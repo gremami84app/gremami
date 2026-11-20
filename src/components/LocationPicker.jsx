@@ -61,7 +61,7 @@ export default function LocationPicker({
         {/* Encabezado */}
         <div className="p-4 border-b border-slate-800/60 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400">
+            <div className="p-2 rounded-xl bg-accent/10 text-accent">
               <MapPin className="w-5 h-5" />
             </div>
             <div>
@@ -94,7 +94,7 @@ export default function LocationPicker({
         {/* Detalles de Posición y Confirmación */}
         <div className="p-4 bg-slate-900/60 border-t border-slate-800 flex flex-col gap-3">
           <div className="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-slate-800">
-            <Crosshair className="w-4 h-4 text-amber-400 flex-shrink-0" />
+            <Crosshair className="w-4 h-4 text-accent flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-[10px] text-slate-400 font-mono">
                 Lat: {selectedCoords[0]?.toFixed(5)} • Lng: {selectedCoords[1]?.toFixed(5)}
@@ -107,7 +107,7 @@ export default function LocationPicker({
                 className="w-full bg-transparent text-xs font-semibold focus:outline-none text-slate-200 placeholder-slate-500"
               />
             </div>
-            {isGeocoding && <span className="text-[10px] text-amber-400 animate-pulse">Buscando...</span>}
+            {isGeocoding && <span className="text-[10px] text-accent animate-pulse">Buscando...</span>}
           </div>
 
           <div className="flex items-center gap-2">
@@ -119,7 +119,7 @@ export default function LocationPicker({
             </button>
             <button
               onClick={handleConfirm}
-              className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 text-xs font-black shadow-lg shadow-amber-500/20 hover:brightness-110 flex items-center justify-center gap-1.5"
+              className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent text-slate-950 text-xs font-black shadow-lg shadow-amber-500/20 hover:brightness-110 flex items-center justify-center gap-1.5"
             >
               <Check className="w-4 h-4" />
               <span>Confirmar Ubicación</span>

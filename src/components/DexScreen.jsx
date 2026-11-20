@@ -130,7 +130,7 @@ export default function DexScreen() {
           <span>Volver</span>
         </button>
         <span className={`text-[10px] font-mono px-2 py-0.5 rounded-lg border ${
-          isDark ? 'text-[#F0B90B] bg-card border-line' : 'text-amber-700 bg-amber-50 border-amber-200 font-bold'
+          isDark ? 'text-[#F0B90B] bg-card border-line' : 'text-accent bg-accent/15 border-accent/40 font-bold'
         }`}>
           Mercado DEX
         </span>
@@ -140,14 +140,14 @@ export default function DexScreen() {
       <div className={`relative rounded-2xl border p-4 shadow-xl overflow-hidden transition-colors ${
         isDark
           ? 'bg-gradient-to-br from-[#121B2D] via-[#101726] to-[#0A1128] border-line'
-          : 'bg-gradient-to-br from-white via-slate-50 to-amber-50/50 border-slate-200'
+          : 'bg-gradient-to-br from-white via-slate-50 to-accent border-slate-200'
       }`}>
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center space-x-2">
             <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
               isDark
                 ? 'bg-gradient-to-r from-[#F7931A]/20 to-[#E02424]/20 text-[#F0B90B] border-[#F7931A]/30'
-                : 'bg-amber-100 text-amber-800 border-amber-300'
+                : 'bg-accent/15 text-accent border-accent/40'
             }`}>
               📈 Mercado P2P DEX
             </span>
@@ -173,10 +173,10 @@ export default function DexScreen() {
               ? 'bg-[#0A2218]/60 border-emerald-500/40 text-emerald-300'
               : 'bg-emerald-50 border-emerald-300 text-emerald-900'
             : isDark
-            ? 'bg-[#2D120B]/70 border-amber-500/50 text-amber-300'
-            : 'bg-amber-50 border-amber-300 text-amber-900'
+            ? 'bg-[#2D120B]/70 border-accent/50 text-accent'
+            : 'bg-accent/15 border-accent/40 text-accent'
         }`}>
-          <AlertTriangle className={`w-4 h-4 flex-shrink-0 mt-0.5 ${hasMinBalance ? 'text-emerald-400' : 'text-amber-500'}`} />
+          <AlertTriangle className={`w-4 h-4 flex-shrink-0 mt-0.5 ${hasMinBalance ? 'text-emerald-400' : 'text-accent'}`} />
           <div className="flex-1 min-w-0">
             <p className="font-bold text-[11px] leading-tight">
               Regla Operativa: Requiere al menos 1.0 VALENS para visibilidad en el radar
@@ -235,7 +235,7 @@ export default function DexScreen() {
             onClick={() => setActiveFilter(f.id)}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border ${
               activeFilter === f.id
-                ? 'bg-accent text-slate-950 border-amber-400 shadow-md font-bold'
+                ? 'bg-accent text-slate-950 border-accent/40 shadow-md font-bold'
                 : isDark
                 ? 'bg-card text-slate-300 hover:text-ink1 border-slate-800'
                 : 'bg-white text-slate-700 hover:text-slate-900 border-slate-200 shadow-xs'
@@ -271,7 +271,7 @@ export default function DexScreen() {
                     : isDonation
                     ? isDark ? 'bg-card border-emerald-500/40 hover:border-emerald-500' : 'bg-white border-emerald-300 hover:border-emerald-500'
                     : isSell
-                    ? isDark ? 'bg-card border-amber-500/40 hover:border-amber-500' : 'bg-white border-amber-300 hover:border-amber-500'
+                    ? isDark ? 'bg-card border-accent/40 hover:border-accent/40' : 'bg-white border-accent/40 hover:border-accent/40'
                     : isDark ? 'bg-card border-cyan-500/40 hover:border-cyan-500' : 'bg-white border-cyan-300 hover:border-cyan-500'
                 }`}
               >
@@ -298,7 +298,7 @@ export default function DexScreen() {
                         isDonation
                           ? 'bg-emerald-950/40 text-emerald-300 border-emerald-700/50'
                           : isSell
-                          ? 'bg-amber-500/20 text-accent border-amber-500/40'
+                          ? 'bg-accent/20 text-accent border-accent/40'
                           : 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40'
                       }`}>
                         {isDonation ? '🎁 Auxilio Mutuo' : isSell ? '🛒 Venta de Tokens' : '💰 Compra de Tokens'}
@@ -468,7 +468,7 @@ export default function DexScreen() {
                       }}
                       className={`py-1.5 px-2 rounded-xl text-xs font-semibold border transition-all ${
                         orderType === t.id
-                          ? 'bg-accent text-slate-950 border-amber-400 font-bold'
+                          ? 'bg-accent text-slate-950 border-accent/40 font-bold'
                           : isDark
                           ? 'bg-card border-slate-800 text-slate-300'
                           : 'bg-slate-100 border-slate-300 text-slate-700'
@@ -620,9 +620,9 @@ export default function DexScreen() {
       {showTradeModal && (
         <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4 animate-fadeIn">
           <div className={`rounded-2xl border max-w-sm w-full p-5 shadow-2xl relative max-h-[90dvh] overflow-y-auto ${
-            isDark ? 'bg-card border-amber-500/50 text-ink1' : 'bg-white border-amber-300 text-slate-900'
+            isDark ? 'bg-card border-accent/50 text-ink1' : 'bg-white border-accent/40 text-slate-900'
           }`}>
-            <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-accent flex items-center justify-center mx-auto mb-2 border border-amber-500/40">
+            <div className="w-12 h-12 rounded-2xl bg-accent/20 text-accent flex items-center justify-center mx-auto mb-2 border border-accent/40">
               <Coins size={24} />
             </div>
 

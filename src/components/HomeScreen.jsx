@@ -150,7 +150,7 @@ export default function HomeScreen() {
       <div className={`relative rounded-2xl border p-4 shadow-xl overflow-hidden transition-colors ${
         isDark
           ? 'bg-gradient-to-br from-[#121B2D] via-[#101726] to-[#0A1128] border-[#1F2D48]'
-          : 'bg-gradient-to-br from-white via-slate-50 to-amber-50/40 border-slate-200'
+          : 'bg-gradient-to-br from-white via-slate-50 to-accent border-slate-200'
       }`}>
         {/* Ambient Glows */}
         <div className="absolute top-0 right-0 w-44 h-44 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
@@ -162,7 +162,7 @@ export default function HomeScreen() {
               <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border ${
                 isDark
                   ? 'bg-gradient-to-r from-[#F7931A]/20 to-[#E02424]/20 text-[#F0B90B] border-accent/30'
-                  : 'bg-accent/15 text-amber-800 border-accent/40'
+                  : 'bg-accent/15 text-accent border-accent/40'
               }`}>
                 <MapPin className="w-3.5 h-3.5 text-accent" aria-hidden="true" />
               Alta Gracia, Córdoba
@@ -270,7 +270,7 @@ export default function HomeScreen() {
               className={`min-h-touch rounded-2xl border font-black text-xs flex flex-col items-center justify-center gap-1 py-2.5 active:scale-[0.99] transition-all ${
                 isDark
                   ? 'bg-[#121B2D] border-accent/60 text-accent hover:bg-[#1A253D]'
-                  : 'bg-white border-accent/60 text-accent hover:bg-amber-50 shadow-sm'
+                  : 'bg-white border-accent/60 text-accent hover:bg-accent/15 shadow-sm'
               }`}
             >
               <Clock className="w-5 h-5" aria-hidden="true" />
@@ -416,11 +416,11 @@ export default function HomeScreen() {
                     : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-accent/40 shadow-sm'
                 }`}
               >
-                <div className="absolute top-0 left-0 bottom-0 w-1 bg-amber-400 group-hover:w-1.5 shadow-glow-gold transition-all" />
+                <div className="absolute top-0 left-0 bottom-0 w-1 bg-accent/15 group-hover:w-1.5 shadow-glow-gold transition-all" />
 
                 <div className="flex items-start space-x-3.5 pl-1.5">
                   <div className={`w-13 h-13 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-105 ${
-                    isDark ? 'bg-amber-500/15 border border-amber-500/40' : 'bg-accent/15 border border-accent/40'
+                    isDark ? 'bg-accent/15 border border-accent/40' : 'bg-accent/15 border border-accent/40'
                   }`}>
                     <CategoryGlyph id={cat.id} />
                   </div>
@@ -433,7 +433,7 @@ export default function HomeScreen() {
                         {cat.title}
                       </h4>
                       <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
-                        isDark ? 'bg-amber-950/60 text-amber-300 border-amber-700/50' : 'bg-accent/15 text-amber-800 border-accent/40'
+                        isDark ? 'bg-accent/60 text-accent border-accent/50' : 'bg-accent/15 text-accent border-accent/40'
                       }`}>
                         {count} locales activos
                       </span>

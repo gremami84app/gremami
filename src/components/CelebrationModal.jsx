@@ -59,7 +59,7 @@ export default function CelebrationModal({
       <div className={`relative max-w-sm w-full max-h-[90dvh] overflow-y-auto rounded-3xl border-2 p-5 shadow-2xl z-10 transition-colors animate-in zoom-in-95 duration-200 ${
         isDark
           ? 'bg-[#0B132B] border-[#F7931A] text-white shadow-[0_0_60px_rgba(247,147,26,0.35)]'
-          : 'bg-white border-amber-400 text-slate-900 shadow-[0_0_50px_rgba(245,158,11,0.25)]'
+          : 'bg-white border-accent/40 text-slate-900 shadow-[0_0_50px_rgba(245,158,11,0.25)]'
       }`}>
         {/* Botón de Cierre */}
         <button
@@ -98,7 +98,7 @@ export default function CelebrationModal({
 
           {/* Placa de Recompensa Destacada */}
           <div className={`mt-3.5 p-3 rounded-2xl border ${
-            isDark ? 'bg-[#070C1E] border-slate-700/80' : 'bg-amber-50 border-amber-300'
+            isDark ? 'bg-[#070C1E] border-slate-700/80' : 'bg-accent/15 border-accent/40'
           }`}>
             <span className="text-[10px] uppercase font-bold tracking-wider text-[#F7931A] block">
               Recompensa P2P Acreditada
@@ -127,7 +127,7 @@ export default function CelebrationModal({
           {/* Alerta de Saldo Bajo si es Cadete (< 1 VALENS) */}
           {isLowBalance && (
             <div className={`mt-3 p-2.5 rounded-xl border text-left text-xs ${
-              isDark ? 'bg-amber-950/40 border-amber-500/60 text-amber-300' : 'bg-amber-50 border-amber-400 text-amber-950'
+              isDark ? 'bg-accent/40 border-accent/60 text-accent' : 'bg-accent/15 border-accent/40 text-accent'
             }`}>
               <p className="font-bold text-[11px] flex items-center gap-1">
                 ⚠️ Alerta de Saldo para Cadetes:

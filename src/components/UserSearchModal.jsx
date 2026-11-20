@@ -171,7 +171,7 @@ export default function UserSearchModal({ isOpen, onClose }) {
             <div className={`p-8 rounded-2xl border text-center space-y-2 my-2 ${
               isDark ? 'bg-[#121B2D]/40 border-[#1F2D48]/60' : 'bg-slate-50 border-slate-200'
             }`}>
-              <div className="w-12 h-12 rounded-full mx-auto flex items-center justify-center bg-amber-500/10 border border-amber-500/20 text-[#F0B90B]">
+              <div className="w-12 h-12 rounded-full mx-auto flex items-center justify-center bg-accent/10 border border-accent/20 text-[#F0B90B]">
                 <Search className="w-6 h-6" />
               </div>
               <h3 className="text-xs font-bold">No se encontraron usuarios con ese nick o correo</h3>
@@ -211,7 +211,7 @@ export default function UserSearchModal({ isOpen, onClose }) {
                         <img
                           src={u.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
                           alt={u.name}
-                          className="w-10 h-10 rounded-xl object-cover border border-amber-400/30"
+                          className="w-10 h-10 rounded-xl object-cover border border-accent/30"
                         />
                         {u.isOnline && (
                           <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#0A1128]" />
@@ -226,7 +226,7 @@ export default function UserSearchModal({ isOpen, onClose }) {
                           </h4>
                           <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded border ${
                             isCad
-                              ? isDark ? 'bg-amber-500/10 text-[#F0B90B] border-amber-500/30' : 'bg-amber-100 text-amber-800 border-amber-300'
+                              ? isDark ? 'bg-accent/10 text-[#F0B90B] border-accent/30' : 'bg-accent/15 text-accent border-accent/40'
                               : isShop
                               ? isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-emerald-100 text-emerald-800 border-emerald-300'
                               : isDark ? 'bg-blue-500/10 text-blue-400 border-blue-500/30' : 'bg-blue-100 text-blue-800 border-blue-300'

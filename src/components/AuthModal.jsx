@@ -390,12 +390,12 @@ export default function AuthModal({ isOpen, onClose }) {
 
           {/* Aviso si la URL de Supabase aún no está configurada */}
           {!isSupabaseConfigured && (
-            <div className="mb-4 p-3 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs flex items-start gap-2.5">
-              <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+            <div className="mb-4 p-3 rounded-2xl bg-accent/15 border border-accent/40 text-accent text-xs flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="font-bold text-amber-200">Configuración de Supabase Requerida</p>
-                <p className="text-[10.5px] mt-0.5 text-amber-300 leading-relaxed">
-                  Coloca en tu archivo <span className="font-mono bg-black/30 px-1 py-0.5 rounded text-amber-200">.env</span>:
+                <p className="font-bold text-accent">Configuración de Supabase Requerida</p>
+                <p className="text-[10.5px] mt-0.5 text-accent leading-relaxed">
+                  Coloca en tu archivo <span className="font-mono bg-black/30 px-1 py-0.5 rounded text-accent">.env</span>:
                   <br />
                   <span className="font-mono font-semibold">VITE_SUPABASE_URL</span>=https://&lt;id-proyecto&gt;.supabase.co
                   <br />
@@ -449,7 +449,7 @@ export default function AuthModal({ isOpen, onClose }) {
               }`}
             >
               {googleLoading ? (
-                <div className="w-4 h-4 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-accent/40 border-t-transparent rounded-full animate-spin" />
               ) : (
                 /* Logotipo Oficial Multicolor de Google */
                 <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
@@ -579,7 +579,7 @@ export default function AuthModal({ isOpen, onClose }) {
                     onClick={() => setRole('cadete')}
                     className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all ${
                       role === 'cadete'
-                        ? 'bg-amber-500/20 border-[#F7931A] text-[#F7931A]'
+                        ? 'bg-accent/20 border-[#F7931A] text-[#F7931A]'
                         : isDark
                         ? 'bg-[#121B2D] border-slate-700 text-slate-400'
                         : 'bg-slate-50 border-slate-300 text-slate-600'
@@ -628,7 +628,7 @@ export default function AuthModal({ isOpen, onClose }) {
                     <span>Lat: {userCoords[0].toFixed(4)}, Lng: {userCoords[1].toFixed(4)} (Alta Gracia)</span>
                   </div>
                 ) : gpsStatus === 'locating' ? (
-                  <p className="text-[10.5px] text-amber-300 animate-pulse">
+                  <p className="text-[10.5px] text-accent animate-pulse">
                     Detectando señal satelital del dispositivo...
                   </p>
                 ) : (
@@ -666,7 +666,7 @@ export default function AuthModal({ isOpen, onClose }) {
               disabled={isWorking}
               onClick={() => handleSwitchMode(mode === 'login' ? 'register' : 'login')}
               className={`text-xs font-bold transition-colors ${
-                isDark ? 'text-[#F7931A] hover:underline' : 'text-amber-700 hover:underline'
+                isDark ? 'text-[#F7931A] hover:underline' : 'text-accent hover:underline'
               }`}
             >
               {mode === 'login'

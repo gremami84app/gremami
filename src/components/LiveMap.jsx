@@ -339,7 +339,7 @@ export default function LiveMap({
           gpsStatus === 'active'
             ? 'bg-emerald-950/80 border-emerald-500/40 text-emerald-300'
             : gpsStatus === 'locating'
-            ? 'bg-amber-950/80 border-amber-500/40 text-amber-300 animate-pulse'
+            ? 'bg-accent/80 border-accent/40 text-accent animate-pulse'
             : 'bg-slate-900/80 border-slate-700 text-slate-300'
         }`}>
           {gpsStatus === 'active' ? (
@@ -349,7 +349,7 @@ export default function LiveMap({
             </>
           ) : gpsStatus === 'locating' ? (
             <>
-              <Compass className="w-3.5 h-3.5 text-amber-400 animate-spin" />
+              <Compass className="w-3.5 h-3.5 text-accent animate-spin" />
               <span>Detectando GPS...</span>
             </>
           ) : (
@@ -361,8 +361,8 @@ export default function LiveMap({
         </div>
 
         {pickerMode && (
-          <div className="px-2.5 py-1.5 rounded-xl backdrop-blur-md bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[11px] font-bold shadow-lg flex items-center gap-1">
-            <Crosshair className="w-3 h-3 text-amber-400" />
+          <div className="px-2.5 py-1.5 rounded-xl backdrop-blur-md bg-accent/20 border border-accent/40 text-accent text-[11px] font-bold shadow-lg flex items-center gap-1">
+            <Crosshair className="w-3 h-3 text-accent" />
             <span>Toca el mapa para fijar punto</span>
           </div>
         )}

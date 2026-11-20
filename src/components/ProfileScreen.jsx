@@ -433,8 +433,8 @@ export default function ProfileScreen() {
             </p>
 
             <div className="flex items-center space-x-3 mt-1.5 text-xs">
-              <div className="flex items-center space-x-1 text-amber-500 font-bold">
-                <Star className="w-3.5 h-3.5 fill-amber-500" />
+              <div className="flex items-center space-x-1 text-accent font-bold">
+                <Star className="w-3.5 h-3.5 fill-accent" />
                 <span>4.96 ★</span>
                 <span className={`text-[10px] font-normal ${isDark ? 'text-ink3' : 'text-slate-500'}`}>(280 reseñas)</span>
               </div>
@@ -496,7 +496,7 @@ export default function ProfileScreen() {
               className={`px-2.5 py-1 rounded-xl text-[11px] font-semibold border flex items-center gap-1 active:scale-95 transition-all ${
                 isDark
                   ? 'bg-[#18243C] border-slate-700 text-accent hover:bg-slate-800'
-                  : 'bg-slate-100 border-slate-300 text-amber-700 hover:bg-slate-200'
+                  : 'bg-slate-100 border-slate-300 text-accent hover:bg-slate-200'
               }`}
             >
               <Upload size={11} />
@@ -554,7 +554,7 @@ export default function ProfileScreen() {
               <CheckCircle2 size={11} /> Conectado
             </span>
           ) : (
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-accent border border-[#F7931A]/30 font-bold">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-accent/15 text-accent border border-[#F7931A]/30 font-bold">
               Modo Invitado / Local
             </span>
           )}
@@ -985,7 +985,7 @@ export default function ProfileScreen() {
                     onClick={() => setFormCategory(c.id)}
                     className={`py-1.5 px-2 rounded-xl text-xs font-semibold border transition-all ${
                       formCategory === c.id
-                        ? 'bg-accent text-slate-950 border-amber-400 font-bold shadow-sm'
+                        ? 'bg-accent text-slate-950 border-accent/40 font-bold shadow-sm'
                         : isDark
                         ? 'bg-card border-slate-700 text-slate-300'
                         : 'bg-white border-slate-300 text-slate-700'
@@ -1077,10 +1077,10 @@ export default function ProfileScreen() {
                     onClick={() => updateUserProfile({ mobilityMode: m.id })}
                     className={`py-1.5 px-1 rounded-xl text-[10px] font-semibold border transition-all text-center active:scale-95 ${
                       (userProfile.mobilityMode ?? 'moto') === m.id
-                        ? 'bg-accent text-slate-950 border-amber-400 font-bold shadow-sm'
+                        ? 'bg-accent text-slate-950 border-accent/40 font-bold shadow-sm'
                         : isDark
                         ? 'bg-card border-slate-700 text-slate-300 hover:border-slate-500'
-                        : 'bg-white border-slate-300 text-slate-700 hover:border-amber-300'
+                        : 'bg-white border-slate-300 text-slate-700 hover:border-accent/40'
                     }`}
                   >
                     {m.label}
@@ -1227,7 +1227,7 @@ export default function ProfileScreen() {
                 <p className="text-xl font-black text-emerald-400 font-mono mt-0.5">
                   {userProfile.milestones?.positiveRatingPercent || 100}%
                 </p>
-                <span className="text-[9px] text-amber-400 font-semibold">⭐⭐⭐⭐⭐ 5.0 Impecable</span>
+                <span className="text-[9px] text-accent font-semibold">⭐⭐⭐⭐⭐ 5.0 Impecable</span>
               </div>
 
               <div className={`p-3 rounded-xl border ${
@@ -1662,7 +1662,7 @@ export default function ProfileScreen() {
               </form>
             ) : (
               <div className="space-y-3">
-                <div className="p-2.5 bg-amber-500/15 border border-amber-500/40 rounded-xl text-[11px] text-[#F0B90B]">
+                <div className="p-2.5 bg-accent/15 border border-accent/40 rounded-xl text-[11px] text-[#F0B90B]">
                   ⚠️ <strong>Alerta:</strong> Jamás compartas estas 12 palabras. Con ellas se puede acceder a tus fondos en cualquier billetera BIP-39.
                 </div>
 
