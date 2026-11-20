@@ -309,7 +309,8 @@ CREATE TABLE IF NOT EXISTS public.valens_transactions (
   amount_val NUMERIC(14, 2) NOT NULL,
   type TEXT NOT NULL CHECK (type IN (
     'servicio', 'recompensa_pin', 'dex', 'faucet',
-    'reward_release', 'direct_transfer', 'tip'
+    'reward_release', 'direct_transfer', 'tip',
+    'p2p_transfer'  -- (S26) lo usa transfer_valens_tokens al transferir entre billeteras
   )),
   description TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
