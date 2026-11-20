@@ -1406,8 +1406,8 @@ export const valensService = {
   transferTokens: async ({ senderId, receiverAddress, amount }) => {
     const intAmount = Math.floor(Number(amount));
     if (intAmount <= 0) return { success: false, error: 'Monto inválido: debe ser entero > 0.' };
-    if (!receiverAddress || !receiverAddress.startsWith('valens')) {
-      return { success: false, error: 'Dirección de destino inválida. Debe iniciar con valens...' };
+    if (!receiverAddress || !/^(?:vlx1|valens1q)/i.test(receiverAddress)) {
+      return { success: false, error: 'Dirección de destino inválida. Debe ser una dirección vlx1...' };
     }
 
     if (!isSupabaseConfigured || !senderId) {

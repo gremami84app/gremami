@@ -458,7 +458,9 @@ export const releaseRewardByPin = async ({ order_id, pin, cadet_id = 'current-ca
 // (ensure_wallet_address, transfer_valens_tokens, claim_school_reward).
 // El cliente nunca modifica public.wallets directamente.
 // ====================================================================
-const VALENS_ADDRESS_RE = /^valens1q[a-z0-9]{6,64}$/i;
+// (S25) La base guarda direcciones `vlx1...` (profiles.wallet_address).
+// Se mantiene `valens1q...` por compatibilidad con cuentas/legado.
+const VALENS_ADDRESS_RE = /^(?:vlx1|valens1q)[a-z0-9]{6,64}$/i;
 
 export const isValensAddress = (value) =>
   typeof value === 'string' && VALENS_ADDRESS_RE.test(value.trim());

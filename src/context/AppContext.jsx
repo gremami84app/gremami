@@ -991,8 +991,9 @@ export function AppProvider({ children }) {
       showToast('❌ El monto debe ser un número entero mayor a 0 VAL.', 'error');
       return { success: false, error: 'invalid_amount' };
     }
-    if (!address.startsWith('valens')) {
-      showToast('❌ Dirección inválida. Debe iniciar con valens...', 'error');
+    // (S25) Aceptar el formato real de la base (`vlx1...`) y el legado (`valens1q...`).
+    if (!/^(?:vlx1|valens1q)/i.test(address)) {
+      showToast('❌ Dirección inválida. Debe ser una dirección vlx1...', 'error');
       return { success: false, error: 'invalid_address' };
     }
 
