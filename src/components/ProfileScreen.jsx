@@ -996,7 +996,9 @@ export default function ProfileScreen() {
                 ))}
               </div>
 
-              {/* Campos específicos de Fletes / Cargas Pesadas */}
+              {/* (S14c-2) Campos específicos de Fletes / Cargas Pesadas:
+                  solo se renderizan cuando la categoría es flete. */}
+              {formCategory === 'fletes' && (
               <div className="grid grid-cols-2 gap-2 pt-1">
                 <div>
                   <label className="block text-[10px] font-bold text-slate-400 mb-0.5">Tipo de Vehículo:</label>
@@ -1043,6 +1045,7 @@ export default function ProfileScreen() {
                   {formIncludesHelpers ? 'Servicio Completo' : 'Solo Chofer'}
                 </span>
               </div>
+              )}
             </div>
 
             {/* 🎯 Radio de Alertas Cercanas */}
