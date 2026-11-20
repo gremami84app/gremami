@@ -15,9 +15,32 @@ import {
 } from '../data/mockData';
 import { playP2PAlertChime, playCelebrationSound } from '../utils/audioAlert';
 
-// (S34) Saldo mínimo en VAL para que un cadete pueda tomar/cotizar servicios.
-// Es la misma regla operativa que el DEX anuncia para la visibilidad en el radar.
-const MIN_VAL_TO_OPERATE = 1;
+// (S34) Tarifa de VAL por categoría de servicio (economía de agradecimiento).
+// Caminando / Moto / Negocios = 1 VAL · Auto = 2 VAL · Flete / Camioneta = 3 VAL
+const VAL_COST_BY_CATEGORY = {
+  caminando: 1,
+  bicicleta: 1,
+  moto: 1,
+  motocicleta: 1,
+  negocios: 1,
+  comercio: 1,
+  auto: 2,
+  automovil: 2,
+  automóvil: 2,
+  flete: 3,
+  fletes: 3,
+  camioneta: 3
+};
+
+// Helper único: cualquier componente puede pedir el costo de su categoría.
+export const getValCostForCategory = (category) => {
+  const key = String(category || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+  return VAL_COST_BY_CATEGORY[key] ?? 1;
+};
 import {
   saveBidToSupabase,
   recordDeliveryTransactionInSupabase,
@@ -1612,16 +1635,20 @@ export function AppProvider({ children }) {
     const uid = isUuid(currentUser?.id) ? currentUser.id : null;
     if (!uid) return { success: false, reason: 'no-session' };
     if (!orderId) return { success: false, reason: 'invalid-order' };
-    // (S34) Regla operativa: para tomar/cotizar un servicio el cadete necesita al
-    // menos 1 VAL en su billetera. El exchange (DEX) NO pasa por acá, así que un
-    // cadete sin saldo puede seguir entrando a comprar/donar tokens.
+    // (S34) Gate por categoría: el cadete necesita el VAL de la categoría del
+    // servicio (1 caminando/moto/negocios, 2 auto, 3 flete). El exchange queda libre.
     const saldoActual = Math.floor(Number(balance) || 0);
-    if (saldoActual < MIN_VAL_TO_OPERATE) {
+    const ordenRef = (liveRequests || []).find((o) => o.id === orderId)
+      || (myOrders || []).find((o) => o.id === orderId)
+      || null;
+    const categoriaOrden = ordenRef?.category || ordenRef?.mobility || ordenRef?.serviceType || 'caminando';
+    const requerido = getValCostForCategory(categoriaOrden);
+    if (saldoActual < requerido) {
       showToast(
-        `Necesitás al menos ${MIN_VAL_TO_OPERATE} VAL para cotizar servicios. Podés conseguirlos en el Mercado DEX.`,
+        `Este servicio requiere ${requerido} VAL y tenés ${saldoActual}. Conseguí VAL en el Mercado DEX (donación, compra o préstamo).`,
         'warning'
       );
-      return { success: false, reason: 'insufficient-val', balance: saldoActual };
+      return { success: false, reason: 'insufficient-val', required: requerido, balance: saldoActual };
     }
     try {
       return await offerService.submitOffer({
@@ -2560,6 +2587,9 @@ export function AppProvider({ children }) {
         // (S09.6a) Datos reales
         myOrders,
         refreshMyOrders,
+    // (S34) Tarifa VAL por categoría, disponible en toda la app.
+    getValCostForCategory,
+    VAL_COST_BY_CATEGORY,
         submitOfferReal,
         acceptOfferReal,
         getOrderOffersReal,

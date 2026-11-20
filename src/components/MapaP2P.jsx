@@ -540,7 +540,9 @@ export default function MapaP2P(props) {
     userGpsCoords,
     hasLiveGps: appHasLiveGps,
     userProfile,
-    user
+    user,
+    // (S34) Tarifa VAL por categoría
+    getValCostForCategory
   } = useApp();
 
   const isDark = theme === 'dark';
@@ -1352,6 +1354,18 @@ export default function MapaP2P(props) {
                   🟢 Reputación: {selectedNode.recommendations || 24}
                 </span>
               )}
+            </div>
+
+            {/* (S34) Tarifa de VAL según la categoría del prestador */}
+            <div className="px-4 pb-2">
+              <div className="flex items-center justify-between gap-2 rounded-xl border border-line bg-card px-3 py-2">
+                <span className="text-[11px] font-semibold text-ink3">
+                  Costo en VAL de esta categoría
+                </span>
+                <span className="text-xs font-bold text-accent tabular-nums">
+                  {getValCostForCategory(selectedNode.category || selectedNode.mobility)} VAL
+                </span>
+              </div>
             </div>
 
             <button
