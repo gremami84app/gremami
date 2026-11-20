@@ -514,8 +514,14 @@ export function AppProvider({ children }) {
             avatar: finalAvatar
           }));
         }
-        if (wallet && typeof wallet.valens_balance === 'number') {
-          setBalance(wallet.valens_balance);
+        // (S27) Fuente de verdad del saldo: balance_valens (lo mueve la RPC).
+        // valens_balance es una columna legada que quedó desfasada tras cada
+        // transferencia P2P; se usa solo como respaldo si la canónica falta.
+        const canonicalBalance = wallet
+          ? Number(wallet.balance_valens ?? wallet.balance_val ?? wallet.valens_balance)
+          : NaN;
+        if (Number.isFinite(canonicalBalance)) {
+          setBalance(canonicalBalance);
         }
 
         // (S11) Dirección Valens persistente + saldo e historial reales.
