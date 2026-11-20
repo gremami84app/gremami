@@ -105,7 +105,8 @@ export default function Header() {
       label: 'Chats P2P Activos',
       icon: MessageSquare,
       desc: 'Mensajería directa y PIN antifraude',
-      badge: '3'
+      // (S14a-7) Sin sesión no hay conversaciones reales: el badge no debe mentir.
+      badge: currentUser?.id ? '3' : '0'
     },
     {
       id: 'wallet',

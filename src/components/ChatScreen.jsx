@@ -215,30 +215,6 @@ export default function ChatScreen() {
     );
   }
 
-  // (S14a-4) Estado vacío: sin conversación elegida no se muestra un chat ficticio.
-  if (!currentPeer) {
-    return (
-      <div className="w-full min-h-[calc(100vh-135px)] flex items-center justify-center p-4 bg-app">
-        <div className="w-full max-w-sm rounded-2xl border border-line bg-card p-6 text-center">
-          <div className="mx-auto w-11 h-11 rounded-full bg-accent/15 flex items-center justify-center">
-            <MessageSquare className="w-5 h-5 text-accent" strokeWidth={1.75} aria-hidden="true" />
-          </div>
-          <h3 className="mt-3 text-[15px] font-semibold text-ink1">No tenés conversaciones activas</h3>
-          <p className="mt-1 text-[13px] leading-relaxed text-ink2">
-            Cuando acuerdes un envío o servicio con un vecino, el chat aparece acá.
-          </p>
-          <button
-            type="button"
-            onClick={() => (currentUser?.id ? setActiveTab('map') : openAuthModal?.())}
-            className="mt-4 w-full min-h-touch rounded-2xl bg-accent text-slate-950 font-semibold text-[15px]"
-          >
-            {currentUser?.id ? 'Explorar el mapa' : 'Iniciar sesión'}
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={`relative w-full h-[calc(100vh-135px)] flex flex-col overflow-hidden animate-fadeIn transition-colors duration-200 ${
       isDark ? 'bg-[#0A1128] text-ink1' : 'bg-[#F8FAFC] text-slate-900'
