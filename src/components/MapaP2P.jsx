@@ -2035,6 +2035,16 @@ export default function MapaP2P(props) {
               )}
             </div>
 
+            {/* (S44) Compromiso de VAL visible antes de postularse */}
+            <div className="mb-2 flex items-center justify-between gap-2 rounded-xl border border-line bg-card px-3 py-2">
+              <span className="text-[11px] font-semibold text-ink3">
+                Compromiso para postularte
+              </span>
+              <span className="text-xs font-bold text-accent tabular-nums">
+                {getValCostForCategory(activeAuction?.category)} VAL
+              </span>
+            </div>
+
             {/* Action Buttons: Dinámico según si ya se envió oferta propia */}
             <div className="flex gap-2">
               <button
